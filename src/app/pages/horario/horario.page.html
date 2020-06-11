@@ -1,0 +1,205 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="comfortaa">Horario</ion-title>
+        <ion-buttons slot="end" class="mobile">
+            <ion-button (click)="verDia(null)" class="comfortaa">
+                <ion-icon slot="start" name="add"></ion-icon>
+                Nuevo
+            </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end" class="escritorio">
+            <ion-button (click)="newEditDia(null)" class="comfortaa">
+                <ion-icon slot="start" name="add"></ion-icon>
+                Nuevo
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <!-- Vista mobile -->
+    <div class="mobile">
+        <ng-container *ngIf="horarioReady; else loadMobileTemplate">
+            <ng-container *ngIf="hasHorario; else mainTemplate">
+                <ion-list>
+                    <div *ngFor="let item of horario; let i = index">
+                        <ion-card *ngIf="item.activo">
+                            <ion-list-header>
+                                <ion-label color="primary">{{item.nombre | titlecase}}</ion-label>
+                                <ion-button (click)="deleteDia(item.nombre, i)" fill="clear" shape="round">
+                                    <ion-icon slot="icon-only" name="close"></ion-icon>
+                                </ion-button>
+                            </ion-list-header>
+                            <ion-item lines="none" detail (click)="verDia(item)">
+                                <ion-label color="medium">
+                                    <p>Apertura -- {{item.apertura | date:'shortTime'}}</p>
+                                    <p>Cierre -- {{item.cierre | date:'shortTime'}}</p>
+                                    <p *ngIf="item.comida === 'comida'">Inicio comida -- {{item.inicioComida | date:'shortTime'}}</p>
+                                    <p *ngIf="item.comida === 'comida'">Fin comida -- {{item.finComida | date:'shortTime'}}</p>
+                                </ion-label>
+                            </ion-item>
+                        </ion-card>
+                    </div>
+                </ion-list>
+            </ng-container>
+            <ng-template #mainTemplate>
+                <ion-item lines="none" style="text-align: center;">
+                    <ion-label class="ion-text-wrap" color="medium">Aún no has agregado ningún horario</ion-label>
+                </ion-item>
+            </ng-template>
+        </ng-container>
+        <ng-template #loadMobileTemplate>
+            <ion-card class="boton-margen">
+                <ion-list>
+                    <ion-item *ngFor="let item of [1,2,3,4,5,6]">
+                        <ion-label>
+                            <h2>
+                                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                            </h2>
+                            <p>
+                                <ion-skeleton-text animated style="width: 90%;"></ion-skeleton-text>
+                            </p>
+                            <p>
+                                <ion-skeleton-text animated style="width: 65%;"></ion-skeleton-text>
+                            </p>
+                        </ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-card>
+        </ng-template>
+    </div>
+    <!-- Vista escritorio -->
+    <div class="escritorio">
+        <ng-container *ngIf="horarioReady; else loadTemplate">
+            <ion-grid fixed>
+                <ion-row>
+                    <ion-col size="5">
+                        <ng-container *ngIf="hasHorario; else mainEscritorioTemplate">
+                            <ion-list>
+                                <div *ngFor="let item of horario; let i = index" style="cursor: pointer;">
+                                    <ion-card *ngIf="item.activo">
+                                        <ion-list-header>
+                                            <ion-label color="primary">{{item.nombre | titlecase}}</ion-label>
+                                            <ion-button (click)="deleteDia(item.nombre, i)" fill="clear" shape="round">
+                                                <ion-icon slot="icon-only" name="close"></ion-icon>
+                                            </ion-button>
+                                        </ion-list-header>
+                                        <ion-item lines="none" detail (click)="newEditDia(item)">
+                                            <ion-label color="medium">
+                                                <p>Apertura -- {{item.apertura | date:'shortTime'}}</p>
+                                                <p>Cierre -- {{item.cierre | date:'shortTime'}}</p>
+                                                <p *ngIf="item.comida === 'comida'">Inicio comida -- {{item.inicioComida | date:'shortTime'}}</p>
+                                                <p *ngIf="item.comida === 'comida'">Fin comida -- {{item.finComida | date:'shortTime'}}</p>
+                                            </ion-label>
+                                        </ion-item>
+                                    </ion-card>
+                                </div>
+                            </ion-list>
+                        </ng-container>
+                        <ng-template #mainEscritorioTemplate>
+                            <ion-item lines="none" style="text-align: center;">
+                                <ion-label class="ion-text-wrap" color="medium">Aún no has agregado ningún horario</ion-label>
+                            </ion-item>
+                        </ng-template>
+                    </ion-col>
+                    <ion-col size="7" *ngIf="editHorario">
+                        <form #forma="ngForm" (ngSubmit)="guardar()">
+                            <ion-card>
+                                <ion-item>
+                                    <ion-label color="primary">¿Horario corrido o con comida?</ion-label>
+                                    <ion-select [(ngModel)]="dia.comida" okText="Aceptar" cancelText="Cancelar" required name="corrido">
+                                        <ion-select-option value="corrido">Corrido</ion-select-option>
+                                        <ion-select-option value="comida">Cierre por comida</ion-select-option>
+                                    </ion-select>
+                                </ion-item>
+                            </ion-card>
+                            <ion-card *ngIf="dia.comida">
+                                <ion-item>
+                                    <ion-label>Apertura</ion-label>
+                                    <ion-datetime [(ngModel)]="dia.apertura" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="apertura"></ion-datetime>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Cierre</ion-label>
+                                    <ion-datetime [(ngModel)]="dia.cierre" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="cierre"></ion-datetime>
+                                </ion-item>
+                            </ion-card>
+                            <ion-card *ngIf="dia.comida === 'comida'">
+                                <ion-item>
+                                    <ion-label>Inicio comida</ion-label>
+                                    <ion-datetime [(ngModel)]="dia.inicioComida" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="comida"></ion-datetime>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Fin comida</ion-label>
+                                    <ion-datetime [(ngModel)]="dia.finComida" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="comidaFin"></ion-datetime>
+                                </ion-item>
+                            </ion-card>
+                            <ng-container *ngIf="dia.comida === 'comida'; else comidaTemplate">
+                                <ion-card *ngIf="dia.comida && dia.apertura && dia.cierre && dia.inicioComida && dia.finComida">
+                                    <ion-item *ngFor="let item of semana">
+                                        <ion-label>{{item.nombre | titlecase}}</ion-label>
+                                        <ion-checkbox [(ngModel)]="item.activo" slot="start" name="item.dia"></ion-checkbox>
+                                    </ion-item>
+                                </ion-card>
+                            </ng-container>
+                            <ng-template #comidaTemplate>
+                                <ion-card *ngIf="dia.comida && dia.apertura && dia.cierre">
+                                    <ion-item *ngFor="let item of semana">
+                                        <ion-label>{{item.nombre | titlecase}}</ion-label>
+                                        <ion-checkbox [(ngModel)]="item.activo" slot="start" name="item.dia"></ion-checkbox>
+                                    </ion-item>
+                                </ion-card>
+                            </ng-template>
+
+                            <ion-button class="boton-margen" color="primary" type="submit" [disabled]="forma.invalid">
+                                Guardar cambios
+                            </ion-button>
+                        </form>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ng-container>
+        <ng-template #loadTemplate>
+            <ion-grid fixed>
+                <ion-row>
+                    <ion-col size="6">
+                        <ion-card class="boton-margen">
+                            <ion-list>
+                                <ion-item *ngFor="let item of [1,2,3,4,5,6]">
+                                    <ion-label>
+                                        <h2>
+                                            <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                                        </h2>
+                                        <p>
+                                            <ion-skeleton-text animated style="width: 90%;"></ion-skeleton-text>
+                                        </p>
+                                        <p>
+                                            <ion-skeleton-text animated style="width: 65%;"></ion-skeleton-text>
+                                        </p>
+                                    </ion-label>
+                                </ion-item>
+                            </ion-list>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ng-template>
+    </div>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="mobile">
+        <ion-fab-button (click)="verDia(null)">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-right: 2rem;" class="escritorio">
+        <ion-fab-button (click)="newEditDia(null)">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+</ion-content>
+
+<app-no-network></app-no-network>

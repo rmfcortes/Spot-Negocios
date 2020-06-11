@@ -1,0 +1,23 @@
+.margen {
+    width: 90%;
+    margin-left: 5%;
+}
+
+.cuadro {
+    position: relative;
+    display: flex;
+    width: 9rem;
+    height: 9rem;
+    margin: auto;
+}
+
+.titulo {
+    margin: auto;
+    color: white;
+}
+
+hr {
+    border: solid 0.05px #bdbec0;
+    width: 95%;
+    margin-left: 2.5%;
+}

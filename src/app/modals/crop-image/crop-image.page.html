@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="end">
+            <ng-container *ngIf="verPrevio; else iconTemplate">
+                <ion-button (click)="verPrevio = false">
+                    <ion-icon slot="icon-only" name="close"></ion-icon>
+                </ion-button>
+            </ng-container>
+            <ng-template #iconTemplate>
+                <ion-button (click)="salir()">
+                    <ion-icon slot="icon-only" name="close"></ion-icon>
+                </ion-button>
+            </ng-template>
+        </ion-buttons>
+        <ion-buttons slot="start" *ngIf="!verPrevio">
+            <ion-button [disabled]="!croppedImage" (click)="verPrevio = true" class="comfortaa">
+                Vista previa
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ng-container *ngIf="verPrevio; else elseTemplate">
+        <div id="contenedor">
+            <img id="foto" [src]="croppedImage" alt="">
+        </div>
+    </ng-container>
+    <ng-template #elseTemplate>
+        <image-cropper format="jpeg" [transform]="imageTransform" [imageChangedEvent]="imageChangedEvent" imageQuality="quality || 60" (imageLoaded)="imageLoaded()" [maintainAspectRatio]="true" [aspectRatio]="aspect" [resizeToWidth]="width || 300" format="jpg"
+            (imageCropped)="imageCropped($event)"></image-cropper>
+        <ion-spinner *ngIf="!imageReady" name="bubbles" name="dots" class="spinner"></ion-spinner>
+    </ng-template>
+
+</ion-content>
+<ion-footer no-border>
+    <ion-toolbar>
+        <ion-button [disabled]="!croppedImage || !imageReady" expand="block" (click)="guardar()">
+            Guardar
+        </ion-button>
+    </ion-toolbar>
+</ion-footer>

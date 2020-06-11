@@ -1,0 +1,48 @@
+img {
+    height: 50vh;
+    float: right;
+    padding-right: 5rem;
+}
+
+.input {
+    border-bottom: rgb(202, 201, 201) 1px solid;
+}
+
+.margin {
+    width: 90%;
+    margin-left: 5%;
+}
+
+.box-form {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 20px 0 rgba(0, 0, 0, 0.10);
+    background: white;
+    border-radius: 25px;
+    width: 100%;
+    padding: 2rem 0;
+    max-width: 500px;
+}
+
+.mobile-container {
+    height: 100vh;
+    margin: auto;
+}
+
+.mobile-box {
+    background: white;
+    border-radius: 25px;
+    width: 100%;
+    padding: 2rem 0;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.error-message {
+    color: red;
+    text-align: left;
+    margin-left: 2rem;
+    font-size: 12px;
+}

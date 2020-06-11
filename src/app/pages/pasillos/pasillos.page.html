@@ -1,0 +1,98 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="comfortaa">Departamentos</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="addPasillo()" class="comfortaa">
+                Nuevo +
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ng-container *ngIf="pasillosReady; else loadTemplate">
+        <ng-container *ngIf="categoria; else mainTemplate">
+            <ion-item style="text-align: center;" lines="none">
+                <ion-label color="medium" class="ion-text-wrap">
+                    Arrastra los elementos para cambiar la prioridad de despliegue
+                </ion-label>
+            </ion-item>
+
+            <!-- Escritorio -->
+            <ion-card class="escritorio" style="max-width: 30rem; margin: auto;">
+                <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
+                    <ion-item *ngFor="let item of pasillos; let i = index">
+                        <ion-badge slot="start" color="primary">{{item.prioridad}}</ion-badge>
+                        <ion-label>{{item.nombre}}</ion-label>
+                        <ion-button slot="end" (click)="editPasillo(i, item.nombre)">
+                            <ion-icon name="create"></ion-icon>
+                        </ion-button>
+                        <ion-button color="danger" slot="end" (click)="deletePasillo(i, item.nombre)">
+                            <ion-icon name="trash"></ion-icon>
+                        </ion-button>
+                        <ion-reorder slot="end">
+                        </ion-reorder>
+                    </ion-item>
+                </ion-reorder-group>
+            </ion-card>
+
+            <!-- Mobile -->
+            <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" class="mobile">
+                <ion-item *ngFor="let item of pasillos; let i = index">
+                    <ion-badge slot="start" color="primary">{{item.prioridad}}</ion-badge>
+                    <ion-label>{{item.nombre}}</ion-label>
+                    <ion-button slot="end" (click)="editPasillo(i, item.nombre)">
+                        <ion-icon name="create"></ion-icon>
+                    </ion-button>
+                    <ion-button color="danger" slot="end" (click)="deletePasillo(i, item.nombre)">
+                        <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                    <ion-reorder slot="end">
+                    </ion-reorder>
+                </ion-item>
+            </ion-reorder-group>
+        </ng-container>
+        <ng-template #mainTemplate>
+            <ion-item lines="none" style="text-align: center;">
+                <ion-label color="medium" class="ion-text-wrap">Antes de agregar pasillos, completa tu perfil. Es muy importante para clasificar tus productos o servicios</ion-label>
+            </ion-item>
+        </ng-template>
+    </ng-container>
+    <ng-template #loadTemplate>
+        <ion-card class="boton-margen">
+            <ion-list>
+                <ion-item *ngFor="let item of [1,2,3,4,5,6]">
+                    <ion-label>
+                        <h2>
+                            <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                        </h2>
+                        <p>
+                            <ion-skeleton-text animated style="width: 90%;"></ion-skeleton-text>
+                        </p>
+                        <p>
+                            <ion-skeleton-text animated style="width: 65%;"></ion-skeleton-text>
+                        </p>
+                    </ion-label>
+                </ion-item>
+            </ion-list>
+        </ion-card>
+    </ng-template>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="mobile">
+        <ion-fab-button (click)="addPasillo()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="escritorio">
+        <ion-fab-button (click)="addPasillo()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+</ion-content>
+
+<app-no-network></app-no-network>

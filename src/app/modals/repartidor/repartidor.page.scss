@@ -1,0 +1,30 @@
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.foto-container {
+    width: 100%;
+    height: 30%;
+    position: absolute;
+    top: 0;
+    background-color: var(--ion-color-primary);
+    text-align: center;
+}
+
+.form-card {
+    position: absolute;
+    left: 5%;
+    top: 31%;
+    width: 90%;
+    height: 90%;
+    border-radius: 10px;
+}
+
+.shadow {
+    width: 80%;
+    height: auto;
+    margin: auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

@@ -1,0 +1,34 @@
+<ion-app>
+    <ion-split-pane contentId="main-content" when="sm">
+        <ion-menu contentId="main-content" type="overlay">
+            <ion-header>
+                <ion-toolbar color="primary">
+                    <ion-title>
+                        <span class="comfortaa">Spot</span>
+                    </ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="background-gris">
+                <ion-menu-toggle auto-hide="false">
+                    <ion-item *ngFor="let p of appPages; let first = first; let i = index" (click)="iSel = i"  routerLinkActive="activo" [routerDirection]="'root'" [routerLink]="[p.url]">
+                        <ion-icon slot="start" [name]="p.icon" color="medium" *ngIf="i!== iSel"></ion-icon>
+                        <ion-icon slot="start" [name]="p.icon" color="light" *ngIf="i === iSel"></ion-icon>
+                        <ion-label color="medium" *ngIf="i!== iSel">{{p.title}}</ion-label>
+                        <ion-label color="light" *ngIf="i === iSel">{{p.title}}</ion-label>
+                        <ion-badge *ngIf="first && pedidos > 0" color="primary" slot="end">{{pedidos}}</ion-badge>
+                        <div *ngIf="no_horario && p.title === 'Horario'" class="alert" id="alert">
+                            <ion-icon slot="end" color="danger" name="notifications" class="alert-icon"></ion-icon>
+                        </div>
+                    </ion-item>
+                    <ion-item (click)="salir()" style="cursor: pointer;">
+                        <ion-icon color="medium" slot="start" name="log-out"></ion-icon>
+                        <ion-label color="medium">
+                            Cerrar sesión
+                        </ion-label>
+                    </ion-item>
+                </ion-menu-toggle>
+            </ion-content>
+        </ion-menu>
+        <ion-router-outlet id="main-content"></ion-router-outlet>
+    </ion-split-pane>
+</ion-app>

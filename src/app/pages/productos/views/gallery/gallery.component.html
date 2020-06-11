@@ -1,0 +1,13 @@
+<div *ngFor="let item of sections; let i = index" [style.display]="item.productos && item.productos.length > 0 ? 'initial' : 'none'">
+    <ion-item lines="none">
+        <h6 class="ion-text-wrap primario">{{item.nombre | titlecase}}</h6>
+    </ion-item>
+    <ion-grid class="ion-no-padding">
+        <ion-row>
+            <ion-col size="4" *ngFor="let prod of item.productos">
+                <preload-image [ratio]="{w: 1, h: .75}" [src]="prod.url" class="shadow" (click)="presentProduct(prod)" style="cursor: pointer; background: white;">
+                </preload-image>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</div>

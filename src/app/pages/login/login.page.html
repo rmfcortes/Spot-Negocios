@@ -1,0 +1,115 @@
+<ion-content>
+    <!-- Desktop design -->
+    <ion-grid style="height: 100vh;" class="desktop">
+        <ion-row class="ion-align-items-center" style="height: 100%;">
+            <!-- Image login -->
+            <ion-col>
+                <!-- <img src="../../../assets/img/login.jpg"> -->
+            </ion-col>
+            <ion-col style="text-align: center; padding: 1.5rem;">
+                <!-- Sign in form -->
+                <form [formGroup]="form" (ngSubmit)="signIn()" class="box-form">
+                    <ion-item lines="none" style="text-align: center;">
+                        <ion-label>Spot</ion-label>
+                    </ion-item>
+                    <h1 style="color: var(--ion-color-primary); font-size: xx-large;">Bienvenido</h1>
+                    <p style="margin-bottom: 4rem;">Spot para administradores</p>
+                    <ion-item lines="none" class="input margin">
+                        <ion-label position="floating" class="grey">Correo</ion-label>
+                        <ion-input type="email" formControlName="email" class="form-control" required></ion-input>
+                    </ion-item>
+                    <ng-container *ngFor="let validation of validation_messages.email">
+                        <div class="error-message" *ngIf="form.get('email').hasError(validation.type) && (form.get('email').dirty || form.get('email').touched)">
+                            {{ validation.message }}
+                        </div>
+                    </ng-container>
+                    <ion-item lines="none" class="input margin">
+                        <ion-label position="floating" class="grey">Contraseña</ion-label>
+                        <ion-input type="password" required formControlName="password"></ion-input>
+                    </ion-item>
+                    <ng-container *ngFor="let validation of validation_messages.password">
+                        <div class="error-message" *ngIf="form.get('password').hasError(validation.type) && (form.get('password').dirty || form.get('password').touched)">
+                            {{ validation.message }}
+                        </div>
+                    </ng-container>
+                    <ion-grid class="margin">
+                        <ion-row>
+                            <ion-col size="6">
+                                <ion-item lines="none">
+                                    <ion-label style="font-size: small;" class="ion-text-wrap">Recuerda mis datos</ion-label>
+                                    <ion-checkbox slot="start" style="margin-right: 0.5rem;" formControlName="isPersistent"></ion-checkbox>
+                                </ion-item>
+                            </ion-col>
+                            <ion-col size="6">
+                                <ion-item lines="none" (click)="resetPassword()" style="cursor: pointer;">
+                                    <ion-label style="font-size: small;" class="ion-text-wrap"><strong>¿Olvidaste tu contraseña?</strong></ion-label>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                    <div class="error-message ion-text-wrap" *ngIf="err">
+                        {{ err }}
+                    </div>
+                    <ion-button type="submit" shape="round">
+                        Ingresar
+                    </ion-button>
+                </form>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+
+
+
+
+    <!-- Mobile design -->
+    <div class="mobile-container" class="mobile">
+        <!-- Sign in form -->
+        <form [formGroup]="form" (ngSubmit)="signIn()" class="mobile-box">
+            <ion-item lines="none" style="text-align: center;">
+                <ion-label>Spot</ion-label>
+            </ion-item>
+            <h1 style="color: var(--ion-color-primary); font-size: xx-large;">Bienvenido</h1>
+            <p style="margin-bottom: 4rem;">Spot para administradores</p>
+            <ion-item lines="none" class="input margin">
+                <ion-label position="floating" class="grey">Correo</ion-label>
+                <ion-input type="email" formControlName="email" class="form-control" required></ion-input>
+            </ion-item>
+            <ng-container *ngFor="let validation of validation_messages.email">
+                <div class="error-message" *ngIf="form.get('email').hasError(validation.type) && (form.get('email').dirty || form.get('email').touched)">
+                    {{ validation.message }}
+                </div>
+            </ng-container>
+            <ion-item lines="none" class="input margin">
+                <ion-label position="floating" class="grey">Contraseña</ion-label>
+                <ion-input type="password" required formControlName="password"></ion-input>
+            </ion-item>
+            <ng-container *ngFor="let validation of validation_messages.password">
+                <div class="error-message" *ngIf="form.get('password').hasError(validation.type) && (form.get('password').dirty || form.get('password').touched)">
+                    {{ validation.message }}
+                </div>
+            </ng-container>
+            <ion-grid class="margin">
+                <ion-row>
+                    <ion-col size="6">
+                        <ion-item lines="none">
+                            <ion-label style="font-size: small;" class="ion-text-wrap">Recuerda mis datos</ion-label>
+                            <ion-checkbox slot="start" style="margin-right: 0.5rem;" formControlName="isPersistent"></ion-checkbox>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-item lines="none" (click)="resetPassword()" style="cursor: pointer;">
+                            <ion-label style="font-size: small;" class="ion-text-wrap"><strong>¿Olvidaste tu contraseña?</strong></ion-label>
+                        </ion-item>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+            <div class="error-message ion-text-wrap" *ngIf="err">
+                {{ err }}
+            </div>
+            <ion-button (click)="signIn()" shape="round">
+                Ingresar
+            </ion-button>
+        </form>
+    </div>
+</ion-content>

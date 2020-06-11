@@ -1,0 +1,18 @@
+.activo {
+    border-right: 6px solid var(--ion-color-primary);
+}
+
+.alert {
+    border: red 3px solid;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
+}
+
+.alert-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -1,0 +1,111 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="regresar()">
+                <ion-icon slot="start" name="arrow-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end" *ngIf="producto.id">
+            <ion-button (click)="eliminarProducto()">
+                Eliminar
+                <ion-icon slot="start" name="trash"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="container">
+        <ng-container *ngIf="producto && producto.url; else fotoTemplate">
+            <div class="foto-container" style="background: white !important;">
+                <img [src]="producto.url" style="height: 100%;" (click)="foto1.click()" /> <br>
+                <input style="display: none" (change)="cropImage($event, 1/.75, true, 60)" type="file" #foto1> <br>
+            </div>
+        </ng-container>
+        <ng-template #fotoTemplate>
+            <div class="foto-container">
+                <img [src]="noFoto" style="height: 50%" (click)="foto1.click()" /> <br>
+                <input style="display: none" (change)="cropImage($event, 1/.75, true, 60)" type="file" #foto1> <br>
+                <ion-label color="light" *ngIf="!producto.url">Agrega una imagen o foto de tu producto</ion-label>
+            </div>
+        </ng-template>
+
+        <div class="form-card">
+            <form #forma="ngForm" (submit)="guardarCambios()">
+                <ion-item>
+                    <ion-label color="medium" position="floating">Nombre</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.nombre" type="text" name="nombre" required minlength="3"></ion-input>
+                </ion-item>
+                <ion-item *ngIf="tipo === 'productos'">
+                    <ion-label color="medium" position="floating">Precio</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" required minlength="3"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Código(opcional)</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.codigo" type="text" name="codigo" minlength="3"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Descripción</ion-label>
+                    <ion-textarea autoGrow="true" (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.descripcion" type="text" name="descripcion" minlength="5"></ion-textarea>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium">Departamento</ion-label>
+                    <ion-select [value]="producto.pasillo" [disabled]="pasillos.length <= 0" (ionChange)="pasilloElegido($event)" color="medium" okText="Aceptar" cancelText="Cancelar" required>
+                        <ion-select-option *ngFor="let item of pasillos" [value]="item.nombre">{{item.nombre | titlecase}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
+                <ion-grid *ngIf="producto.pasillo === 'Ofertas'">
+                    <ion-row>
+                        <ion-col size="4">
+                            <ion-item lines="none">
+                                <ion-label color="medium" position="fixed">Foto oferta</ion-label>
+                            </ion-item>
+                        </ion-col>
+                        <ion-col size="8" style="cursor: pointer;">
+                            <img style="float: right;" [src]="producto.foto || noLogo" style="height: 8rem;" (click)="foto2.click()" />
+                            <input style="display: none" (change)="cropImage($event, 1/.45, false, 100, 800)" type="file" #foto2>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+                <ion-item *ngIf="tipo === 'productos'">
+                    <ion-label color="medium">Complementos</ion-label>
+                    <ion-button (click)="addComplemento()" size="small">
+                        Nuevo complemento
+                        <ion-icon name="add"></ion-icon>
+                    </ion-button>
+                </ion-item>
+                <div *ngIf="tipo === 'productos'">
+                    <ion-list *ngFor="let item of complementos; let i = index">
+                        <ion-list-header>
+                            <ion-label color="primary">{{item.titulo}}</ion-label>
+                            <ion-button (click)="addProductoComplemento(i)" size="small">
+                                Agrega producto
+                            </ion-button>
+                            <ion-button fill="outline" (click)="deleteComplemento(i)" size="small">
+                                <ion-icon name="trash"></ion-icon>
+                            </ion-button>
+                        </ion-list-header>
+                        <ion-item>
+                            <ion-label>Obligatorio</ion-label>
+                            <ion-checkbox [(ngModel)]="item.obligatorio" name="{{i}}"></ion-checkbox>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label color="medium" position="floating">Máximo de opciones a elegir</ion-label>
+                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="item.limite" type="number" name="limite" required></ion-input>
+                        </ion-item>
+                        <ion-item *ngFor="let prods of item.productos; let y = index">
+                            <ion-label color="medium">{{prods.nombre}}</ion-label>
+                            <ion-label color="medium">+{{prods.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                            <ion-icon slot="end" name="trash" (click)="deleteProdCom(i, y)"></ion-icon>
+                        </ion-item>
+                    </ion-list>
+                </div>
+                <ion-button class="boton-margen" style="margin-top: 2rem" [disabled]="!forma.valid || !producto.url || !producto.pasillo || guardando" expand="block" type="submit">
+                    Guardar cambios
+                    <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
+                </ion-button>
+            </form>
+        </div>
+    </div>
+
+</ion-content>

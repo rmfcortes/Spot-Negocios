@@ -1,0 +1,24 @@
+<ion-card *ngFor="let item of sections; let i = index; trackBy: trackSections" [style.display]="item.productos && item.productos.length > 0 ? 'initial' : 'none'">
+    <ion-list-header>
+        <ion-label color="primary">{{item.nombre | titlecase}}</ion-label>
+    </ion-list-header>
+    <ion-card *ngFor="let prod of item.productos; let y = index; trackBy: trackProducts" style="--padding: 0;">
+        <ion-item style="--padding-start: 0; cursor: pointer;" lines="none" detail (click)="presentProduct(prod)">
+            <ion-grid class="ion-no-padding">
+                <ion-row>
+                    <ion-col size="4">
+                        <ion-img [src]="prod.url" style="height: 100%; width: 100%; max-height: 7rem; object-fit: cover;" (ionImgWillLoad)="ionImgWillLoad($event)"></ion-img>
+                    </ion-col>
+                    <ion-col size="8">
+                        <ion-item lines="none">
+                            <ion-label class="ion-text-wrap">
+                                <h2>{{(prod.nombre.length > 25) ? (prod.nombre | slice:0:25) + '...' : prod.nombre}}</h2>
+                                <h2 *ngIf="prod.precio" style="color: var(--ion-color-primary)">{{prod.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
+                            </ion-label>
+                        </ion-item>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-card>
+</ion-card>

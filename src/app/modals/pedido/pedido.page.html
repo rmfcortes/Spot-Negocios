@@ -1,0 +1,73 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="regresar()">
+                <ion-icon slot="start" name="arrow-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title class="comfortaa">{{pedido.cliente.nombre}}</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+        <ion-card>
+            <ion-list-header>
+                <ion-label color="primary">Contacto</ion-label>
+            </ion-list-header>
+            <ion-item *ngIf="pedido.cliente.telefono" lines="none">
+                <ion-label>{{pedido.cliente.nombre}}: {{pedido.cliente.telefono}}</ion-label>
+            </ion-item>
+        </ion-card>
+    </ion-list>
+    <ion-list>
+        <ion-card>
+            <ion-list-header>
+                <ion-label color="primary">Productos</ion-label>
+            </ion-list-header>
+            <ion-item *ngFor="let producto of pedido.productos let i = index" lines="full">
+                <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
+                <ion-thumbnail slot="start">
+                    <img [src]="producto.url">
+                </ion-thumbnail>
+                <ion-label>
+                    <h2 class="ion-text-wrap">{{producto.nombre | titlecase}}
+                        <ion-text color="medium">{{producto.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+                    </h2>
+                    <p>{{producto.observaciones | titlecase}}</p>
+                    <div *ngFor="let item of producto.complementos">
+                        <h4>+ {{item.titulo | titlecase}}</h4>
+                        <p style="color: var(--ion-color-primary); margin-left: 0.5rem;" *ngFor="let com of item.complementos">{{com.nombre}}: {{com.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</p>
+                    </div>
+                    <h2 class="ion-text-wrap">Total
+                        <ion-text color="medium">{{producto.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+                    </h2>
+                </ion-label>
+            </ion-item>
+            <ion-item style="text-align: center;" lines="none" color="primary">
+                <ion-label>Total: {{pedido.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+            </ion-item>
+        </ion-card>
+    </ion-list>
+    <ion-list *ngIf="pedido.repartidor">
+        <ion-card>
+            <ion-list-header>
+                <ion-label color="primary">Repartidor</ion-label>
+            </ion-list-header>
+            <ion-item>
+                <ion-avatar slot="start">
+                    <img [src]="pedido.repartidor.foto" />
+                </ion-avatar>
+                <ion-label>{{pedido.repartidor.nombre}}</ion-label>
+            </ion-item>
+        </ion-card>
+    </ion-list>
+</ion-content>
+
+<ion-footer *ngIf="!pedido.aceptado">
+    <ion-toolbar>
+        <ion-button class="boton-margen" expand="block" (click)="aceptarPedido()">
+            Aceptar pedido
+        </ion-button>
+    </ion-toolbar>
+</ion-footer>

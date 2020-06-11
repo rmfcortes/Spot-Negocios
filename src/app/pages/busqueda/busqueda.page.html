@@ -1,0 +1,32 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="comfortaa">Búsqueda</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card class="card-search">
+        <ion-card-header>
+            <ion-card-title color="primary">Palabras clave de búsqueda</ion-card-title>
+            <ion-card-subtitle class="ion-text-wrap">Ingresa palabras clave para que sea más fácil a los usuarios encontrar tu negocio. Escribe sin comas ni máyusculas</ion-card-subtitle>
+        </ion-card-header>
+        <ion-item lines="none" style="margin-bottom: 0.75rem;">
+            <ng-container *ngIf="palabrasReady; else palTemplate">
+                <ion-textarea autoGrow="true" [(ngModel)]="palabrasClave" class="cuadro-claves" placeholder="Ej. masajes, hamburguesas, tornillos, ropa dama"></ion-textarea>
+            </ng-container>
+            <ng-template #palTemplate>
+                <ion-spinner color="primary" name="dots"></ion-spinner>
+            </ng-template>
+        </ion-item>
+        <ion-item>
+            <ion-button [disabled]="!palabrasReady || !hasProds" (click)="updateClaves()" slot="end">
+                Actualizar
+            </ion-button>
+        </ion-item>
+    </ion-card>
+</ion-content>
+
+<app-no-network></app-no-network>

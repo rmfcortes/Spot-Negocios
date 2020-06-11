@@ -1,0 +1,72 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="regresar()">
+                <ion-icon slot="start" name="arrow-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end" *ngIf="repartidorPrev">
+            <ion-button (click)="eliminarRepartidor()">
+                Eliminar
+                <ion-icon slot="start" name="trash"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="container">
+        <ng-container *ngIf="repartidor && repartidor.preview && repartidor.preview.foto; else fotoTemplate">
+            <div class="foto-container" style="background: white !important;">
+                <img [src]="repartidor.preview.foto" style="height: 100%;" (click)="foto1.click()" /> <br>
+                <input style="display: none" (change)="cropImage($event, 1/1, 60, 150)" type="file" #foto1> <br>
+            </div>
+        </ng-container>
+        <ng-template #fotoTemplate>
+            <div class="foto-container">
+                <img [src]="noFoto" style="height: 50%;" (click)="foto1.click()" /> <br>
+                <input style="display: none" (change)="cropImage($event, 1/1, 60, 150)" type="file" #foto1> <br>
+                <ion-label color="light" *ngIf="!repartidor.preview.foto">Agrega una imagen o foto de tu producto</ion-label>
+            </div>
+        </ng-template>
+
+        <div class="form-card">
+            <form #forma="ngForm" (submit)="guardarCambios()" *ngIf="repartidor">
+                <ion-item>
+                    <ion-label color="medium" position="floating">Nombre</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="repartidor.preview.nombre" type="text" name="nombre" required minlength="3"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Usuario</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando || bloquearUser" [(ngModel)]="repartidor.detalles.user" type="text" name="user" required minlength="3"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Contraseña (al menos 6 caracteres)</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="repartidor.detalles.pass" type="password" name="pass" required minlength="6"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Teléfono</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="repartidor.preview.telefono" type="tel" name="telefono" minlength="3"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Edad</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="repartidor.detalles.edad" type="number" name="precio" required minlength="3"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium">Sexo</ion-label>
+                    <ion-select [value]="repartidor.detalles.sexo" (ionChange)="sexoElegido($event)" color="medium" okText="Aceptar" cancelText="Cancelar" required>
+                        <ion-select-option value="mujer">Mujer</ion-select-option>
+                        <ion-select-option value="hombre">Hombre</ion-select-option>
+                    </ion-select>
+                </ion-item>
+
+
+                <ion-button class="boton-margen" style="margin-top: 2rem" [disabled]="!forma.valid || !repartidor.preview.foto || guardando" expand="block" type="submit">
+                    Guardar cambios
+                    <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
+                </ion-button>
+            </form>
+        </div>
+    </div>
+
+</ion-content>

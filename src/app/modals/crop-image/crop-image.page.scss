@@ -1,0 +1,26 @@
+#contenedor {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#foto {
+    position: absolute;
+    left: 50%;
+    margin-left: -150px;
+    top: 50%;
+    margin-top: -150px;
+}
+
+$spinner-size: 50px;
+$spinner-color: var(--ion-color-medium);
+.spinner {
+    position: absolute;
+    top: calc(50% - #{ ($spinner-size/2) });
+    left: calc(50% - #{ ($spinner-size/2) });
+    width: $spinner-size;
+    height: $spinner-size;
+    font-size: $spinner-size;
+    line-height: $spinner-size;
+    color: $spinner-color;
+}

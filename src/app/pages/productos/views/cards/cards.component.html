@@ -1,0 +1,23 @@
+<ion-list *ngFor="let item of sections; let i = index" [style.display]="item.productos && item.productos.length > 0 ? 'initial' : 'none'">
+    <ion-list-header>
+        <h6 class="primario">{{item.nombre | titlecase}}</h6>
+    </ion-list-header>
+    <ion-card *ngFor="let serv of item.productos; let y = index" style="margin-bottom: 1rem">
+        <preload-image [ratio]="{w: 1, h: 0.75}" [src]="serv.url"></preload-image>
+        <ion-card-header>
+            <ion-card-title>
+                <ion-item lines="none">
+                    <ion-label color="primary">
+                        <h2 class="ion-text-wrap">{{serv.nombre}}</h2>
+                    </ion-label>
+                    <ion-button fill="clear" style="cursor: pointer; --opacity: 0.75" slot="end" (click)="presentProduct(serv)"> Ver más
+                    </ion-button>
+                </ion-item>
+            </ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="description">
+            <h6>{{(serv.descripcion.length > 130) ? (serv.descripcion | slice:0:130) + '...' : serv.descripcion}}
+            </h6>
+        </ion-card-content>
+    </ion-card>
+</ion-list>

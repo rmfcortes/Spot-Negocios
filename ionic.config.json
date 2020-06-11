@@ -1,0 +1,7 @@
+{
+    "name": "Spot Negocios",
+    "integrations": {
+        "cordova": {}
+    },
+    "type": "angular"
+}
