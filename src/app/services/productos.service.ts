@@ -116,7 +116,7 @@ export class ProductosService {
   }
 
 
-  setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number) {
+  setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number, nuevo: boolean, plan: string) {
     const region = this.uidService.getRegion()
     return new Promise(async (resolve, reject) => {
       try {
@@ -135,13 +135,13 @@ export class ProductosService {
             foto: producto.foto,
             id: producto.id,
             idNegocio
-          };
+          }
           await this.db.object(`ofertas/${region}/${categoria}/${producto.id}`).update(oferta)
           await this.db.object(`ofertas/${region}/todas/${producto.id}`).update(oferta)
         }
-        await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
+        if (nuevo) await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
         this.setPalabras(producto)
-        if (agregados === 0) await this.setDisplay()
+        if (agregados === 0) await this.setDisplay(plan)
         resolve()
       } catch (error) {
         reject(error)
@@ -174,12 +174,12 @@ export class ProductosService {
   }
 
   changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string) {
-    const region = this.uidService.getRegion();
-    const idNegocio = this.uidService.getUid();
-    this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}`).remove();
+    const region = this.uidService.getRegion()
+    const idNegocio = this.uidService.getUid()
+    this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}`).remove()
     if (pasilloViejo === 'Ofertas') {
-      this.db.object(`ofertas/${region}/${categoria}/${idProducto}`).remove();
-      this.db.object(`ofertas/${region}/todas/${idProducto}`).remove();
+      this.db.object(`ofertas/${region}/${categoria}/${idProducto}`).remove()
+      this.db.object(`ofertas/${region}/todas/${idProducto}`).remove()
     }
   }
 
@@ -230,7 +230,7 @@ export class ProductosService {
   }
 
   // Auxiliar
-  setDisplay() {
+  setDisplay(plan: string) {
     return new Promise(async (resolve, reject) => {
       try {        
         // Info preview
@@ -281,19 +281,19 @@ export class ProductosService {
           tipo: perfil.tipo,
           calificaciones: 5,
           promedio: 5,
+          plan,
         }
         await this.db.object(`functions/${perfil.region}/${idNegocio}`).update(infoFun)
         // Info busqueda
-        const plan = this.uidService.getPlan()
         const busqueda = {
           abierto: perfil.abierto,
           categoria: perfil.categoria,
-          plan,
           foto: perfil.logo,
           idNegocio,
           nombre: perfil.nombre,
           tipo: perfil.tipo,
         }
+        if (plan === 'basico') delete busqueda.idNegocio
         await this.db.object(`busqueda/${perfil.region}/${idNegocio}`).update(busqueda)
         await this.db.object(`rate/resumen/${idNegocio}`).update(calificacion)
         resolve()

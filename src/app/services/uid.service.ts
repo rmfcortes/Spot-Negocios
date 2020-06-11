@@ -13,6 +13,7 @@ export class UidService {
 
   public usuario = new BehaviorSubject(null)
   public planWatch = new BehaviorSubject(null)
+  public cambios = new BehaviorSubject(false)
 
   constructor( ) {  }
 
@@ -48,6 +49,10 @@ export class UidService {
 
   getRegion() {
     return this.region
+  }
+
+  setCambios(value: boolean) {
+    this.cambios.next(value)
   }
 
 }

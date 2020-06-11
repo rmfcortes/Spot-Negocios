@@ -78,6 +78,12 @@
                 <ion-row>
                     <ion-col size="5">
                         <ng-container *ngIf="hasHorario; else mainEscritorioTemplate">
+                            <ion-card (click)="newEditDia(null)" style="cursor: pointer;">
+                                <ion-item lines="none">
+                                    <ion-label>Agregar/editar horario</ion-label>
+                                    <ion-icon slot="end" name="add" color="primary"></ion-icon>
+                                </ion-item>
+                            </ion-card>
                             <ion-list>
                                 <div *ngFor="let item of horario; let i = index" style="cursor: pointer;">
                                     <ion-card *ngIf="item.activo">
@@ -103,6 +109,12 @@
                             <ion-item lines="none" style="text-align: center;">
                                 <ion-label class="ion-text-wrap" color="medium">Aún no has agregado ningún horario</ion-label>
                             </ion-item>
+                            <ion-card (click)="newEditDia(null)" style="cursor: pointer;">
+                                <ion-item lines="none">
+                                    <ion-label>Agregar horario</ion-label>
+                                    <ion-icon slot="end" name="add" color="primary"></ion-icon>
+                                </ion-item>
+                            </ion-card>
                         </ng-template>
                     </ion-col>
                     <ion-col size="7" *ngIf="editHorario">
@@ -194,11 +206,6 @@
         </ion-fab-button>
     </ion-fab>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-right: 2rem;" class="escritorio">
-        <ion-fab-button (click)="newEditDia(null)">
-            <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-    </ion-fab>
 
 </ion-content>
 

@@ -36,7 +36,6 @@ export class PerfilPage implements OnInit {
 
   perfilReady = false
 
-
   centro: Ubicacion = {
     lat: null,
     lng: null
@@ -45,6 +44,8 @@ export class PerfilPage implements OnInit {
   cobertura = false
 
   back: Subscription
+
+  activate_cambios = false
 
   constructor(
     private ngZone: NgZone,
@@ -71,16 +72,21 @@ export class PerfilPage implements OnInit {
     })
   }
 
+  formularioChange() {
+    if (!this.activate_cambios) return
+    this.uidService.setCambios(true)
+  }
+
   getPerfil() {
     this.perfilService.getPerfil().then(async (perfil: Perfil) => {
       this.perfil = perfil
-      console.log(perfil)
       this.subCategoriaAnterior = this.perfil.subCategoria
       this.cobertura = true
       this.perfilReady = true
       this.getSubcategorias()
       setTimeout(() => {
         this.setAutocomplete()
+        this.activate_cambios = true
       }, 350)
     })
   }
@@ -97,6 +103,7 @@ export class PerfilPage implements OnInit {
     })
     modal.onWillDismiss().then(resp => {
       if (resp.data) {
+        this.uidService.setCambios(true)
         if (portada) {
           this.perfil.portada = resp.data
           this.base64Pordata = resp.data.split('data:image/png;base64,')[1]
@@ -154,6 +161,7 @@ export class PerfilPage implements OnInit {
               const lng = place.geometry.location.lng()
               const d = await this.calculaDistancia(lat, lng)
               if (d < 5) {
+                this.uidService.setCambios(true)
                 this.perfil.direccion.lat = place.geometry.location.lat()
                 this.perfil.direccion.lng = place.geometry.location.lng()
                 this.perfil.direccion.direccion = place.formatted_address
@@ -172,6 +180,7 @@ export class PerfilPage implements OnInit {
   }
 
   async guardaLoc(evento) {
+    this.uidService.setCambios(true)
     this.perfil.direccion.lat = evento.coords.lat
     this.perfil.direccion.lng = evento.coords.lng
   }
@@ -179,6 +188,17 @@ export class PerfilPage implements OnInit {
   // Guardar
 
   async guardarCambios() {
+    this.perfil.nombre = this.perfil.nombre.trim()
+    this.perfil.direccion.direccion = this.perfil.direccion.direccion.trim()
+    this.perfil.telefono = this.perfil.telefono.trim()
+    this.perfil.descripcion = this.perfil.descripcion.trim()
+    if (!this.perfil.nombre ||
+        !this.perfil.direccion.direccion ||
+        !this.perfil.telefono ||
+        !this.perfil.descripcion) {
+          this.alertService.presentAlert('', 'Por favor llena todos los campos')
+          return
+        }
     const plan = this.uidService.getPlan()
     let permitidos
     switch (plan) {
@@ -234,10 +254,8 @@ export class PerfilPage implements OnInit {
 
       this.subCategoriaAnterior = this.perfil.subCategoria
       this.alertService.dismissLoading()
-      this.alertService.presentAlert('Cambios guardados',
-        'Si no has registrado tu horario te invitamos a que lo hagas. Es muy importante para recibir pedidos '+
-        'sólo cuando el negocio esté abierto. Y recuerda, ' + this.perfil.nombre + 'sólo aparecerá en Spot ' +
-        'hasta que agregues tu primer producto')
+      this.alertService.presentToast('Cambios guardados')
+      this.uidService.setCambios(false)
     } catch (error) {
       console.log(error)
       this.alertService.dismissLoading()

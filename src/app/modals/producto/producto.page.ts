@@ -24,6 +24,7 @@ export class ProductoPage implements OnInit {
   @Input() tipo: string
   @Input() plan: string
   @Input() agregados: number
+  @Input() nuevo: boolean
 
   pasillos: Pasillo[] = []
   complementos: Complemento[] = []
@@ -79,7 +80,7 @@ export class ProductoPage implements OnInit {
           };
           this.pasillos.unshift(oferta)
         }
-    });
+    })
   }
 
   getComplementos() {
@@ -95,6 +96,8 @@ export class ProductoPage implements OnInit {
   async addComplemento() {
     this.alertService.presentAlertPrompt('Nueva lista de complementos', 'Titulo de la lista')
       .then((titulo: string) => {
+        titulo = titulo.trim()
+        if (!titulo) return
         const complemento: Complemento = {
           titulo,
           obligatorio: false,
@@ -108,6 +111,8 @@ export class ProductoPage implements OnInit {
   async addProductoComplemento(i) {
     this.alertService.presentPromptComplementos()
       .then((producto: ProductoComplemento) => {
+        producto.nombre = producto.nombre.trim()
+        if (!producto.nombre) return
         producto.precio = parseInt(producto.precio, 10)
         this.complementos[i].productos.unshift(producto)
       })
@@ -147,6 +152,12 @@ export class ProductoPage implements OnInit {
   async guardarCambios() {
     this.guardando = true
     this.alertService.presentLoading()
+    this.producto.nombre = this.producto.nombre.trim()
+    this.producto.descripcion = this.producto.descripcion.trim()
+    if (!this.producto.nombre || this.producto.descripcion) {
+      this.alertService.presentAlert('', 'Por favor completa todos los campos')
+      return
+    }
     try {
       if (this.base64) {
         this.producto.url = await this.productoService.uploadFoto(this.base64, this.producto, 'producto')
@@ -159,7 +170,7 @@ export class ProductoPage implements OnInit {
       if (this.pasilloViejo && this.pasilloViejo !== this.producto.pasillo) {
         this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo)
       }
-      await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados)
+      await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.nuevo, this.plan)
       this.guardando = false
       this.alertService.dismissLoading()
       this.modalCtrl.dismiss(this.producto)
@@ -173,7 +184,7 @@ export class ProductoPage implements OnInit {
   async eliminarProducto() {
     try {
       const resp = await this.alertService.presentAlertAction(`Eliminar ${this.producto.nombre}`,
-      '¿Estás seguro de eliminar este producto? se perderá toda la información referente al mismo de manera permanente')
+      '¿Estás seguro de eliminar este producto? se perderá toda la información referente al mismo de manera permanente', 'Eliminar', 'Cancelar')
       if (resp) {
         await this.productoService.deleteProducto(this.producto, this.tipo, this.categoria, this.agregados)
         this.alertService.presentToast('Artículo eliminado')

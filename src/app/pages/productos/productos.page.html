@@ -95,7 +95,7 @@
 
                         <!-- Section list -->
                         <ion-card>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label color="medium">Departamentos</ion-label>
                                 <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
@@ -129,7 +129,7 @@
                         <!-- Products list -->
 
                         <ion-card *ngIf="listaPasillos.length > 0">
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label color="medium">Productos</ion-label>
                                 <ion-icon slot="end" name="add" color="primary" (click)="verProducto(null)"></ion-icon>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="viewProducts === false && productosCargados > 0" (click)="viewProducts = true"></ion-icon>

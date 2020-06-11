@@ -97,7 +97,6 @@ export class ProductosPage implements OnInit {
       if (categoria) {
         this.categoria = categoria
         this.getPasillos()
-        this.getListaPasillos()
       }
     })
   }
@@ -108,6 +107,7 @@ export class ProductosPage implements OnInit {
     if (detalles.pasillos && detalles.pasillos.length > 0) {
       this.pasillos.pasillos = detalles.pasillos
       this.pasillos.pasillos = this.pasillos.pasillos.sort((a, b) => a.prioridad - b.prioridad)
+      this.getListaPasillos(this.pasillos.pasillos)
     } else {
       this.prodsReady = true
       return
@@ -288,6 +288,7 @@ export class ProductosPage implements OnInit {
   async verProducto(producto: Producto) {
     let nuevo = false
     let agregados: number
+    let pasilloAnterior: string
     if (!producto) {
       nuevo = true
       agregados = await this.productoService.getProductosAgregados()
@@ -320,10 +321,12 @@ export class ProductosPage implements OnInit {
         url: '',
         variables: false,
       }
+    } else {
+      pasilloAnterior = producto.pasillo
     }
     const modal = await this.modalCtrl.create({
       component: ProductoPage,
-      componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados}
+      componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados, nuevo}
     })
 
     modal.onWillDismiss().then(resp => {
@@ -334,8 +337,22 @@ export class ProductosPage implements OnInit {
         } else {
           if (!nuevo) {
             const i = this.productos.findIndex(p => p.nombre === producto.pasillo)
-            const y = this.productos[i].productos.findIndex(p => p.id === producto.id)
-            this.productos[i].productos[y] = producto
+            if (pasilloAnterior !== producto.pasillo) {
+              const iAnterior = this.productos.findIndex(p => p.nombre === pasilloAnterior)
+              const yAnterior = this.productos[iAnterior].productos.findIndex(p => p.id === producto.id)
+              this.productos[iAnterior].productos.splice(yAnterior, 1)
+              if (i >= 0) this.productos[i].productos.unshift(producto)
+              else {
+                const prodArray: ProductoPasillo = {
+                  nombre: producto.pasillo,
+                  productos: [producto]
+                }
+                this.productos.unshift(prodArray)
+              }
+            } else {
+              const y = this.productos[i].productos.findIndex(p => p.id === producto.id)
+              this.productos[i].productos[y] = producto
+            }
           } else {
             this.addProdAgregado(resp.data)
           }
@@ -377,21 +394,26 @@ export class ProductosPage implements OnInit {
 
   
   // Pasillos
-    getListaPasillos() {
-      this.pasillosService.getPasillos(this.categoria).then((pasillos) => {
-        this.listaPasillos = pasillos
-        const plan = this.uidService.getPlan()
-        if (plan !== 'basico') {
-          const oferta: Pasillo = {
-            nombre: 'Ofertas',
-            prioridad: 0
-          };
-          this.listaPasillos.unshift(oferta)
-        }
-      });
+    getListaPasillos(pasillos) {
+      this.listaPasillos = pasillos
+      const plan = this.uidService.getPlan()
+      if (plan !== 'basico') {
+        const oferta: Pasillo = {
+          nombre: 'Ofertas',
+          prioridad: 0
+        };
+        this.listaPasillos.unshift(oferta)
+      }
     }
 
   async addPasillo() {
+    this.nuevo_pasillo = this.nuevo_pasillo.trim()
+    if (!this.nuevo_pasillo || this.nuevo_pasillo === '') return
+    const i = this.listaPasillos.findIndex(p => p.nombre === this.nuevo_pasillo)
+    if (i >= 0) {
+      this.alertService.presentAlert('', 'El nombre de este pasillo ya existe. Por favor intenta con otro')
+      return
+    }
     const pasillo: Pasillo = {
       nombre: this.nuevo_pasillo,
       prioridad: 0
@@ -459,8 +481,8 @@ export class ProductosPage implements OnInit {
     return index;
   }
 
-  trackByPasillos(index:number, el:Pasillo): number {
-    return index;
+  trackByPasillos(index:number, el:Pasillo): string {
+    return el.nombre;
   }
 
   trackByPasilloProducto(index:number, el:ProductoPasillo): number {

@@ -82,8 +82,8 @@ export class HorarioPage implements OnInit {
         cierre: '2020-02-12T18:00:00.255-06:00',
         inicioComida: '2020-02-12T14:00:00.255-06:00',
         finComida: '2020-02-12T15:00:00.255-06:00',
-      };
-      dia = x;
+      }
+      dia = x
     }
     const modal = await this.modalCtrl.create({
       component: SetHorarioPage,
@@ -106,15 +106,15 @@ export class HorarioPage implements OnInit {
         })
         this.horarioService.setHorario(this.horario)
       }
-    });
+    })
 
-    return await modal.present();
+    return await modal.present()
   }
 
   deleteDia(dia: string, i: number) {
     this.alertService.presentAlertAction(`Eliminar ${dia}`,
      '¿Estás segura(o) de eliminar la información referente a este día? ' +
-     'Será considerado como un día cerrado')
+     'Será considerado como un día cerrado', 'Eliminar', 'Cancelar')
     .then(resp => {
       if (resp) {
         const x: Dia = {
@@ -126,8 +126,8 @@ export class HorarioPage implements OnInit {
           inicioComida: '',
           finComida: '',
         };
-        this.horario[i] = x;
-        this.horarioService.setHorario(this.horario);
+        this.horario[i] = x
+        this.horarioService.setHorario(this.horario)
       }
     });
   }

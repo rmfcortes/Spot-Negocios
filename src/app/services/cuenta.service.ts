@@ -27,6 +27,7 @@ export class CuentaService {
   updatePlan(plan: string, planAnterior: string, precio: number) {
     return new Promise(async (resolve, reject) => {      
       const idNegocio = this.uidService.getUid()
+      const region = this.uidService.getRegion()
       const cambio = {
         solicita: plan,
         anterior: planAnterior,
@@ -34,6 +35,8 @@ export class CuentaService {
       }
       await this.db.object(`aacambio/${idNegocio}`).set(cambio)
       this.setPlan(plan)
+      if (plan !== 'basico') this.db.object(`busqueda/${region}/${idNegocio}/idNegocio`).set(idNegocio)
+      this.db.object(`perfiles/${idNegocio}/plan`).set(plan)
       resolve()
     })
   }

@@ -69,12 +69,14 @@ export class AppComponent {
   uidSub: Subscription
   pedSub: Subscription
   planSub: Subscription
+  cambiosSub: Subscription
 
   perfil: Perfil
 
   iSel: number
 
   no_horario = false
+  cambios = false
 
   constructor(
     private title: Title,
@@ -114,6 +116,7 @@ export class AppComponent {
         this.getPlan()
         this.getPerfil()
         this.getHorario()
+        this.listenCambios()
       }
     })
   }
@@ -122,7 +125,7 @@ export class AppComponent {
     this.planSub = this.uidService.planWatch.subscribe(plan => {
       if (plan && plan !== 'basico') {
         this.getPedidos()
-        this.fcmService.requestToken()
+        this.fcmService.requestToken(plan)
         const page = {
           title: 'Historial',
           url: '/historial',
@@ -179,9 +182,32 @@ export class AppComponent {
     })
   }
 
+  listenCambios() {
+    this.cambiosSub = this.uidService.cambios.subscribe(value => {
+      this.cambios = value
+    })
+  }
+
+  irA(page: string, i: number) {
+    if (this.cambios) {
+      this.commonService.presentAlertAction('', 'Tienes cambios pendientes por guardar. ¿Deseas salir sin guardar estos cambios?', 'Descartar cambios', 'Cancelar')
+      .then(resp => {
+        if (resp) {
+          this.iSel = i
+          this.router.navigate([page])
+          this.uidService.setCambios(false)
+        }
+      })
+    } else {
+      this.iSel = i
+      this.router.navigate([page])
+    }
+  }
+
   salir() {
     if (this.pedSub) this.pedSub.unsubscribe()
     if (this.planSub)  this.planSub.unsubscribe()
+    if (this.cambiosSub) this.cambiosSub.unsubscribe()
     this.authService.logout()
     this.router.navigate(['/login'])
   }

@@ -10,11 +10,11 @@
             </ion-header>
             <ion-content class="background-gris">
                 <ion-menu-toggle auto-hide="false">
-                    <ion-item *ngFor="let p of appPages; let first = first; let i = index" (click)="iSel = i"  routerLinkActive="activo" [routerDirection]="'root'" [routerLink]="[p.url]">
+                    <ion-item *ngFor="let p of appPages; let first = first; let i = index" (click)="irA(p.url, i)" [routerDirection]="'root'" style="cursor: pointer;">
                         <ion-icon slot="start" [name]="p.icon" color="medium" *ngIf="i!== iSel"></ion-icon>
-                        <ion-icon slot="start" [name]="p.icon" color="light" *ngIf="i === iSel"></ion-icon>
+                        <ion-icon slot="start" [name]="p.icon" color="primary" *ngIf="i === iSel"></ion-icon>
                         <ion-label color="medium" *ngIf="i!== iSel">{{p.title}}</ion-label>
-                        <ion-label color="light" *ngIf="i === iSel">{{p.title}}</ion-label>
+                        <ion-label color="primary" *ngIf="i === iSel">{{p.title}}</ion-label>
                         <ion-badge *ngIf="first && pedidos > 0" color="primary" slot="end">{{pedidos}}</ion-badge>
                         <div *ngIf="no_horario && p.title === 'Horario'" class="alert" id="alert">
                             <ion-icon slot="end" color="danger" name="notifications" class="alert-icon"></ion-icon>
@@ -28,6 +28,17 @@
                     </ion-item>
                 </ion-menu-toggle>
             </ion-content>
+            <ion-footer>
+                <ion-toolbar class="background-gris">
+                    <ion-item>
+                        <ion-icon slot="start" name="logo-whatsapp" color="medium"></ion-icon>
+                        <ion-label class="ion-text-wrap" style="text-align: center;" color="medium">
+                            <h3>Dudas/comentarios/reportar problemas</h3>
+                            <h4>33-1447-3715</h4>
+                        </ion-label>
+                    </ion-item>
+                </ion-toolbar>                
+            </ion-footer>
         </ion-menu>
         <ion-router-outlet id="main-content"></ion-router-outlet>
     </ion-split-pane>

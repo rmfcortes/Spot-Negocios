@@ -175,14 +175,14 @@ export class AlertService {
     });
   }
 
-  async presentAlertAction(titulo, msn) {
+  async presentAlertAction(titulo: string, msn: string, txtAceptar: string, txtCancelar: string) {
     return new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
         header: titulo,
         message: msn,
         buttons: [
           {
-            text: 'Cancelar',
+            text: txtCancelar,
             role: 'cancel',
             cssClass: 'secondary',
             handler: (blah) => {
@@ -190,7 +190,7 @@ export class AlertService {
             }
           },
           {
-            text: 'Ok',
+            text: txtAceptar,
             cssClass: 'secondary',
             handler: (blah) => {
               resolve(true);
