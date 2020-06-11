@@ -240,7 +240,7 @@ export class ProductosService {
           calificaciones: 5,
           promedio: 5,
         }
-        const preview = {
+        const preview: any = {
           abierto: perfil.abierto,
           foto: perfil.logo,
           id: perfil.id,
@@ -248,6 +248,14 @@ export class ProductosService {
           tipo: perfil.tipo,
           calificaciones: 5,
           promedio: 5,
+          direccion: perfil.direccion
+        }
+        if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
+          if (perfil.envio_gratis_pedMin) preview.envio_gratis_pedMin = perfil.envio_gratis_pedMin
+          if (perfil.envio_desp_pedMin) preview.envio_desp_pedMin = perfil.envio_desp_pedMin
+          preview.envio = perfil.envio
+          preview.envio_costo_fijo = perfil.envio_costo_fijo
+          preview.repartidores_propios = perfil.repartidores_propios
         }
         if (perfil.abierto) {
           perfil.subCategoria.forEach(async (s) => {
@@ -270,8 +278,10 @@ export class ProductosService {
           }
           await this.db.object(`isOpen/${perfil.region}/${idNegocio}`).update(cerrado)
         }
+
+
         // Info functions
-        const infoFun = {
+        const infoFun: any = {
           abierto: perfil.abierto,
           categoria: perfil.categoria,
           foto: perfil.logo,
@@ -282,16 +292,35 @@ export class ProductosService {
           calificaciones: 5,
           promedio: 5,
           plan,
+          direccion: perfil.direccion
+        }
+        if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
+          if (perfil.envio_gratis_pedMin) infoFun.envio_gratis_pedMin = perfil.envio_gratis_pedMin
+          if (perfil.envio_desp_pedMin) infoFun.envio_desp_pedMin = perfil.envio_desp_pedMin
+          infoFun.envio = perfil.envio
+          infoFun.envio_costo_fijo = perfil.envio_costo_fijo
+          infoFun.repartidores_propios = perfil.repartidores_propios
+
         }
         await this.db.object(`functions/${perfil.region}/${idNegocio}`).update(infoFun)
+
+
         // Info busqueda
-        const busqueda = {
+        const busqueda: any = {
           abierto: perfil.abierto,
           categoria: perfil.categoria,
           foto: perfil.logo,
           idNegocio,
           nombre: perfil.nombre,
           tipo: perfil.tipo,
+          direccion: perfil.direccion
+        }
+        if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
+          if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
+          if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
+          busqueda.envio = perfil.envio
+          busqueda.envio_costo_fijo = perfil.envio_costo_fijo
+          busqueda.repartidores_propios = perfil.repartidores_propios
         }
         if (plan === 'basico') delete busqueda.idNegocio
         await this.db.object(`busqueda/${perfil.region}/${idNegocio}`).update(busqueda)

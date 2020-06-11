@@ -17,13 +17,16 @@ export interface Perfil {
     display?: boolean;
     productos?: number;
     preparacion?: number;
-    envio?: number;
     entrega: string;
     whats?: string;
     correo: string;
     contacto: string;
     pass: string;
     repartidores_propios: boolean;
+    envio?: number;
+    envio_gratis_pedMin?: number
+    envio_costo_fijo?: boolean
+    envio_desp_pedMin?: number
 }
 
 export interface FormaPago {
