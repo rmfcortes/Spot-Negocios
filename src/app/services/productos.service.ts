@@ -313,7 +313,9 @@ export class ProductosService {
           idNegocio,
           nombre: perfil.nombre,
           tipo: perfil.tipo,
-          direccion: perfil.direccion
+          direccion: perfil.direccion,
+          promedio: 5,
+          calificaciones: 5,
         }
         if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
           if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
