@@ -93,7 +93,7 @@ export class PedidoPage implements OnInit {
         const dias =  num * 86400000
         this.pedido.aceptado = Date.now() + dias
         const dia = await this.datePipe.transform(this.pedido.aceptado, 'EEEE d/MMMM/y').toString()
-        this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`)
+        this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'No')
         .then(resp => { 
           if (resp) this.pedidoService.aceptarPedido(this.pedido)
           else this.pedido.aceptado = null

@@ -126,7 +126,7 @@ export class RepartidorPage implements OnInit {
   eliminarRepartidor() {
     this.alertService.presentAlertAction(`Eliminar ${this.repartidor.preview.nombre}`, 
       `¿Estás segura(o) de eliinar a ${this.repartidor.preview.nombre}?
-        Se borrarán todos sus datos de forma permanente`).then(async (resp) => {
+        Se borrarán todos sus datos de forma permanente`, 'Eliminar', 'Cancelar').then(async (resp) => {
           if (resp) {
             this.repartidorService.eliminarRepartidor(this.repartidor);
             this.repartidorService.getCreateUserResult().query.ref.off('child_added');

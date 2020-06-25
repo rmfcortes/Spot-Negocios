@@ -463,7 +463,7 @@ export class ProductosPage implements OnInit {
   async deletePasillo(i, nombre) {
     const resp = await this.alertService.presentAlertAction('Eliminar departamento',
      `¿Estás segura(o) de eliminar ${nombre}? se borrarán también todos los productos ` +
-     'pertenecientes a este departamento. Esta acción es irreversible.')
+     'pertenecientes a este departamento. Esta acción es irreversible.', 'Eliminar', 'Cancelar')
     if (resp) {
       this.listaPasillos.splice(i, 1)
       this.listaPasillos.forEach((p, i) => p.prioridad = i + 1)

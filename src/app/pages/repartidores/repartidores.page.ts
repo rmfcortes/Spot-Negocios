@@ -177,36 +177,34 @@ export class RepartidoresPage implements OnInit {
       this.repartidor.detalles.correo = this.repartidor.detalles.user.trim() + '@spot.com';
     }
     try {
-      this.guardando = true;
-      this.alertService.presentLoading();
+      this.guardando = true
+      this.alertService.presentLoading()
       if (this.base64) {
-        this.repartidor = await this.repartidorService.uploadFoto(this.base64, this.repartidor);
-        this.base64 = '';
-        if (this.fotoVieja) {
-          this.repartidorService.borraFoto(this.fotoVieja);
-        }
+        this.repartidor = await this.repartidorService.uploadFoto(this.base64, this.repartidor)
+        this.base64 = ''
+        if (this.fotoVieja) this.repartidorService.borraFoto(this.fotoVieja)
       }
-      await this.repartidorService.setRepartidor(this.repartidor, this.repartidorPrev);
+      await this.repartidorService.setRepartidor(this.repartidor, this.repartidorPrev)
     } catch (error) {
-      this.guardando = false;
-      this.alertService.dismissLoading();
-      this.alertService.presentAlert('Error', 'Algo salió mal. Por favor intenta de nuevo o comunícate con soporte' + error);
+      this.guardando = false
+      this.alertService.dismissLoading()
+      this.alertService.presentAlert('Error', 'Algo salió mal. Por favor intenta de nuevo o comunícate con soporte' + error)
     }
   }
 
   async eliminarRepartidor() {
-    this.eliminando = true;
+    this.eliminando = true
     this.alertService.presentAlertAction(`Eliminar ${this.repartidor.preview.nombre}`, 
       `¿Estás segura(o) de eliinar a ${this.repartidor.preview.nombre}?
-        Se borrarán todos sus datos de forma permanente`).then(async (resp) => {
+        Se borrarán todos sus datos de forma permanente`, 'Eliminar', 'Cancelar').then(async (resp) => {
           if (resp) {
-            await this.repartidorService.eliminarRepartidor(this.repartidor);
-            this.alertService.presentToast('Repartidor eliminado con éxito');
-            this.cancelEdit();
-            this.repartidores = this.repartidores.filter(r => r !== this.repartidor.preview);
+            await this.repartidorService.eliminarRepartidor(this.repartidor)
+            this.alertService.presentToast('Repartidor eliminado con éxito')
+            this.cancelEdit()
+            this.repartidores = this.repartidores.filter(r => r !== this.repartidor.preview)
           }
-          this.eliminando = false;
-    });
+          this.eliminando = false
+    })
   }
 
   // Auxiliares

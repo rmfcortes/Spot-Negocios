@@ -138,14 +138,6 @@ export class HomePage {
           this.radioRepartidores.push(input)
         })
       }
-      const input = {
-        name: `spot`,
-        type: 'radio',
-        label: 'Solicitar repartidor',
-        value: 'spot',
-      }
-      this.radioRepartidores.push(input)
-      console.log(this.radioRepartidores)
       this.repartidoresReady = true
     })
   }
@@ -177,7 +169,7 @@ export class HomePage {
         const dias =  num * 86400000
         this.pedido.aceptado = Date.now() + dias
         const dia = await this.datePipe.transform(this.pedido.aceptado, 'EEEE d/MMMM/y').toString()
-        this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`)
+        this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'Cancelar')
         .then(resp => { 
           if (resp) this.pedidoService.aceptarPedido(this.pedido)
           else this.pedido.aceptado = null

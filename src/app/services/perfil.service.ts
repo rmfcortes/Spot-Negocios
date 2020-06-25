@@ -56,9 +56,6 @@ export class PerfilService {
         // Info detalles
         const detalles = {
           descripcion: perfil.descripcion,
-          direccion: perfil.direccion.direccion,
-          lat: perfil.direccion.lat,
-          lng: perfil.direccion.lng,
           telefono: perfil.telefono
         }
         await this.db.object(`negocios/detalles/${perfil.categoria}/${idNegocio}`).update(detalles)
@@ -66,12 +63,10 @@ export class PerfilService {
         // Info datos-pedido & preparacion if tipo productos
         if (perfil.tipo === 'productos') {
           const datosPedido = {
-            direccion: perfil.direccion,
-            envio: perfil.envio || 0,
             entrega: perfil.entrega,
             telefono: perfil.telefono,
             formas_pago: perfil.formas_pago
-          };
+          }
           await this.db.object(`negocios/datos-pedido/${perfil.categoria}/${idNegocio}`).update(datosPedido)
         }
         if (perfil.preparacion && perfil.tipo === 'productos') {
