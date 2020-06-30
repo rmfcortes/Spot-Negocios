@@ -28,13 +28,13 @@ export class PedidosService {
   ) { }
 
   getPedidos() {
-    const uid = this.uidService.getUid();
-    return this.db.list(`pedidos/activos/${uid}/detalles`);
+    const uid = this.uidService.getUid()
+    return this.db.list(`pedidos/activos/${uid}/detalles`)
   }
 
   getPedidosCount() {
-    const uid = this.uidService.getUid();
-    return this.db.object(`pedidos/activos/${uid}/cantidad`).valueChanges();
+    const uid = this.uidService.getUid()
+    return this.db.object(`pedidos/activos/${uid}/cantidad`).valueChanges()
   }
 
   getHistorial(batch, lastKey): Promise<Pedido[]> {
@@ -43,37 +43,37 @@ export class PedidosService {
       if (lastKey || lastKey === 0) {
         const x = this.db.list(`pedidos/historial/${uid}/detalles`, data =>
           data.orderByKey().limitToLast(batch).endAt(lastKey.toString())).valueChanges().subscribe(async (pedidos: Pedido[]) => {
-            x.unsubscribe();
-            resolve(pedidos);
+            x.unsubscribe()
+            resolve(pedidos)
           });
       } else {
         const x = this.db.list(`pedidos/historial/${uid}/detalles`, data =>
           data.orderByKey().limitToLast(batch)).valueChanges().subscribe(async (pedidos: Pedido[]) => {
-            x.unsubscribe();
-            resolve(pedidos);
-          });
+            x.unsubscribe()
+            resolve(pedidos)
+          })
       }
-    });
+    })
   }
 
   getTiempoPreparacion(): Promise <number> {
-    const uid = this.uidService.getUid();
+    const uid = this.uidService.getUid()
     return new Promise((resolve, reject) => {
       const prepSub = this.db.object(`preparacion/${uid}`).valueChanges().subscribe((time: number) => {
-        prepSub.unsubscribe();
-        resolve(time);
-      });
-    });
+        prepSub.unsubscribe()
+        resolve(time)
+      })
+    })
   }
 
   getRepartidores(): Promise <RepartidorPreview[]> {
-    const uid = this.uidService.getUid();
+    const uid = this.uidService.getUid()
     return new Promise((resolve, reject) => {
       const repSub = this.db.list(`repartidores/${uid}/preview`).valueChanges().subscribe((repartidores: RepartidorPreview[]) => {
-        repSub.unsubscribe();
-        resolve(repartidores);
-      });
-    });
+        repSub.unsubscribe()
+        resolve(repartidores)
+      })
+    })
   }
 
   aceptarPedido(pedido: Pedido) {

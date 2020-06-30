@@ -166,6 +166,9 @@
                                     <ion-textarea (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.descripcion" type="text" name="descripcion" required minlength="3"></ion-textarea>
                                 </ion-item>
                                 <ion-item>
+                                    <ion-label color="medium">Categoria    {{perfil.categoria | titlecase}}</ion-label>
+                                </ion-item>
+                                <ion-item>
                                     <ion-label color="medium">Subcategoria</ion-label>
                                     <ion-select multiple="true" [(ngModel)]="perfil.subCategoria" (ionChange)="formularioChange()" [disabled]="subCategorias.length <= 0" color="medium" okText="Aceptar" cancelText="Cancelar" required name="subCat">
                                         <ion-select-option *ngFor="let item of subCategorias" [value]="item">{{item | titlecase}}</ion-select-option>

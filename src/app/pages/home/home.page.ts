@@ -1,16 +1,17 @@
 import { Component, NgZone } from '@angular/core';
 import { ModalController, Platform, MenuController } from '@ionic/angular';
+import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { PedidoPage } from 'src/app/modals/pedido/pedido.page';
 
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { UidService } from 'src/app/services/uid.service';
 
 import { Pedido, RepartidorPedido } from 'src/app/interfaces/pedido';
 import { RepartidorPreview } from 'src/app/interfaces/repartidor';
-import { UidService } from 'src/app/services/uid.service';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -41,6 +42,7 @@ export class HomePage {
 
   constructor(
     private ngZone: NgZone,
+    private router: Router,
     private datePipe: DatePipe,
     private platform: Platform,
     private menu: MenuController,
@@ -68,11 +70,11 @@ export class HomePage {
   }
 
   getPedidos() {
-    this.pedidos = [];
+    this.pedidos = []
     this.pedidoService.getPedidos().query.ref.on('child_added', snapshot => {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
-        this.pedidos.unshift(pedido);
+        this.pedidos.unshift(pedido)
         // if (pedido.aceptado && !pedido.repartidor) this.pedidoService.solicitarRepartidor(pedido)
       })
     })
@@ -103,7 +105,7 @@ export class HomePage {
     this.pedidoService.getPedidos().query.ref.off('child_added')
 
     if (this.escuchaRepAnterior) this.repSub.unsubscribe()
-    if (this.back) {this.back.unsubscribe()}
+    if (this.back) this.back.unsubscribe()
     this.escuchaRepAnterior = ''
   }
 
@@ -205,6 +207,16 @@ export class HomePage {
   }
 
   asignaRepartidor() {
+    if (this.radioRepartidores.length === 0) {
+      return this.alertService.presentAlertAction('', 'No tienes repartidores registrados. Para aceptar el pedido debes tener al menos ' +
+      'un repartidor registrado. ¿Te gustaría registrar tu primer repartidor?', 'Registrar', 'Cancelar')
+      .then(resp => {
+        if (resp) {
+          this.router.navigate(['/repartidores'])
+          return
+        } else return
+      })
+    }
     this.alertService.presentAlertRadio('Elige un repartidor',
     'Elige a un colaborador disponible para entregar este envío o solicita uno a Spot',
     this.radioRepartidores).then(resp => {
@@ -230,6 +242,8 @@ export class HomePage {
           this.pedido.repartidor = rep
           this.pedidoService.asignarRepartidor(this.pedido)
         }
+        const i = this.pedidos.findIndex(p => p.id === this.pedido.id)
+        this.pedidos[i] = this.pedido
       }
     })
   }

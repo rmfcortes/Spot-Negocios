@@ -56,11 +56,11 @@ export class AppComponent {
       url: '/perfil',
       icon: 'person'
     },
-    {
-      title: 'Plan',
-      url: '/planes',
-      icon: 'ribbon'
-    },
+    // {
+    //   title: 'Plan',
+    //   url: '/planes',
+    //   icon: 'ribbon'
+    // },
   ]
 
   pedidos: number
@@ -173,7 +173,7 @@ export class AppComponent {
       const nombre = this.uidService.getNombre()
       if (count) {
         this.pedidos = count
-        this.title.setTitle(nombre + this.pedidos)
+        this.title.setTitle(`${nombre} (${this.pedidos})`)
       }
       else {
         this.title.setTitle(nombre)
