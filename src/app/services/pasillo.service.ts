@@ -71,43 +71,37 @@ export class PasilloService {
   }
 
   deletePasillo(categoria: string, pasillo: string) {
-    const idNegocio = this.uidService.getUid();
+    const idNegocio = this.uidService.getUid()
     const tipoSub = this.db.object(`perfiles/${idNegocio}/tipo`).valueChanges().subscribe(tipo => {
-      tipoSub.unsubscribe();
-      this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasillo}`).remove();
-    });
+      tipoSub.unsubscribe()
+      this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasillo}`).remove()
+    })
   }
 
   async setPalabrasPasillos(pasillos: Pasillo[]) {
-    let claves = '';
-    const palabras = await this.palabrasService.getPalabrasClave();
-    if (palabras) {
-      claves = claves.concat(palabras);
-    }
-    pasillos.forEach(p => {
-      claves = claves.concat(' ' + p.nombre);
-    });
+    let claves = ''
+    const palabras = await this.palabrasService.getPalabrasClave()
+    if (palabras) claves = claves.concat(palabras)
+    pasillos.forEach(p => claves = claves.concat(' ' + p.nombre))
     claves = claves
       .toLocaleLowerCase()
       .split(' ')
       .filter((item, i, allItems) => i === allItems.indexOf(item))
-      .join(' ');
-    this.palabrasService.updateClaves(claves);
+      .join(' ')
+    this.palabrasService.updateClaves(claves)
   }
 
   async setPalabrasPasillo(pasillo: string) {
-    let claves = '';
-    const palabras = await this.palabrasService.getPalabrasClave();
-    if (palabras) {
-      claves = claves.concat(palabras + ' ');
-    }
-    claves = claves.concat(pasillo);
+    let claves = ''
+    const palabras = await this.palabrasService.getPalabrasClave()
+    if (palabras) claves = claves.concat(palabras + ' ');
+    claves = claves.concat(pasillo)
     claves = claves
       .toLocaleLowerCase()
       .split(' ')
       .filter((item, i, allItems) => i === allItems.indexOf(item))
-      .join(' ');
-    this.palabrasService.updateClaves(claves);
+      .join(' ')
+    this.palabrasService.updateClaves(claves)
   }
 
 }

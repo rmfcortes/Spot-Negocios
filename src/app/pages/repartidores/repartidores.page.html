@@ -9,10 +9,6 @@
                 <ion-icon slot="start" name="add"></ion-icon>
                 Nuevo
             </ion-button>
-            <ion-button (click)="newEditRepartidor(null, null)" class="escritorio comfortaa">
-                <ion-icon slot="start" name="add"></ion-icon>
-                Nuevo
-            </ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -144,17 +140,18 @@
                         </ion-item>
 
 
-                        <ion-button class="boton-margen" style="margin-top: 2rem" [disabled]="!forma.valid || !repartidor.preview.foto || guardando || eliminando" expand="block" type="submit">
-                            Guardar cambios
-                            <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
-                        </ion-button>
-                        <ion-button *ngIf="repartidorPrev" class="boton-margen" [disabled]="guardando || eliminando" expand="block" color="dark" (click)="eliminarRepartidor()">
-                            Eliminar
-                            <ion-spinner *ngIf="eliminando" name="dots"></ion-spinner>
-                        </ion-button>
-                        <ion-button class="boton-margen" [disabled]="guardando || eliminando" expand="block" color="danger" (click)="cancelEdit()">
-                            Cancelar
-                        </ion-button>
+                        <ion-item lines="none">
+                            <ion-button slot="start" (click)="eliminarRepartidor()" fill="clear" *ngIf="repartidorPrev" [disabled]="guardando || eliminando">
+                                Eliminar
+                            </ion-button>                            
+                            <ion-button slot="end" (click)="cancelEdit()" [disabled]="guardando || eliminando" fill="outline">
+                                Cancelar
+                            </ion-button>                            
+                            <ion-button slot="end" type="submit" [disabled]="!forma.valid || !repartidor.preview.foto || guardando || eliminando">
+                                Guardar
+                                <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
+                            </ion-button>
+                        </ion-item>
                     </form>
                 </div>
             </ion-col>

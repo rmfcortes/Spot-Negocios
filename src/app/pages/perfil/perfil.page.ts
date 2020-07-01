@@ -80,7 +80,6 @@ export class PerfilPage implements OnInit {
   getPerfil() {
     this.perfilService.getPerfil().then(async (perfil: Perfil) => {
       this.perfil = perfil
-      console.log(this.perfil);
       this.subCategoriaAnterior = this.perfil.subCategoria
       this.cobertura = true
       this.perfilReady = true

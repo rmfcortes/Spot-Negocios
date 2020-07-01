@@ -19,37 +19,37 @@ import { UidService } from 'src/app/services/uid.service';
 })
 export class ProductosPage implements OnInit {
 
-  @ViewChild('inputSection', {static: false}) inputSection: IonInput;
-  @ViewChild('inputSectionEdit', {static: false}) inputSectionEdit: IonInput;
+  @ViewChild('inputSection', {static: false}) inputSection: IonInput
+  @ViewChild('inputSectionEdit', {static: false}) inputSectionEdit: IonInput
   
-  productos: ProductoPasillo[] = [];
-  categoria: string;
-  tipo = '';
+  productos: ProductoPasillo[] = []
+  categoria: string
+  tipo = ''
   pasillos: InfoPasillos = {
     portada: '',
     vista: '',
     pasillos: []
-  };
+  }
 
-  batch = 10;
-  yPasillo = 0;
-  lastKey = '';
-  noMore = false;
-  infiniteCall = 1;
-  productosCargados = 0;
-  cambiandoPasillo = false;
+  batch = 10
+  yPasillo = 0
+  lastKey = ''
+  noMore = false
+  infiniteCall = 1
+  productosCargados = 0
+  cambiandoPasillo = false
   cargando_productos = false
 
-  pasilloFiltro = '';
-  hasOfertas = false;
+  pasilloFiltro = ''
+  hasOfertas = false
 
   ///////////Escritorio
 
-  listaPasillos: Pasillo[] = [];
+  listaPasillos: Pasillo[] = []
 
-  prodsReady = false;
+  prodsReady = false
 
-  back: Subscription;
+  back: Subscription
 
     //////////
 
@@ -397,13 +397,6 @@ export class ProductosPage implements OnInit {
     getListaPasillos(pasillos) {
       this.listaPasillos = pasillos
       const plan = this.uidService.getPlan()
-      if (plan !== 'basico') {
-        const oferta: Pasillo = {
-          nombre: 'Ofertas',
-          prioridad: 0
-        };
-        this.listaPasillos.unshift(oferta)
-      }
     }
 
   async addPasillo() {
@@ -439,7 +432,7 @@ export class ProductosPage implements OnInit {
     this.listaPasillos[i].edit = true
     setTimeout(() => {
       this.inputSectionEdit.setFocus()
-    }, 300);
+    }, 300)
   }
 
   cancelEditPasillo(i: number) {
@@ -450,14 +443,14 @@ export class ProductosPage implements OnInit {
 
   saveEditSection(i) {
     this.unselectEdit()
-    this.pasillosService.editPasillo(this.categoria, i, this.beforeEdit, this.listaPasillos[i].nombre);
+    this.pasillosService.editPasillo(this.categoria, i, this.beforeEdit, this.listaPasillos[i].nombre)
+    const y = this.productos.findIndex(p => p.nombre === this.beforeEdit)
+    this.productos[y].nombre = this.listaPasillos[i].nombre
     this.beforeEdit = ''
   }
 
   unselectEdit() {
-    this.listaPasillos.forEach(s => {
-      s.edit = null
-    })
+    this.listaPasillos.forEach(s => s.edit = null)
   }
 
   async deletePasillo(i, nombre) {
@@ -473,24 +466,24 @@ export class ProductosPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    if (this.back) {this.back.unsubscribe()}
+    if (this.back) this.back.unsubscribe()
   }
 
   // Track By
   trackByPasillosPasillos(index:number, el:Pasillo): number {
-    return index;
+    return index
   }
 
   trackByPasillos(index:number, el:Pasillo): string {
-    return el.nombre;
+    return el.nombre
   }
 
   trackByPasilloProducto(index:number, el:ProductoPasillo): number {
-    return index;
+    return index
   }
 
   trackByProducto(index:number, el:Producto): string {
-    return el.id;
+    return el.id
   }
   
 

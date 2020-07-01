@@ -77,7 +77,7 @@ export class ProductoPage implements OnInit {
           const oferta: Pasillo = {
             nombre: 'Ofertas',
             prioridad: 0
-          };
+          }
           this.pasillos.unshift(oferta)
         }
     })
@@ -85,9 +85,7 @@ export class ProductoPage implements OnInit {
 
   getComplementos() {
     if (this.producto.variables) {
-      this.productoService.getComplementos(this.producto.id).then((complementos: Complemento[]) => {
-        this.complementos = complementos
-      })
+      this.productoService.getComplementos(this.producto.id).then((complementos: Complemento[]) => this.complementos = complementos)
     }
   }
 

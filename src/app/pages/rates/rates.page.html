@@ -11,10 +11,10 @@
     <ng-container *ngIf="rateNegReady && rateRepReady; else loadTemplate">
         <ng-container *ngIf="rate && perfilNegocio; else rateTemplate">
             <!-- Escritorio -->
-            <ion-grid class="escritorio ion-no-padding">
+            <ion-grid class="escritorio" fixed>
                 <ion-row>
-                    <ion-col size-md="6" size-lg="5" size-xl="4" class="separate-scroll">
-                        <ion-card [ngStyle]="{'border-right': negSel ? 'solid var(--ion-color-primary) 5px' : null}">
+                    <ion-col size-md="4" class="separate-scroll">
+                        <ion-card [ngStyle]="{'border-right': negSel ? 'solid var(--ion-color-primary) 5px' : null}" class="resaltar">
                             <ion-item detail (click)="setDatos(perfilNegocio.id, 'negocio', rate.calificaciones, perfilNegocio.nombre, null)" [style.cursor]="negSel? null :'pointer'">
                                 <ion-avatar style="margin-right: 0.5rem;">
                                     <img [src]="perfilNegocio.logo" />
@@ -22,7 +22,7 @@
                                 <ion-label class="ion-text-wrap">
                                     <h2>{{perfilNegocio.nombre}}</h2>
                                     <app-stars *ngIf="rate.promedio" [calificacion]="rate.promedio"></app-stars>
-                                    <p>{{rate.calificaciones}} calificaciones</p>
+                                    <p>{{rate.calificaciones - 5}} calificaciones</p>
                                 </ion-label>
                             </ion-item>
                         </ion-card>
@@ -30,7 +30,7 @@
                             <ion-list-header>
                                 <ion-label color="primary">Repartidores</ion-label>
                             </ion-list-header>
-                            <ion-card *ngFor="let item of repartidores; let i = index" [ngStyle]="{'border-right': i === iSel ? 'solid var(--ion-color-primary) 5px' : null}">
+                            <ion-card *ngFor="let item of repartidores; let i = index" [ngStyle]="{'border-right': i === iSel ? 'solid var(--ion-color-primary) 5px' : null}" class="resaltar">
                                 <ion-item detail (click)="setDatos(item.id, 'repartidor', item.calificaciones, item.nombre, i)" [style.cursor]="i === iSel? null :'pointer'">
                                     <ion-avatar style="margin-right: 0.5rem;">
                                         <img [src]="item.foto" />
@@ -38,35 +38,29 @@
                                     <ion-label class="ion-text-wrap">
                                         <h2>{{item.nombre}}</h2>
                                         <app-stars *ngIf="item.promedio" [calificacion]="item.promedio"></app-stars>
-                                        <p *ngIf="item.calificaciones > 1">{{item.calificaciones}} calificaciones</p>
+                                        <p *ngIf="item.calificaciones > 1">{{item.calificaciones - 1}} calificaciones</p>
                                     </ion-label>
                                 </ion-item>
                             </ion-card>
                         </ion-list>
                     </ion-col>
-                    <ion-col size-md="6" size-lg="7" size-xl="8" class="separate-scroll">
+                    <ion-col size-md="4" class="separate-scroll">
                         <ng-container *ngIf="loadingComentarios; else loadComTemplate">
                             <ion-item style="text-align: center;">
                                 <ion-progress-bar type="indeterminate"></ion-progress-bar>
                             </ion-item>
                         </ng-container>
                         <ng-template #loadComTemplate>
-                            <ion-list *ngFor="let item of comentarios" style="max-width: 30rem;">
-                                <ion-card>
-                                    <ion-item>
+                            <ion-list *ngFor="let item of comentarios; let i = index">
+                                <ion-card (click)="verPedido(item, i)" style="cursor: pointer;" [ngStyle]="{'border-right': i === calSel  ? 'solid var(--ion-color-primary) 5px' : null}" class="resaltar">
+                                    <div style="margin: 0.5rem 0 0 0.5rem;">
+                                        <app-stars [calificacion]="item.puntos"></app-stars>
+                                    </div>
+                                    <ion-item detail lines="none">
                                         <ion-label>
-                                            <ion-grid fixed>
-                                                <ion-row>
-                                                    <ion-col size="8">
-                                                        <h2 class="ion-text-wrap" [style.color]="item.puntos < 3 ? 'red' : item.puntos < 4 ? 'orange' : '#595756' ">
-                                                            {{item.comentarios}}
-                                                        </h2>
-                                                    </ion-col>
-                                                    <ion-col size="4">
-                                                        <app-stars [calificacion]="item.puntos"></app-stars>
-                                                    </ion-col>
-                                                </ion-row>
-                                            </ion-grid>
+                                            <h2 class="ion-text-wrap" [style.color]="item.puntos < 3 ? 'red' : item.puntos < 4 ? 'orange' : '#595756' ">
+                                                {{item.comentarios}}
+                                            </h2>
                                         </ion-label>
                                     </ion-item>
                                 </ion-card>
@@ -77,6 +71,9 @@
                             <ion-infinite-scroll-content loadingSpinner="bubbles">
                             </ion-infinite-scroll-content>
                         </ion-infinite-scroll>
+                    </ion-col>
+                    <ion-col size="4" class="separate-scroll">
+                         <app-trip-selected *ngIf="pedido" [pedido_selected]="pedido"></app-trip-selected>
                     </ion-col>
                 </ion-row>
             </ion-grid>

@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { PreloadImageComponent } from '../components/pre-load-image/pre-load-image.component';
 import { StarsComponent } from '../components/stars/stars.component';
 import { NoNetworkComponent } from '../components/no-network/no-network.component';
+import { TripSelectedComponent } from '../components/trip-selected/trip-selected.component';
 
 
 @NgModule({
@@ -17,11 +18,13 @@ import { NoNetworkComponent } from '../components/no-network/no-network.componen
       StarsComponent,
       NoNetworkComponent,
       PreloadImageComponent,
+      TripSelectedComponent
     ],
     exports: [
       StarsComponent,
       NoNetworkComponent,
       PreloadImageComponent,
+      TripSelectedComponent
     ]
   })
 

@@ -214,4 +214,21 @@ export class AlertService {
     if (this.loader) this.loader.dismiss();
   }
 
+
+
+  formatDate(d: Date): Promise<string> {
+    return new Promise((resolve, reject) => {        
+        let month = '' + (d.getMonth() + 1)
+        let day = '' + d.getDate()
+        const year = d.getFullYear()
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        resolve([year, month, day].join('-'))
+    })
+  }
+
 }

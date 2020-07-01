@@ -153,9 +153,18 @@
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Whatsapp de contacto (10 dígitos)</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.whats" type="tel" name="whats" minlength="10" maxlength="10"></ion-input>
                                 </ion-item>
-                                <ion-item *ngIf="perfil.tipo === 'productos'">
+                                <ion-item>
+                                    <ion-label *ngIf="perfil.envio_costo_fijo">Costo de envío fijo</ion-label>
+                                    <ion-label *ngIf="!perfil.envio_costo_fijo">Costo de envío en base a distancia</ion-label>
+                                    <ion-toggle [(ngModel)]="perfil.envio_costo_fijo" slot="end" color="primary" name="envio_fijo" (ionChange)="formularioChange()"></ion-toggle>
+                                </ion-item>
+                                <ion-item *ngIf="perfil.tipo === 'productos' && perfil.envio_costo_fijo">
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.envio" type="number" name="envio" minlength="1"></ion-input>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label color="medium" position="floating">Pedido mínimo para envío gratis</ion-label>
+                                    <ion-input type="number" [(ngModel)]="perfil.envio_gratis_pedMin" name="envio_gratis" (ionChage)="formularioChange()"></ion-input>
                                 </ion-item>
                                 <ion-item *ngIf="perfil.tipo === 'productos' && perfil.entrega === 'inmediato'">
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Tiempo de preparacion aprox. en minutos</ion-label>

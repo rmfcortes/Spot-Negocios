@@ -37,24 +37,6 @@ export class PedidosService {
     return this.db.object(`pedidos/activos/${uid}/cantidad`).valueChanges()
   }
 
-  getHistorial(batch, lastKey): Promise<Pedido[]> {
-    const uid = this.uidService.getUid();
-    return new Promise((resolve, reject) => {
-      if (lastKey || lastKey === 0) {
-        const x = this.db.list(`pedidos/historial/${uid}/detalles`, data =>
-          data.orderByKey().limitToLast(batch).endAt(lastKey.toString())).valueChanges().subscribe(async (pedidos: Pedido[]) => {
-            x.unsubscribe()
-            resolve(pedidos)
-          });
-      } else {
-        const x = this.db.list(`pedidos/historial/${uid}/detalles`, data =>
-          data.orderByKey().limitToLast(batch)).valueChanges().subscribe(async (pedidos: Pedido[]) => {
-            x.unsubscribe()
-            resolve(pedidos)
-          })
-      }
-    })
-  }
 
   getTiempoPreparacion(): Promise <number> {
     const uid = this.uidService.getUid()
