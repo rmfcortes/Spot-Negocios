@@ -7,6 +7,9 @@
         <h2>Solicitado:
             <ion-text color="medium">{{pedido_selected.createdAt | date:'h:mm a'}}</ion-text>
         </h2>
+        <h2 *ngIf="pedido_selected.cancelado_by_negocio">Rechazado:
+            <ion-text color="medium">{{pedido_selected.cancelado_by_negocio | date:'h:mm a'}}</ion-text>
+        </h2>
         <h2 *ngIf="pedido_selected.entregado">Entregado:
             <ion-text color="medium">{{pedido_selected.entregado | date:'h:mm a'}}</ion-text>
         </h2>

@@ -63,6 +63,11 @@ export class PedidosService {
     this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
   }
 
+  rechazarPedido(pedido: Pedido) {
+    const uid = this.uidService.getUid()
+    this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
+  }
+
   asignarRepartidor(pedido: Pedido) {
     return new Promise(async (resolve, reject) => {
       try {        

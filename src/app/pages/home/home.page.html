@@ -19,7 +19,7 @@
     <ion-grid class="escritorio" fixed *ngIf="plan !== 'basico'">
         <ion-row>
             <!-- Columna lista pedidos -->
-            <ion-col size-md="6" size-lg="5" size-xl="4">
+            <ion-col size="4">
                 <ng-container *ngIf="pedidosReady && repartidoresReady && tiempoReady; else loadEscritorioTemplate">
                     <ng-container *ngIf="pedidos.length > 0; else noPedTemplate">
                         <ion-list>
@@ -68,15 +68,26 @@
             </ion-col>
 
             <!-- Columna detalles pedido -->
-            <ion-col size-md="6" size-lg="7" size-xl="8" *ngIf="pedido">
+            <ion-col size="8" *ngIf="pedido">
                 <div style="max-width: 30rem;">
                     <ion-list>
-                        <ion-card *ngIf="pedido.cliente.telefono">
+                        <ion-card>
                             <ion-list-header>
-                                <ion-label color="primary">Contacto</ion-label>
+                                <ion-label color="primary">Resumen</ion-label>
                             </ion-list-header>
-                            <ion-item *ngIf="pedido.cliente.telefono" lines="none">
-                                <ion-label>{{pedido.cliente.nombre}}: {{pedido.cliente.telefono}}</ion-label>
+                            <ion-item lines="none">
+                                <ion-label>
+                                    <h2><strong>Cliente: {{pedido.cliente.nombre}}</strong></h2>
+                                    <h3 *ngIf="pedido.cliente.telefono" class="medium">Teléfono: {{pedido.cliente.telefono}}</h3>
+                                </ion-label>
+                            </ion-item>                        
+                            <ion-item lines="none">
+                                <ion-label>
+                                    <h3>Forma pago: {{pedido.formaPago.tipo !== 'efectivo' ? 'Tarjeta' : 'Efectivo'}}</h3>
+                                    <h3 *ngIf="pedido.comision">Comisión: {{pedido.comision | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h3>
+                                    <h3 *ngIf="pedido.negocio.repartidores_propios">Envío: {{pedido.envio | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h3>
+                                    <h3 *ngIf="pedido.negocio.repartidores_propios">Propina: {{pedido.propina | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h3>
+                                </ion-label>
                             </ion-item>
                         </ion-card>
                     </ion-list>
@@ -106,7 +117,8 @@
                             </ion-item>
                             <ion-item style="text-align: center;" lines="none">
                                 <ion-label color="primary">
-                                    <h1>Total: {{pedido.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h1>
+                                    <h1 *ngIf="pedido.negocio.repartidores_propios">Total: {{pedido.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h1>
+                                    <h1 *ngIf="!pedido.negocio.repartidores_propios">Total: {{pedido.total - pedido.envio -pedido.propina | currency:'CAD':'symbol-narrow':'1.0-2'}}</h1>
                                 </ion-label>
                             </ion-item>
                         </ion-card>
@@ -136,9 +148,20 @@
                             </ion-button>
                         </ion-item>
                     </ion-card>
-                    <ion-button *ngIf="!pedido.aceptado" class="boton-margen" expand="block" (click)="aceptarPedido()">
-                        Aceptar pedido
-                    </ion-button>
+                    <ion-grid fixed>
+                        <ion-row>
+                            <ion-col size="6">
+                                <ion-button *ngIf="!pedido.aceptado" fill="outline" color="danger" (click)="rechazarPedido()">
+                                    Rechazar pedido
+                                </ion-button>
+                            </ion-col>
+                            <ion-col size="6">
+                                <ion-button *ngIf="!pedido.aceptado" expand="block" (click)="aceptarPedido()">
+                                    Tomar pedido
+                                </ion-button>                                
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
                 </div>
             </ion-col>
         </ion-row>

@@ -10,8 +10,10 @@ import { PedidosService } from 'src/app/services/pedidos.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UidService } from 'src/app/services/uid.service';
 
-import { Pedido, RepartidorPedido } from 'src/app/interfaces/pedido';
+import { Pedido, RepartidorPedido, Cliente, FormaPago, Negocio } from 'src/app/interfaces/pedido';
 import { RepartidorPreview } from 'src/app/interfaces/repartidor';
+import { Direccion } from '../../interfaces/direccion';
+
 
 @Component({
   selector: 'app-home',
@@ -71,6 +73,7 @@ export class HomePage {
 
   getPedidos() {
     this.pedidos = []
+    this.pushPedido()
     this.pedidoService.getPedidos().query.ref.on('child_added', snapshot => {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
@@ -89,6 +92,60 @@ export class HomePage {
     setTimeout(() => {
       this.pedidosReady = true
     }, 1500)
+  }
+
+  pushPedido() {
+    const direccion: Direccion = {
+      direccion: 'Av. Siempre Viva 4545',
+      lat: 20.185687,
+      lng: -103.546875
+    }
+    const cliente: Cliente = {
+      direccion,
+      nombre: 'Pablo Flores',
+      uid: 'pabloflores',
+      telefono: '33145786485'
+    }
+    const formaPago: FormaPago = {
+      forma: '4242',
+      id: 'src_2nVA2khLbxoDvuGfr',
+      tipo: 'visa'
+    }
+    const negocio: Negocio = {
+      categoria: 'Moda',
+      direccion,
+      envio: 16,
+      idNegocio: 'fñjasd',
+      logo: 'klafjsd',
+      nombreNegocio: 'Novedades Elvia',
+      repartidores_propios: false,
+      telefono: '14564887'
+    }
+    const pedido: Pedido =  {
+      aceptado: false,
+      cliente,
+      comision: 12,
+      createdAt: 1593465814655,
+      entrega: 'inmediato',
+      envio: 35,
+      formaPago,
+      negocio,
+      productos: [{
+        descripcion: 'Excelente calidad',
+        id: 'aklsjdfasd',
+        nombre: 'Tenis clon',
+        pasillo: 'Abrigos',
+        precio: 280,
+        url: 'https://firebasestorage.googleapis.com/v0/b/revistaojo-9a8d3.appspot.com/o/negocios%2Fproductos%2FNX0Pt5gOnqQ20yqaLMxdbXpUkfS2%2F-M9VrdoSd8iMXksgExzA%2Fproducto?alt=media&token=27101131-5b12-420d-981a-129426db3ecc',
+        cantidad: 1,
+        total: 280,
+
+      }],
+      propina: 0,
+      total: 320,
+      id: 'fdklajñerm',
+    }
+    this.pedidos.push(pedido)
   }
 
   async verPedido(pedido) {
@@ -144,6 +201,22 @@ export class HomePage {
     })
   }
 
+  rechazarPedido() {
+    this.alertService.presentAlertPrompt('Rechazar pedido', 'No tengo producto en existencia', 'Rechazar pedido', 'Cancelar', 'Ingresa la razón por la que rechazas el pedido')
+    .then((resp: string) => {
+      resp = resp.trim()
+      if (!resp) {
+        this.alertService.presentAlert('', 'Por favor ingresa la razón por la cual cancelas el pedido')
+        return
+      }
+      this.pedido.cancelado_by_negocio = Date.now()
+      this.pedido.razon_cancelacion = resp
+      this.pedidoService.rechazarPedido(this.pedido)
+      this.pedidos = this.pedidos.filter(p => p.id !== this.pedido.id)
+      this.pedido = null
+    })
+  }
+
   async aceptarPedido() {
     if (!this.pedido.entrega || this.pedido.entrega === 'indefinido') {
       const inputs = await this.radioEntregas()
@@ -166,7 +239,7 @@ export class HomePage {
     'Tiempo estimado en días para tener listos los productos. ' +
     'Por favor introduce sólo números')
     .then(async (resp: any) => {
-      const num = parseInt(resp.preparacion, 10);
+      const num = parseInt(resp.preparacion, 10)
       if (num) {
         const dias =  num * 86400000
         this.pedido.aceptado = Date.now() + dias

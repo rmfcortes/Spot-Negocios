@@ -9,15 +9,19 @@ export interface Pedido {
     comision: number;
     entrega: string;
     entregado?: number;
+    envio: number;
     id?: string;
     negocio: Negocio;
     formaPago: FormaPago;
     productos: Producto[];
+    propina: number;
     repartidor?: RepartidorPedido;
     total: number;
     last_notification?: number;
     last_notificado?: string;
     last_solicitud?: number;
+    cancelado_by_negocio?: number;
+    razon_cancelacion?: string;
 }
 
 export interface Calificacion {
@@ -40,6 +44,7 @@ export interface Negocio {
     logo: string;
     nombreNegocio: string;
     telefono: string;
+    repartidores_propios: boolean;
 }
 
 export interface FormaPago {

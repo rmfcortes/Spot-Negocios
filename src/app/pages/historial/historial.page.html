@@ -17,7 +17,7 @@
                         <ion-card class="background-gris">
                             <ion-item lines="none" style="cursor: pointer;">
                                 <ion-label color="light">Fecha inicial</ion-label>
-                                <ion-datetime style="color: #a9bd1c" (ionChange)="initialDateCambio($event.detail.value)" [min]="first_date" [max]="today" displayFormat="D-MMM-YYYY" doneText="Aceptar" cancelText="Cancelar"></ion-datetime>
+                                <!-- <ion-datetime style="color: #a9bd1c" (ionChange)="initialDateCambio($event.detail.value)" [min]="first_date" [max]="today" displayFormat="D-MMM-YYYY" doneText="Aceptar" cancelText="Cancelar"></ion-datetime> -->
                             </ion-item>
                         </ion-card>
                     </ion-col>
@@ -50,6 +50,7 @@
                                 <ion-item lines="none">
                                     <ion-label>
                                         <h3>Completados: {{completados}}</h3>
+                                        <h3>Rechazados: {{rechazados}}</h3>
                                         <h3>Total: {{total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h3>
                                         <h3>Comisiones: {{comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}</h3>
                                     </ion-label>
@@ -84,28 +85,42 @@
                         <ion-label>Pago</ion-label>
                         <ion-label>Repartidor</ion-label>
                         <ion-label>Entregado</ion-label>
-                        </ion-item>          
-                        <ion-item *ngFor="let ped of historial.pedidos" class="resaltar" (click)="pedido = ped" [ngClass]="ped === pedido ? 'active' : 'initial'">
-                        <ion-label color="medium">{{ped.createdAt | date:'shortTime'}}</ion-label>
-                        <ion-label color="medium">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                        <ng-container *ngIf="ped.comision; else comisionTemp">
-                            <ion-label color="medium">{{ped.formaPago.forma | titlecase}} / {{ped.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                        </ng-container>
-                        <ng-template #comisionTemp>
-                            <ion-label color="medium">{{ped.formaPago.forma | titlecase}}</ion-label>
-                        </ng-template>
-                        <ng-container *ngIf="ped.repartidor; else repartidorTemp">
-                            <ng-container *ngIf="ped.repartidor.ganancia; else gananciaTemp">
-                            <ion-label color="medium">{{ped.repartidor.nombre}} - {{ped.repartidor.ganancia | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                        </ion-item>         
+                        <ion-item *ngFor="let ped of historial.pedidos" class="resaltar" (click)="pedido = ped" [ngClass]="ped === pedido ? 'active' : ''">
+                            <ng-container *ngIf="!ped.cancelado_by_negocio; else cancelTemplate">
+                                <ion-label color="medium">{{ped.createdAt | date:'shortTime'}}</ion-label>
+                                <ion-label color="medium">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                                <ng-container *ngIf="ped.comision; else comisionTemp">
+                                    <ion-label color="medium">{{ped.formaPago.forma | titlecase}} / {{ped.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                                </ng-container>
+                                <ng-template #comisionTemp>
+                                    <ion-label color="medium">{{ped.formaPago.forma | titlecase}}</ion-label>
+                                </ng-template>
+                                <ng-container *ngIf="ped.repartidor; else repartidorTemp">
+                                    <ng-container *ngIf="ped.repartidor.ganancia; else gananciaTemp">
+                                    <ion-label color="medium">{{ped.repartidor.nombre}} - {{ped.repartidor.ganancia | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                                    </ng-container>
+                                    <ng-template #gananciaTemp>
+                                    <ion-label color="medium">{{ped.repartidor.nombre}}</ion-label>
+                                    </ng-template>
+                                </ng-container>
+                                <ng-template #repartidorTemp>
+                                    <ion-label color="medium">--</ion-label>
+                                </ng-template>
+                                <ion-label color="medium">{{ped.entregado ? (ped.entregado | date:'shortTime') : '--'}}</ion-label>
                             </ng-container>
-                            <ng-template #gananciaTemp>
-                            <ion-label color="medium">{{ped.repartidor.nombre}}</ion-label>
+                            <ng-template #cancelTemplate>
+                                <ion-label color="danger" style="text-decoration: line-through;">{{ped.createdAt | date:'shortTime'}}</ion-label>
+                                <ion-label color="danger" style="text-decoration: line-through;">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                                <ng-container *ngIf="ped.comision; else comisionTemp">
+                                    <ion-label color="danger" style="text-decoration: line-through;">{{ped.formaPago.forma | titlecase}} / {{ped.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                                </ng-container>
+                                <ng-template #comisionTemp>
+                                    <ion-label color="danger" style="text-decoration: line-through;">{{ped.formaPago.forma | titlecase}}</ion-label>
+                                </ng-template>
+                                <ion-label color="danger">--</ion-label>
+                                <ion-label color="danger">--</ion-label>
                             </ng-template>
-                        </ng-container>
-                        <ng-template #repartidorTemp>
-                            <ion-label color="medium">--</ion-label>
-                        </ng-template>
-                        <ion-label color="medium">{{ped.entregado ? (ped.entregado | date:'shortTime') : '--'}}</ion-label>
                         </ion-item>
                     </ion-list>        
                 </div>

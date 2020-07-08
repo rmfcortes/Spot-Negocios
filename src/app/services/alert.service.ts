@@ -81,10 +81,11 @@ export class AlertService {
     await alert.present()
   }
 
-  async presentAlertPrompt(titulo, placeholder) {
+  async presentAlertPrompt(header: string, placeholder: string, btnAceptar: string, btnCancelar: string, message?: string) {
     return new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
-        header: titulo,
+        header,
+        message,
         inputs: [
           {
             name: 'name1',
@@ -94,22 +95,19 @@ export class AlertService {
         ],
         buttons: [
           {
-            text: 'Cancelar',
+            text: btnCancelar,
             role: 'cancel',
             cssClass: 'secondary',
-            handler: () => {
-              console.log('Confirm Cancel');
-            }
           }, {
-            text: 'Ok',
+            text: btnAceptar,
             handler: (data) => {
-              resolve(data.name1);
+              resolve(data.name1)
             }
           }
         ]
-      });
-      await alert.present();
-    });
+      })
+      await alert.present()
+    })
   }
 
   async presentPromptComplementos() {

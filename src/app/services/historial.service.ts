@@ -62,7 +62,7 @@ export class HistorialService {
             fecha: trip.key,
             pedidos: Object.values(trip.payload.val()),
             completados: Object.values(trip.payload.val()).filter(t => t.entregado),
-            cancelados_negocio: Object.values(trip.payload.val()).filter(t => t.cancelado),
+            cancelados_negocio: Object.values(trip.payload.val()).filter(t => t.cancelado_by_negocio),
             cancelados_user: Object.values(trip.payload.val()).filter(t => t.cancelado_by_user),
             ver_detalles: false
           }

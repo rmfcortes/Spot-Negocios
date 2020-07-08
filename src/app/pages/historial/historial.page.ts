@@ -35,6 +35,7 @@ export class HistorialPage implements OnInit {
   back: Subscription
 
   completados: number
+  rechazados: number
   total: number
   comisiones: number
 
@@ -100,6 +101,7 @@ export class HistorialPage implements OnInit {
     this.loading_pedidos = true
     this.pedidos = []
     this.completados = 0
+    this.rechazados = 0
     this.total = 0
     this.comisiones = 0
     this.pedidos = await this.historialService.getRegistrosByRange(this.inicial_date, this.end_date)
@@ -107,15 +109,17 @@ export class HistorialPage implements OnInit {
       this.no_registros = ''
       this.pedidos.forEach(p => {
         this.completados += p.completados.length
+        this.rechazados += p.cancelados_negocio.length
         p.pedidos.forEach(x => {
-          this.total += x.total
-          this.comisiones += x.comision
+          if (!x.cancelado_by_negocio) {
+            this.total += x.total
+            this.comisiones += x.comision
+          }
         })
       })
     }
     else this.no_registros = 'No hay registros de servicios en estos días'
     this.loading_pedidos = false
-    console.log(this.pedidos);
   }
 
   getPedidos(event?) {

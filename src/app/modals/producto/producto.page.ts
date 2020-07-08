@@ -92,7 +92,7 @@ export class ProductoPage implements OnInit {
   // Acciones
 
   async addComplemento() {
-    this.alertService.presentAlertPrompt('Nueva lista de complementos', 'Titulo de la lista')
+    this.alertService.presentAlertPrompt('Nueva lista de complementos', 'Titulo de la lista', 'Agregar lista', 'Cancelar')
       .then((titulo: string) => {
         titulo = titulo.trim()
         if (!titulo) return

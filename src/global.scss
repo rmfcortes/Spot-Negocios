@@ -36,6 +36,10 @@ ion-card {
     color: var(--ion-color-primary)
 }
 
+.medium {
+    color: var(--ion-color-medium)
+}
+
 .gris {
     color: #2D3E4F;
 }
@@ -50,6 +54,10 @@ ion-card {
 }
 
 .resaltar:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 20px 0 rgba(0, 0, 0, 0.10)
+}
+
+.active {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 20px 0 rgba(0, 0, 0, 0.10)
 }
 

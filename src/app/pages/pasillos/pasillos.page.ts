@@ -63,7 +63,7 @@ export class PasillosPage implements OnInit {
         'Antes de agregar productos o servicios completa tu perfil. Es muy importante');
       return;
     }
-    this.alertService.presentAlertPrompt('Nuevo departamento', 'Ej. Botanas, Bebidas')
+    this.alertService.presentAlertPrompt('Nuevo departamento', 'Ej. Botanas, Bebidas', 'Agregar departamento', 'Cancelar')
       .then((nombre: string) => {
         const pasillo: Pasillo = {
           nombre,
@@ -88,7 +88,7 @@ export class PasillosPage implements OnInit {
   }
 
   editPasillo(i, name) {
-    this.alertService.presentAlertPrompt(`Edita ${name}`, 'Ej. Botanas, Bebidas')
+    this.alertService.presentAlertPrompt(`Edita ${name}`, 'Ej. Botanas, Bebidas', 'Guardar cambios', 'Cancelar')
       .then((nombre: string) => {
         if (name === nombre) {
           return;
