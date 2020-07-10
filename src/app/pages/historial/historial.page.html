@@ -15,17 +15,17 @@
                 <ion-row *ngIf="first_date">
                     <ion-col size="6">
                         <ion-card class="background-gris">
-                            <ion-item lines="none" style="cursor: pointer;">
+                            <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(true)">
                                 <ion-label color="light">Fecha inicial</ion-label>
-                                <!-- <ion-datetime style="color: #a9bd1c" (ionChange)="initialDateCambio($event.detail.value)" [min]="first_date" [max]="today" displayFormat="D-MMM-YYYY" doneText="Aceptar" cancelText="Cancelar"></ion-datetime> -->
+                                <ion-label slot="end" style="color: #a9bd1c;" *ngIf="inicial_date">{{inicial_date}}</ion-label>
                             </ion-item>
                         </ion-card>
                     </ion-col>
                     <ion-col size="6">
                         <ion-card class="background-gris">
-                            <ion-item lines="none" style="cursor: pointer;">
+                            <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(false)">
                                 <ion-label color="light">Fecha final</ion-label>
-                                <ion-datetime style="color: #a9bd1c" (ionChange)="endDateCambio($event.detail.value)" [min]="first_date" [max]="today" displayFormat="D-MMM-YYYY" doneText="Aceptar" cancelText="Cancelar"></ion-datetime>
+                                <ion-label slot="end" style="color: #a9bd1c;" *ngIf="end_date">{{end_date}}</ion-label>
                             </ion-item>
                         </ion-card>
                     </ion-col>

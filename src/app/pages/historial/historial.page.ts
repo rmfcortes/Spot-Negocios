@@ -8,6 +8,7 @@ import { HistorialService } from 'src/app/services/historial.service';
 
 import { HistorialPedido, Pedido } from 'src/app/interfaces/pedido';
 import { AlertService } from 'src/app/services/alert.service';
+import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
 
 @Component({
   selector: 'app-historial',
@@ -39,6 +40,29 @@ export class HistorialPage implements OnInit {
   total: number
   comisiones: number
 
+  datePickerObj: any = {
+    inputDate: new Date('2018-08-10'), // default new Date()
+    fromDate: new Date('2016-12-08'), // default null
+    toDate: new Date('2018-12-28'), // default null
+    closeOnSelect: true, // default false
+    mondayFirst: true, // default false
+    setLabel: 'Aceptar',  // default 'Set'
+    todayLabel: 'Hoy', // default 'Today'
+    closeLabel: 'Cerrar', // default 'Close'
+    monthsList: ["Ene", "Feb", "Mar", "Abril", "Mayo", "Junio", "Julio", "Ago", "Sept", "Oct", "Nov", "Dic"],
+    weeksList: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+    dateFormat: 'YYYY-MM-DD', // default DD MMM YYYY
+    momentLocale: 'es', // Default 'en-US'
+    btnProperties: {
+      expand: 'block', // Default 'block'
+      fill: '', // Default 'solid'
+      size: '', // Default 'default'
+      disabled: '', // Default false
+      strong: '', // Default false
+      color: '' // Default ''
+    },
+  }
+
   constructor(
     private platform: Platform,
     private menu: MenuController,
@@ -56,6 +80,7 @@ export class HistorialPage implements OnInit {
 
   async getToday() {
     this.today = await this.commonService.formatDate(new Date())
+    this.datePickerObj.inputDate = this.today
   }
 
   async getFirstDate() {
@@ -63,6 +88,10 @@ export class HistorialPage implements OnInit {
     if (!this.first_date) this.first_date = await this.historialService.getFirstDate()
     if (!this.first_date) this.first_date = await this.historialService.setFirstDate()
     if (!this.first_date) this.no_registros = 'Aún no tienes pedidos completados'
+    if (this.first_date) {
+      this.datePickerObj.fromDate = this.first_date
+      this.datePickerObj.toDate = this.today
+    }
   }
 
   ionViewWillEnter() {
@@ -73,9 +102,28 @@ export class HistorialPage implements OnInit {
 
     //Fechas seleccionadas
 
+    async openDatePicker(initial: boolean) {
+      const datePickerModal = await this.modalCtrl.create({
+        component: Ionic4DatepickerModalComponent,
+        cssClass: 'li-ionic4-datePicker',
+        componentProps: { 
+           'objConfig': this.datePickerObj, 
+           'selectedDate': this.today 
+        }
+      })
+
+      await datePickerModal.present()
+   
+      datePickerModal.onDidDismiss()
+        .then((data) => {
+          if (initial) this.initialDateCambio(data.data.date)
+          else this.endDateCambio(data.data.date)
+        })
+    }
+
   async initialDateCambio(value) {
-    const date = new Date(value)
-    this.inicial_date = await this.commonService.formatDate(date)
+    if (value === 'Fecha invalida') return
+    this.inicial_date = value
     if (this.end_date) {
       if (this.inicial_date > this.end_date) {
         this.commonService.presentAlert('', 'La fecha inicial no puede ser mayor a la fecha final')
@@ -86,8 +134,8 @@ export class HistorialPage implements OnInit {
   }
 
   async endDateCambio(value) {
-    const date = new Date(value)
-    this.end_date = await this.commonService.formatDate(date)
+    if (value === 'Fecha invalida') return
+    this.end_date = value
     if (this.inicial_date) {
       if (this.inicial_date > this.end_date) {
         this.commonService.presentAlert('', 'La fecha inicial no puede ser mayor a la fecha final')
