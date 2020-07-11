@@ -73,7 +73,7 @@ export class HomePage {
 
   getPedidos() {
     this.pedidos = []
-    this.pushPedido()
+    // this.pushPedido()
     this.pedidoService.getPedidos().query.ref.on('child_added', snapshot => {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
@@ -94,7 +94,7 @@ export class HomePage {
     }, 1500)
   }
 
-  pushPedido() {
+  pushPedido() { // Eliminar está función
     const direccion: Direccion = {
       direccion: 'Av. Siempre Viva 4545',
       lat: 20.185687,
