@@ -149,7 +149,7 @@ export class AlertService {
 
   async presentPromptPreparacion(title: string, msn: string) {
     return new Promise(async (resolve, reject) => {
-      const alert = await this.alertController.create({
+      const alert: HTMLIonAlertElement = await this.alertController.create({
         header: title,
         message: msn,
         inputs: [
@@ -157,20 +157,21 @@ export class AlertService {
             name: 'preparacion',
             min: 0,
             type: 'number',
-            placeholder: 'Ej. 5, 10, 15'
+            placeholder: 'Ej. 5, 10, 15',
+            
           }
         ],
         buttons: [
           {
             text: 'Aceptar',
             handler: (data) => {
-              resolve(data);
+              resolve(data)
             }
           }
         ]
-      });
-      await alert.present();
-    });
+      })
+      await alert.present()
+    })
   }
 
   async presentAlertAction(titulo: string, msn: string, txtAceptar: string, txtCancelar: string) {

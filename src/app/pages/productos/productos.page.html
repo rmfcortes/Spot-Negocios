@@ -94,22 +94,26 @@
                         </ion-card>
 
                         <!-- Section list -->
-                        <ion-card>
+                        <ion-card style="padding-bottom: 1rem;">
                             <ion-item lines="none">
-                                <ion-label color="medium">Departamentos</ion-label>
-                                <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
+                                <ion-button (click)="showSectionInput()" expand="block" fill="outline" color="medium" class="btn_agregar ion-text-wrap">
+                                    Agregar Departamento
+                                </ion-button>
+                              </ion-item>
+                            <ion-item lines="none" *ngIf="listaPasillos.length > 0">
+                                <ion-label color="medium">Ver departamentos</ion-label>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
                                 <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
                             </ion-item>
-                            <ion-item *ngIf="viewSectionInput">
-                                <ion-input type="text" [(ngModel)]="nuevo_pasillo" placeholder="Nuevo pasillo" autoFocus="true" id="inputSection" #inputSection></ion-input>
+                            <ion-item *ngIf="viewSectionInput" lines="none">
+                                <ion-input (keyup.enter)="addPasillo()" type="text" [(ngModel)]="nuevo_pasillo" placeholder="Bebidas, Lacteos, Ropa dama" autoFocus="true" id="inputSection" #inputSection></ion-input>
                                 <ion-icon slot="end" name="close" color="medium" (click)="viewSectionInput = false"></ion-icon>
                                 <ion-button slot="end" (click)="addPasillo()" shape="round">
                                     Agregar
                                 </ion-button>
                             </ion-item>
                             <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
-                                <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos">
+                                <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos" lines="none">
                                     <ng-container *ngIf="section.edit; else editTemplate">
                                         <ion-input [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
                                         <ion-reorder slot="end"></ion-reorder>
@@ -128,10 +132,14 @@
 
                         <!-- Products list -->
 
-                        <ion-card *ngIf="listaPasillos.length > 0">
+                        <ion-card *ngIf="listaPasillos.length > 0" style="padding-bottom: 1rem;">
                             <ion-item lines="none">
+                                <ion-button (click)="verProducto(null)" expand="block" fill="outline" color="medium" class="btn_agregar ion-text-wrap">
+                                    Agregar Producto
+                                </ion-button>
+                              </ion-item>
+                            <ion-item lines="none" *ngIf="productosCargados > 0">
                                 <ion-label color="medium">Productos</ion-label>
-                                <ion-icon slot="end" name="add" color="primary" (click)="verProducto(null)"></ion-icon>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="viewProducts === false && productosCargados > 0" (click)="viewProducts = true"></ion-icon>
                                 <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="viewProducts === true" (click)="viewProducts = false"></ion-icon>
                             </ion-item>

@@ -10,7 +10,7 @@ import { PedidosService } from 'src/app/services/pedidos.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UidService } from 'src/app/services/uid.service';
 
-import { Pedido, RepartidorPedido, Cliente, FormaPago, Negocio } from 'src/app/interfaces/pedido';
+import { Pedido, RepartidorPedido, Cliente, FormaPago, Negocio, Avance } from 'src/app/interfaces/pedido';
 import { RepartidorPreview } from 'src/app/interfaces/repartidor';
 import { Direccion } from '../../interfaces/direccion';
 
@@ -41,6 +41,11 @@ export class HomePage {
 
   escuchaRepAnterior: string
   repSub: Subscription
+
+  avance: Avance = {
+    concepto: '',
+    fecha: null
+  };
 
   constructor(
     private ngZone: NgZone,
@@ -78,7 +83,7 @@ export class HomePage {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
         this.pedidos.unshift(pedido)
-        // if (pedido.aceptado && !pedido.repartidor) this.pedidoService.solicitarRepartidor(pedido)
+        if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato') this.pedidoService.solicitarRepartidor(pedido)
       })
     })
 
@@ -123,6 +128,7 @@ export class HomePage {
     }
     const pedido: Pedido =  {
       aceptado: false,
+      avances: [],
       cliente,
       comision: 12,
       createdAt: 1593465814655,
@@ -239,26 +245,25 @@ export class HomePage {
     'Tiempo estimado en días para tener listos los productos. ' +
     'Por favor introduce sólo números')
     .then(async (resp: any) => {
-      const num = parseInt(resp.preparacion, 10)
-      if (num) {
-        const dias =  num * 86400000
-        this.pedido.aceptado = Date.now() + dias
-        const dia = await this.datePipe.transform(this.pedido.aceptado, 'EEEE d/MMMM/y').toString()
-        this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'Cancelar')
-        .then(resp => { 
-          if (resp) this.pedidoService.aceptarPedido(this.pedido)
-          else this.pedido.aceptado = null
-        })
-      } else {
-        this.alertService.presentAlert('Tiempo inválido', 'Por favor introduce un número entero entre 1-100');
+      if (!/^[0-9]+$/.test(resp.preparacion)) {
+        this.alertService.presentAlert('Tiempo inválido', 'Por favor introduce un número entero entre 1-100')
+        return
       }
-    });
+      const num = parseInt(resp.preparacion, 10)
+      const dias =  num * 86400000
+      this.pedido.aceptado = Date.now() + dias
+      const dia = await this.datePipe.transform(this.pedido.aceptado, 'EEEE d/MMMM/y').toString()
+      this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'Cancelar')
+      .then(resp => { 
+        if (resp) this.pedidoService.aceptarPedido(this.pedido)
+        else this.pedido.aceptado = null
+      })
+    })
   }
 
   entregaInmediata() {
-    if (this.tiempoPreparacion) {
-      this.asignaRepartidor()
-    } else {
+    if (this.tiempoPreparacion) this.asignaRepartidor()
+    else {
       this.alertService.presentPromptPreparacion('Tiempo de preparacion',
       'Agrega el tiempo estimado de preparación en minutos. ' +
       'Si deseas que se calcule automáticamente, regístralo en la pestaña de Perfil. ' +
@@ -283,12 +288,7 @@ export class HomePage {
     if (this.radioRepartidores.length === 0) {
       return this.alertService.presentAlertAction('', 'No tienes repartidores registrados. Para aceptar el pedido debes tener al menos ' +
       'un repartidor registrado. ¿Te gustaría registrar tu primer repartidor?', 'Registrar', 'Cancelar')
-      .then(resp => {
-        if (resp) {
-          this.router.navigate(['/repartidores'])
-          return
-        } else return
-      })
+      .then(resp => resp ? this.router.navigate(['/repartidores']) : null)
     }
     this.alertService.presentAlertRadio('Elige un repartidor',
     'Elige a un colaborador disponible para entregar este envío o solicita uno a Spot',
@@ -298,12 +298,10 @@ export class HomePage {
         return
       }
       if (resp) {
-        this.pedido.aceptado = Date.now() + (this.tiempoPreparacion)
+        if (this.pedido.entrega === 'inmediato') this.pedido.aceptado = Date.now() + (this.tiempoPreparacion)
         this.pedidoService.aceptarPedido(this.pedido)
-        if (resp === 'spot') {
-          this.pedidoService.solicitarRepartidor(this.pedido)
-          this.listenRepartidorPendiente()
-        } else {
+        if (resp === 'spot') this.solicitarRepartidor()
+        else {
           const repartidor = this.repartidores.filter(r => r.id === resp)
           const rep: RepartidorPedido = {
             nombre: repartidor[0].nombre,
@@ -319,6 +317,19 @@ export class HomePage {
         this.pedidos[i] = this.pedido
       }
     })
+  }
+
+  solicitarRepartidor() {
+    this.pedidoService.solicitarRepartidor(this.pedido)
+    this.listenRepartidorPendiente()
+  }
+
+  agregarAvance() {
+    this.avance.concepto = this.avance.concepto.trim()
+    if (!this.avance.concepto) return
+    this.avance.fecha = Date.now()
+    this.pedido.avances.push(this.avance)
+    this.pedidoService.pushAvance(this.pedido)
   }
 
   listenRepartidorPendiente() {

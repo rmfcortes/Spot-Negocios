@@ -2,3 +2,11 @@
     max-height: 35vh;
     overflow: hidden;
 }
+
+.input_avance {
+    border: 2px dashed var(--ion-color-medium);
+    border-radius: 8px;
+    width: 80%;
+    margin-left: 10%;
+    height: auto;
+}

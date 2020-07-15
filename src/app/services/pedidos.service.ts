@@ -5,7 +5,7 @@ import { AngularFireDatabase } from '@angular/fire/database';
 
 import { UidService } from './uid.service';
 
-import { Pedido, RepartidorPedido } from '../interfaces/pedido';
+import { Pedido } from '../interfaces/pedido';
 import { RepartidorPreview } from 'src/app/interfaces/repartidor';
 import { Subscription } from 'rxjs';
 
@@ -99,6 +99,11 @@ export class PedidosService {
       this.listenRepartidor()
       this.timeOutRepartidorPendiente()
     }
+  }
+
+  pushAvance(pedido: Pedido) {
+    const uid = this.uidService.getUid()
+    this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}/avances`).set(pedido.avances)
   }
 
     // Esucha de una lista de pedidos pendientes de repartidores. Cuando se elimina de esa lista, sabemos que ya tiene repartidor

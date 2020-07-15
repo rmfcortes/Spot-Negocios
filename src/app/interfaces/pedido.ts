@@ -3,6 +3,7 @@ import { Producto } from './producto';
 
 export interface Pedido {
     aceptado: any;
+    avances: Avance[];
     calificacion?: Calificacion;
     cliente: Cliente;
     createdAt: number;
@@ -22,6 +23,11 @@ export interface Pedido {
     last_solicitud?: number;
     cancelado_by_negocio?: number;
     razon_cancelacion?: string;
+}
+
+export interface Avance {
+    fecha: number;
+    concepto: string;
 }
 
 export interface Calificacion {

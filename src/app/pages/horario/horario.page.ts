@@ -88,22 +88,14 @@ export class HorarioPage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: SetHorarioPage,
       componentProps: {dia}
-    });
+    })
 
     modal.onWillDismiss().then(resp => {
       if (resp.data) {
-        const semana: Dia[] = resp.data;
-        semana.forEach((d, i) => {
-          if (d.activo) {
-            this.horario[i] = d;
-          }
-        });
-        this.hasHorario = false;
-        this.horario.forEach(d => {
-          if (d.activo) {
-            this.hasHorario = true;
-          }
-        })
+        const semana: Dia[] = resp.data
+        semana.forEach((d, i) => d.activo ? this.horario[i] = d : null)
+        this.hasHorario = false
+        this.horario.forEach(d => d.activo ? this.hasHorario = true : null)
         this.horarioService.setHorario(this.horario)
       }
     })
@@ -125,11 +117,11 @@ export class HorarioPage implements OnInit {
           cierre: '',
           inicioComida: '',
           finComida: '',
-        };
+        }
         this.horario[i] = x
         this.horarioService.setHorario(this.horario)
       }
-    });
+    })
   }
 
   ///////// Escritorio
@@ -143,9 +135,9 @@ export class HorarioPage implements OnInit {
         cierre: '2020-02-12T18:00:00.255-06:00',
         inicioComida: '2020-02-12T14:00:00.255-06:00',
         finComida: '2020-02-12T15:00:00.255-06:00',
-      };
+      }
     }
-    this.dia = dia;
+    this.dia = dia
     if (this.semana.length === 0) {
       this.dias.forEach(d => {
         const x: Dia = {
@@ -156,84 +148,76 @@ export class HorarioPage implements OnInit {
           apertura: null,
           cierre: null,
           inicioComida: null,
-        };
-        this.semana.push(x);
-      });
+        }
+        this.semana.push(x)
+      })
     }
-    this.editHorario = true;
+    this.editHorario = true
   }
 
   guardar() {
     if (this.dia.cierre === this.dia.apertura) {
       this.alertService.presentAlert('Incongruencia de horario',
-        'La hora de apertura y cierre no puede ser la misma. Sería considerado como día inactivo');
-      return;
+        'La hora de apertura y cierre no puede ser la misma. Sería considerado como día inactivo')
+      return
     }
     if (this.dia.cierre < this.dia.apertura) {
       this.alertService.presentAlert('Incongruencia de horario',
-        'La hora de cierre no puede ser antes de la hora de apertura');
-      return;
+        'La hora de cierre no puede ser antes de la hora de apertura')
+      return
     }
     if (this.dia.comida === 'comida' && this.dia.inicioComida === this.dia.finComida) {
       this.alertService.presentAlert('Incongruencia de horario',
         'La hora de incio y fin de comida no puede ser igual. Si no hay horario de comida, selecciona ' +
-        'Corrido, en el tipo de horario');
-      return;
+        'Corrido, en el tipo de horario')
+      return
     }
     if (this.dia.comida === 'comida' && this.dia.inicioComida < this.dia.apertura) {
       this.alertService.presentAlert('Incongruencia de horario',
-        'La hora de incio de comida no puede ser antes de la hora de apertura');
-      return;
+        'La hora de incio de comida no puede ser antes de la hora de apertura')
+      return
     }
     if (this.dia.comida === 'comida' && this.dia.inicioComida > this.dia.cierre) {
       this.alertService.presentAlert('Incongruencia de horario',
-        'La hora de incio de comida no puede ser después de la hora de cierre');
-      return;
+        'La hora de incio de comida no puede ser después de la hora de cierre')
+      return
     }
     if (this.dia.comida === 'comida' && this.dia.finComida < this.dia.apertura) {
       this.alertService.presentAlert('Incongruencia de horario',
-        'La hora de fin de comida no puede ser antes de la hora de apertura');
-      return;
+        'La hora de fin de comida no puede ser antes de la hora de apertura')
+      return
     }
     if (this.dia.comida === 'comida' && this.dia.finComida > this.dia.cierre) {
       this.alertService.presentAlert('Incongruencia de horario',
-        'La hora de fin de comida no puede ser después de la hora de cierre');
-      return;
+        'La hora de fin de comida no puede ser después de la hora de cierre')
+      return
     }
-    let diasSeleccionados = 0;
+    let diasSeleccionados = 0
     this.semana.forEach(d => {
       if (d.activo) {
-        diasSeleccionados++;
-        d.comida = this.dia.comida;
-        d.finComida = this.dia.finComida;
-        d.apertura = this.dia.apertura;
-        d.cierre = this.dia.cierre;
-        d.inicioComida = this.dia.inicioComida;
+        diasSeleccionados++
+        d.comida = this.dia.comida
+        d.finComida = this.dia.finComida
+        d.apertura = this.dia.apertura
+        d.cierre = this.dia.cierre
+        d.inicioComida = this.dia.inicioComida
       }
-    });
+    })
     if (diasSeleccionados <= 0) {
       this.alertService.presentAlert('No hay días seleccionados',
         'Selecciona por lo menos un día de la semana para continuar con el formulario');
-      return;
+      return
     }
-    const semana: Dia[] = this.semana;
-    semana.forEach((d, i) => {
-      if (d.activo) {
-        this.horario[i] = d;
-      }
-    });
-    this.hasHorario = false;
-    this.horario.forEach(d => {
-      if (d.activo) {
-        this.hasHorario = true;
-      }
-    });
-    this.horarioService.setHorario(this.horario);
-    this.editHorario = false;
+    const semana: Dia[] = this.semana
+    semana.forEach((d, i) => d.activo ? this.horario[i] = d : null)
+    this.hasHorario = false
+    this.horario.forEach(d => d.activo ? this.hasHorario = true : null)
+    this.horarioService.setHorario(this.horario)
+    this.editHorario = false
   }
 
   ionViewWillLeave() {
-    if (this.back) {this.back.unsubscribe()}
+    if (this.back) this.back.unsubscribe()
   }
 
 

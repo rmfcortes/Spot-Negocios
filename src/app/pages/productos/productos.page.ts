@@ -103,7 +103,7 @@ export class ProductosPage implements OnInit {
 
   async getPasillos() {
     const detalles: InfoPasillos = await this.productoService.getPasillos(this.categoria)
-    this.pasillos.vista = detalles.vista || 'lista'
+    this.pasillos.vista = detalles.vista || 'list'
     if (detalles.pasillos && detalles.pasillos.length > 0) {
       this.pasillos.pasillos = detalles.pasillos
       this.pasillos.pasillos = this.pasillos.pasillos.sort((a, b) => a.prioridad - b.prioridad)
@@ -289,10 +289,10 @@ export class ProductosPage implements OnInit {
     let nuevo = false
     let agregados: number
     let pasilloAnterior: string
+    const plan = this.uidService.getPlan()
     if (!producto) {
       nuevo = true
       agregados = await this.productoService.getProductosAgregados()
-      const plan = this.uidService.getPlan()
       let permitidos
       switch (plan) {
         case 'basico':
@@ -326,7 +326,7 @@ export class ProductosPage implements OnInit {
     }
     const modal = await this.modalCtrl.create({
       component: ProductoPage,
-      componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados, nuevo}
+      componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados, nuevo, plan}
     })
 
     modal.onWillDismiss().then(resp => {
@@ -379,17 +379,15 @@ export class ProductosPage implements OnInit {
   }
 
   addProdAgregado(producto: Producto) {
-    const i = this.productos.findIndex(p => p.nombre === producto.pasillo);
-    if (i >= 0) {
-      this.productos[i].productos.unshift(producto);
-    } else {
+    const i = this.productos.findIndex(p => p.nombre === producto.pasillo)
+    if (i >= 0) this.productos[i].productos.unshift(producto)
+    else {
       const prodArray: ProductoPasillo = {
         nombre: producto.pasillo,
         productos: [producto]
       }
       this.productos.unshift(prodArray)
     }
-    console.log(this.productos)
   }
 
   

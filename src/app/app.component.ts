@@ -148,6 +148,12 @@ export class AppComponent {
           this.commonService.presentAlert('Agrega tu horario', 'Agrega el horario de tu negocio para que los usuarios lo conozcan. ' +
           'Si no agregas un horario en todo momento aparecerás en status -Cerrado-')
         }, 10000)
+        this.horarioService.hasHorario.subscribe(hasHorario => {
+          if (hasHorario) {
+            this.no_horario = false
+            this.animationService.stopPulse()
+          }
+        })
       }
     })
   }

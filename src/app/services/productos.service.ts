@@ -250,7 +250,7 @@ export class ProductosService {
           promedio: 5,
           direccion: perfil.direccion
         }
-        if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
+        if (perfil.tipo === 'productos' && perfil.repartidores_propios) {
           if (perfil.envio_gratis_pedMin) preview.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) preview.envio_desp_pedMin = perfil.envio_desp_pedMin
           preview.envio = perfil.envio
@@ -294,7 +294,7 @@ export class ProductosService {
           plan,
           direccion: perfil.direccion
         }
-        if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
+        if (perfil.tipo === 'productos' && perfil.repartidores_propios) {
           if (perfil.envio_gratis_pedMin) infoFun.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) infoFun.envio_desp_pedMin = perfil.envio_desp_pedMin
           infoFun.envio = perfil.envio
@@ -317,7 +317,7 @@ export class ProductosService {
           promedio: 5,
           calificaciones: 5,
         }
-        if (perfil.tipo === 'productos' && perfil.entrega === 'inmediato' && perfil.repartidores_propios) {
+        if (perfil.tipo === 'productos' && perfil.repartidores_propios) {
           if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
           busqueda.envio = perfil.envio

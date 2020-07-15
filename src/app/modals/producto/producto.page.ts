@@ -149,10 +149,11 @@ export class ProductoPage implements OnInit {
 
   async guardarCambios() {
     this.guardando = true
-    this.alertService.presentLoading()
+    await this.alertService.presentLoading()
     this.producto.nombre = this.producto.nombre.trim()
     this.producto.descripcion = this.producto.descripcion.trim()
-    if (!this.producto.nombre || this.producto.descripcion) {
+    if (!this.producto.nombre || !this.producto.descripcion) {
+      this.alertService.dismissLoading()
       this.alertService.presentAlert('', 'Por favor completa todos los campos')
       return
     }
