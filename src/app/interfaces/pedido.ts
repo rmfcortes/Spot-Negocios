@@ -23,6 +23,8 @@ export interface Pedido {
     last_solicitud?: number;
     cancelado_by_negocio?: number;
     razon_cancelacion?: string;
+    repartidor_solicitado: boolean;
+    recolectado?: boolean;
 }
 
 export interface Avance {

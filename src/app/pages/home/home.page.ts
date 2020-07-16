@@ -84,6 +84,7 @@ export class HomePage {
         const pedido: Pedido = snapshot.val()
         this.pedidos.unshift(pedido)
         if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato') this.pedidoService.solicitarRepartidor(pedido)
+        if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'planeado' && pedido.repartidor_solicitado) this.pedidoService.solicitarRepartidor(pedido)
       })
     })
 
@@ -150,6 +151,7 @@ export class HomePage {
       propina: 0,
       total: 320,
       id: 'fdklajñerm',
+      repartidor_solicitado: false
     }
     this.pedidos.push(pedido)
   }
@@ -177,6 +179,7 @@ export class HomePage {
   // Lógia para escritorio. Vista en una sola pantalla, sin Modal
   getPedido(pedido: Pedido, i: number) {
     this.pedido = pedido
+    console.log(this.pedido);
     this.iSel = i
     if (this.pedido.aceptado && !this.pedido.repartidor) this.listenRepartidorPendiente()
   }
@@ -320,6 +323,7 @@ export class HomePage {
   }
 
   solicitarRepartidor() {
+    this.pedido.repartidor_solicitado = true
     this.pedidoService.solicitarRepartidor(this.pedido)
     this.listenRepartidorPendiente()
   }
@@ -336,7 +340,10 @@ export class HomePage {
     if (this.escuchaRepAnterior) this.repSub.unsubscribe()
     this.escuchaRepAnterior = this.pedido.id
     this.repSub = this.pedidoService.listenRepartidorTs(this.pedido.id).subscribe((repartidor: RepartidorPedido) => {
-      this.ngZone.run(() => this.pedido.repartidor = repartidor)
+      this.ngZone.run(() => {
+        this.pedido.repartidor = repartidor
+        this.pedidoService.borraPendiente(this.pedido.id)
+      })
     })
   }
 

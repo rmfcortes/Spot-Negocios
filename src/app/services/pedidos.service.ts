@@ -75,14 +75,22 @@ export class PedidosService {
         this.pedidos_pendientes_repartidor = this.pedidos_pendientes_repartidor.filter(p => p.id !== pedido.id)
         await this.db.object(`pedidos/activos/${idNegocio}/detalles/${pedido.id}`).update(pedido)
         this.db.object(`pedidos/activos/${idNegocio}/repartidor_pendiente/${pedido.id}`).remove()
+        resolve()
       } catch (error) {
         reject(error)
       }
     })
   }
 
+  borraPendiente(idPedido: string) {
+    const idNegocio = this.uidService.getUid()
+    this.db.object(`pedidos/activos/${idNegocio}/repartidor_pendiente/${idPedido}`).remove()
+  }
+
   solicitarRepartidor(pedido: Pedido, i?: number) {
+    console.log('Solicitar repartidor');
     const uid = this.uidService.getUid()
+    this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
     this.db.object(`pedidos/repartidor_pendiente/${uid}/${pedido.id}`).set(pedido)
     this.db.object(`pedidos/activos/${uid}/repartidor_pendiente/${pedido.id}`).set(pedido.id)
     pedido.last_solicitud = Date.now()
@@ -131,7 +139,7 @@ export class PedidosService {
         return
       }
       for (let i = 0; i < this.pedidos_pendientes_repartidor.length; i++) {
-        const lapso = this.pedidos_pendientes_repartidor[i].last_solicitud + 30000
+        const lapso = this.pedidos_pendientes_repartidor[i].last_solicitud + 45000
         if (Date.now() > lapso) this.solicitarRepartidor(this.pedidos_pendientes_repartidor[i], i)
       }
       this.timeOutRepartidorPendiente()

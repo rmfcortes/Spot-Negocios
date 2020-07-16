@@ -110,20 +110,17 @@
                         </ion-item>
                     </ion-card>
                         <!-- Repartidor pendiente entrega inmediata -->
-                    <ion-card *ngIf="pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato'">
+                    <ion-card *ngIf="pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato' || pedido.repartidor_solicitado && !pedido.repartidor">
                         <ion-list-header>
                             <ion-label color="primary">Repartidor</ion-label>
                         </ion-list-header>
                         <ion-item>
                             <ion-icon slot="start" color="warning" name="time"></ion-icon>
                             <ion-label color="medium">Asignando repartidor</ion-label>
-                            <ion-button *ngIf="radioRepartidores.length > 1" (click)="asignaRepartidor()" shape="round">
-                                Asignar
-                            </ion-button>
                         </ion-item>
                     </ion-card>
                         <!-- Repartidor pendiente entrega planeado -->
-                    <ion-card *ngIf="pedido.aceptado && !pedido.repartidor && pedido.entrega === 'planeado'">
+                    <ion-card *ngIf="pedido.aceptado && !pedido.repartidor && pedido.entrega === 'planeado' && !pedido.repartidor_solicitado">
                         <ion-list-header>
                             <ion-label color="primary">Repartidor</ion-label>
                         </ion-list-header>
@@ -139,7 +136,7 @@
                     </ion-card>
 
                     <!-- Detalles de avances -->
-                    <ion-card *ngIf="pedido.aceptado && pedido.entrega === 'planeado'">
+                    <ion-card *ngIf="pedido.aceptado && pedido.entrega === 'planeado'" style="padding-bottom: 1rem;">
                         <ion-list-header>
                             <ion-label color="primary">Avances</ion-label>
                         </ion-list-header>
