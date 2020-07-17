@@ -88,7 +88,6 @@ export class PedidosService {
   }
 
   solicitarRepartidor(pedido: Pedido, i?: number) {
-    console.log('Solicitar repartidor');
     const uid = this.uidService.getUid()
     this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
     this.db.object(`pedidos/repartidor_pendiente/${uid}/${pedido.id}`).set(pedido)
@@ -109,6 +108,17 @@ export class PedidosService {
     }
   }
 
+  getBanderazo(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const region = this.uidService.getRegion()
+      const banSub = this.db.object(`ciudades/${region}/envio/banderazo_negocio`)
+      .valueChanges().subscribe((banderazo: number) => {
+        banSub.unsubscribe()
+        resolve(banderazo)
+      })
+    })
+  } 
+
   pushAvance(pedido: Pedido) {
     const uid = this.uidService.getUid()
     this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}/avances`).set(pedido.avances)
@@ -126,6 +136,11 @@ export class PedidosService {
   listenRepartidorTs(idPedido: string) {
     const uid = this.uidService.getUid()
     return this.db.object(`pedidos/activos/${uid}/detalles/${idPedido}/repartidor`).valueChanges()
+  }
+
+  listenAvances(idPedido: string) {
+    const uid = this.uidService.getUid()
+    return this.db.list(`pedidos/activos/${uid}/detalles/${idPedido}/avances`).valueChanges()
   }
 
   timeOutRepartidorPendiente() {

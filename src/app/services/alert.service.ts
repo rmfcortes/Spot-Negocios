@@ -202,15 +202,16 @@ export class AlertService {
     })
   }
 
-  async presentLoading() {
+  async presentLoading(message?: string) {
     this.loader = await this.loadingCtrl.create({
-     spinner: 'crescent'
-    });
-    return await this.loader.present();
+     spinner: 'crescent',
+     message
+    })
+    return await this.loader.present()
   }
 
   dismissLoading() {
-    if (this.loader) this.loader.dismiss();
+    if (this.loader) this.loader.dismiss()
   }
 
 

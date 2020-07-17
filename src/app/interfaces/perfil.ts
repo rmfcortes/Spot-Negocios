@@ -1,32 +1,33 @@
 import { Direccion } from './direccion';
 
 export interface Perfil {
-    abierto: boolean;
-    id: string;
-    formas_pago: FormaPago;
-    nombre: string;
-    logo: string;
-    descripcion: string;
-    portada: string;
-    categoria: string;
-    subCategoria: string[];
-    telefono: string;
-    direccion: Direccion;
-    tipo: string;
-    region: string;
-    display?: boolean;
-    productos?: number;
-    preparacion?: number;
-    entrega: string;
-    whats?: string;
-    correo: string;
-    contacto: string;
-    pass: string;
-    repartidores_propios: boolean;
-    envio?: number;
+    abierto: boolean
+    id: string
+    formas_pago: FormaPago
+    nombre: string
+    logo: string
+    descripcion: string
+    portada: string
+    categoria: string
+    subCategoria: string[]
+    telefono: string
+    direccion: Direccion
+    tipo: string
+    region: string
+    display?: boolean
+    productos?: number
+    preparacion?: number
+    entrega: string
+    whats?: string
+    correo: string
+    contacto: string
+    pass: string
+    repartidores_propios: boolean
+    envio?: number
     envio_gratis_pedMin?: number
     envio_costo_fijo?: boolean
     envio_desp_pedMin?: number
+    plan: string
 }
 
 export interface FormaPago {

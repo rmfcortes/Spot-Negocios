@@ -25,6 +25,7 @@ export interface Pedido {
     razon_cancelacion?: string;
     repartidor_solicitado: boolean;
     recolectado?: boolean;
+    banderazo?: number;
 }
 
 export interface Avance {

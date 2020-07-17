@@ -72,10 +72,10 @@ export class ProductosPage implements OnInit {
 
   ngOnInit() {
     this.menu.enable(true)
-    this.getTipo()
   }
 
   ionViewWillEnter() {
+    this.getTipo()
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
       return
     })
@@ -103,7 +103,7 @@ export class ProductosPage implements OnInit {
 
   async getPasillos() {
     const detalles: InfoPasillos = await this.productoService.getPasillos(this.categoria)
-    this.pasillos.vista = detalles.vista || 'list'
+    this.pasillos.vista = detalles.vista || 'list-img'
     if (detalles.pasillos && detalles.pasillos.length > 0) {
       this.pasillos.pasillos = detalles.pasillos
       this.pasillos.pasillos = this.pasillos.pasillos.sort((a, b) => a.prioridad - b.prioridad)
@@ -119,6 +119,7 @@ export class ProductosPage implements OnInit {
 
   getOfertas() {
     this.cargando_productos = true
+    this.productosCargados = 0
     this.productoService.getOfertas(this.tipo, this.categoria).then(async (ofertas: Producto[]) => {
       if (ofertas && ofertas.length > 0) {
         this.hasOfertas = true
@@ -137,7 +138,6 @@ export class ProductosPage implements OnInit {
   getInfoProds() {
     if (!this.pasillos.pasillos || this.pasillos.pasillos.length === 0) return
     this.infiniteCall = 1
-    this.productosCargados = 0
     this.getProds()
   }
 
@@ -152,16 +152,14 @@ export class ProductosPage implements OnInit {
       } else if ( this.yPasillo + 1 < this.pasillos.pasillos.length ) {
         this.yPasillo++
         this.lastKey = null
-        if (this.productosCargados < this.batch * this.infiniteCall) {
-          this.getProds()
-        }
+        if (this.productosCargados < this.batch * this.infiniteCall) this.getProds()
       } else {
         this.noMore = true
         this.prodsReady = true
         this.cargando_productos = false
         resolve()
       }
-    });
+    })
   }
 
   async evaluaProductos(productos) {
@@ -269,6 +267,7 @@ export class ProductosPage implements OnInit {
   }
 
   resetProds(pasillo?) {
+    console.log('reset');
     this.cambiandoPasillo = true
     this.lastKey = ''
     this.yPasillo = 0
@@ -297,10 +296,10 @@ export class ProductosPage implements OnInit {
       switch (plan) {
         case 'basico':
           permitidos = 15
-          break;
+          break
         case 'pro':
           permitidos = 100
-          break;
+          break
         case 'premium':
           permitidos = 500
           break
@@ -354,7 +353,15 @@ export class ProductosPage implements OnInit {
               this.productos[i].productos[y] = producto
             }
           } else {
-            this.addProdAgregado(resp.data)
+            if (this.productosCargados && this.productosCargados > 0) this.addProdAgregado(resp.data)
+            else {
+              this.productosCargados = 1
+              const prodArray: ProductoPasillo = {
+                nombre: producto.pasillo,
+                productos: [producto]
+              }
+              this.productos.push(prodArray)
+            }
           }
         }
       }
@@ -392,10 +399,10 @@ export class ProductosPage implements OnInit {
 
   
   // Pasillos
-    getListaPasillos(pasillos) {
-      this.listaPasillos = pasillos
-      const plan = this.uidService.getPlan()
-    }
+  getListaPasillos(pasillos) {
+    this.listaPasillos = pasillos
+    const plan = this.uidService.getPlan()
+  }
 
   async addPasillo() {
     this.nuevo_pasillo = this.nuevo_pasillo.trim()

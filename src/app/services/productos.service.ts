@@ -232,10 +232,10 @@ export class ProductosService {
   // Auxiliar
   setDisplay(plan: string) {
     return new Promise(async (resolve, reject) => {
+      const idNegocio = this.uidService.getUid()
       try {        
         // Info preview
         const perfil: Perfil = await this.perfilService.getPerfil()
-        const idNegocio = this.uidService.getUid()
         const calificacion = {
           calificaciones: 5,
           promedio: 5,
@@ -250,10 +250,10 @@ export class ProductosService {
           promedio: 5,
           direccion: perfil.direccion
         }
-        if (perfil.tipo === 'productos' && perfil.repartidores_propios) {
+        if (perfil.tipo === 'productos') {
           if (perfil.envio_gratis_pedMin) preview.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) preview.envio_desp_pedMin = perfil.envio_desp_pedMin
-          preview.envio = perfil.envio
+          if (perfil.envio) preview.envio = perfil.envio
           preview.envio_costo_fijo = perfil.envio_costo_fijo
           preview.repartidores_propios = perfil.repartidores_propios
         }
@@ -294,10 +294,10 @@ export class ProductosService {
           plan,
           direccion: perfil.direccion
         }
-        if (perfil.tipo === 'productos' && perfil.repartidores_propios) {
+        if (perfil.tipo === 'productos') {
           if (perfil.envio_gratis_pedMin) infoFun.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) infoFun.envio_desp_pedMin = perfil.envio_desp_pedMin
-          infoFun.envio = perfil.envio
+          if (perfil.envio) infoFun.envio = perfil.envio
           infoFun.envio_costo_fijo = perfil.envio_costo_fijo
           infoFun.repartidores_propios = perfil.repartidores_propios
 
@@ -317,10 +317,10 @@ export class ProductosService {
           promedio: 5,
           calificaciones: 5,
         }
-        if (perfil.tipo === 'productos' && perfil.repartidores_propios) {
+        if (perfil.tipo === 'productos') {
           if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
-          busqueda.envio = perfil.envio
+          if (perfil.envio) busqueda.envio = perfil.envio
           busqueda.envio_costo_fijo = perfil.envio_costo_fijo
           busqueda.repartidores_propios = perfil.repartidores_propios
         }
@@ -329,6 +329,7 @@ export class ProductosService {
         await this.db.object(`rate/resumen/${idNegocio}`).update(calificacion)
         resolve()
       } catch (error) {
+        this.db.object(`perfiles/${idNegocio}/productos`).set(0)
         reject(error)
       }
     })

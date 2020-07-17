@@ -151,30 +151,30 @@ export class PerfilPage implements OnInit {
 
       const autocompleteEscritorio = new google.maps.places.Autocomplete(inputBox, {types: ['address']})
       autocompleteEscritorio.addListener('place_changed', () => {
-          this.ngZone.run(async () => {
-              // get the place result
-              const place: google.maps.places.PlaceResult = autocompleteEscritorio.getPlace()
-              // verify result
-              if (place.geometry === undefined || place.geometry === null) return
-              // set latitude, longitude and zoom
-              const lat = place.geometry.location.lat()
-              const lng = place.geometry.location.lng()
-              const d = await this.calculaDistancia(lat, lng)
-              if (d < 5) {
-                this.uidService.setCambios(true)
-                this.perfil.direccion.lat = place.geometry.location.lat()
-                this.perfil.direccion.lng = place.geometry.location.lng()
-                this.perfil.direccion.direccion = place.formatted_address
-                this.alertService.presentToast('De ser necesario, puedes mover el pin a tu ubicación exacta');
-                this.cobertura = true
-              } else {
-                this.perfil.direccion.lat = null
-                this.perfil.direccion.direccion = ''
-                this.alertService.presentAlert('Fuera de cobertura', 'La dirección está muy lejos de la región elegida ' +
-                'Cambia de región o espera a que Spot llegue a tu región')
-                this.cobertura = false
-              }
-          })
+        this.ngZone.run(async () => {
+            // get the place result
+            const place: google.maps.places.PlaceResult = autocompleteEscritorio.getPlace()
+            // verify result
+            if (place.geometry === undefined || place.geometry === null) return
+            // set latitude, longitude and zoom
+            const lat = place.geometry.location.lat()
+            const lng = place.geometry.location.lng()
+            const d = await this.calculaDistancia(lat, lng)
+            if (d < 5) {
+              this.uidService.setCambios(true)
+              this.perfil.direccion.lat = place.geometry.location.lat()
+              this.perfil.direccion.lng = place.geometry.location.lng()
+              this.perfil.direccion.direccion = place.formatted_address
+              this.alertService.presentToast('De ser necesario, puedes mover el pin a tu ubicación exacta');
+              this.cobertura = true
+            } else {
+              this.perfil.direccion.lat = null
+              this.perfil.direccion.direccion = ''
+              this.alertService.presentAlert('Fuera de cobertura', 'La dirección está muy lejos de la región elegida ' +
+              'Cambia de región o espera a que Spot llegue a tu región')
+              this.cobertura = false
+            }
+        })
       })
     })
   }

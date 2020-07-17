@@ -108,12 +108,16 @@ export class ProductoPage implements OnInit {
 
   async addProductoComplemento(i) {
     this.alertService.presentPromptComplementos()
-      .then((producto: ProductoComplemento) => {
-        producto.nombre = producto.nombre.trim()
-        if (!producto.nombre) return
-        producto.precio = parseInt(producto.precio, 10)
-        this.complementos[i].productos.unshift(producto)
-      })
+    .then((producto: ProductoComplemento) => {
+      producto.nombre = producto.nombre.trim()
+      if (!producto.nombre) return
+      if (!/^[0-9]+$/.test(producto.precio)) {
+        this.alertService.presentAlert('Precio inválido', 'El precio debe incluir sólo números enteros')
+        return
+      }
+      producto.precio = parseInt(producto.precio, 10)
+      this.complementos[i].productos.unshift(producto)
+    })
   }
 
   async cropImage(imageChangedEvent, aspect, portada, quality, width?) {
@@ -149,7 +153,7 @@ export class ProductoPage implements OnInit {
 
   async guardarCambios() {
     this.guardando = true
-    await this.alertService.presentLoading()
+    await this.alertService.presentLoading('Estamos guardando la información del producto. Este proceso puede tardar algunos minutos. Por favor no cierres ni actualices la página')
     this.producto.nombre = this.producto.nombre.trim()
     this.producto.descripcion = this.producto.descripcion.trim()
     if (!this.producto.nombre || !this.producto.descripcion) {

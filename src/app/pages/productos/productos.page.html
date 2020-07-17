@@ -113,7 +113,7 @@
                                 </ion-button>
                             </ion-item>
                             <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
-                                <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos" lines="none">
+                                <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                                     <ng-container *ngIf="section.edit; else editTemplate">
                                         <ion-input [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
                                         <ion-reorder slot="end"></ion-reorder>
@@ -148,7 +148,7 @@
                                     <ion-list-header *ngIf="section.productos && section.productos.length > 0">
                                         <ion-label color="primary" style="font-size: 10px;">{{section.nombre}}</ion-label>
                                     </ion-list-header>
-                                    <ion-item *ngFor="let product of section.productos; trackBy: trackByProducto">
+                                    <ion-item *ngFor="let product of section.productos; trackBy: trackByProducto; let odd = odd" [ngClass]="{'contraste': odd}" lines="none">
                                         <ion-label>{{product.nombre}}</ion-label>
                                         <ion-icon name="pencil" slot="end" color="primary" (click)="verProducto(product)"></ion-icon>
                                     </ion-item>

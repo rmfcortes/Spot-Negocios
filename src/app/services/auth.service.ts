@@ -147,6 +147,7 @@ export class AuthService {
           localStorage.removeItem('plan')
           localStorage.removeItem('region')
           localStorage.removeItem('persistent')
+          localStorage.removeItem('first_date')
           this.uidService.setUid(null)
           this.uidService.setNombre(null)
           this.uidService.setPlan(null)

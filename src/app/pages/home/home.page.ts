@@ -45,7 +45,9 @@ export class HomePage {
   avance: Avance = {
     concepto: '',
     fecha: null
-  };
+  }
+
+  avancesSub: Subscription
 
   constructor(
     private ngZone: NgZone,
@@ -92,6 +94,7 @@ export class HomePage {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
         this.pedidos = this.pedidos.filter(p => p.id !== pedido.id)
+        if (this.pedido && this.pedido.id === pedido.id) this.pedido = null
       })
     })
 
@@ -179,9 +182,9 @@ export class HomePage {
   // Lógia para escritorio. Vista en una sola pantalla, sin Modal
   getPedido(pedido: Pedido, i: number) {
     this.pedido = pedido
-    console.log(this.pedido);
     this.iSel = i
     if (this.pedido.aceptado && !this.pedido.repartidor) this.listenRepartidorPendiente()
+    this.listenAvances()
   }
 
   getTiempoPreparcion() {
@@ -314,6 +317,16 @@ export class HomePage {
             externo: false
           }
           this.pedido.repartidor = rep
+          this.pedido.avances = [
+            {
+              fecha: Date.now(),
+              concepto: `${this.pedido.negocio.nombreNegocio} ha aceptado tu pedido`
+            },
+            {
+              fecha: Date.now(),
+              concepto: `${rep.nombre} está esperando tu pedido`
+            }
+          ]
           this.pedidoService.asignarRepartidor(this.pedido)
         }
         const i = this.pedidos.findIndex(p => p.id === this.pedido.id)
@@ -322,8 +335,9 @@ export class HomePage {
     })
   }
 
-  solicitarRepartidor() {
+  async solicitarRepartidor() {
     this.pedido.repartidor_solicitado = true
+    this.pedido.banderazo = await this.pedidoService.getBanderazo()
     this.pedidoService.solicitarRepartidor(this.pedido)
     this.listenRepartidorPendiente()
   }
@@ -344,6 +358,13 @@ export class HomePage {
         this.pedido.repartidor = repartidor
         this.pedidoService.borraPendiente(this.pedido.id)
       })
+    })
+  }
+
+  listenAvances() {
+    if (this.avancesSub) this.avancesSub.unsubscribe()
+    this.avancesSub = this.pedidoService.listenAvances(this.pedido.id).subscribe((avances: Avance[]) => {
+      this.ngZone.run(() => this.pedido.avances = avances)
     })
   }
 

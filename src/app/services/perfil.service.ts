@@ -45,7 +45,7 @@ export class PerfilService {
             portada: perfil.portada,
             telefono: perfil.telefono,
             whats: perfil.whats,
-          };
+          }
         } else {
           datosPasillo = {
             portada: perfil.portada,
@@ -75,10 +75,97 @@ export class PerfilService {
         // Info perfil
         await this.db.object(`perfiles/${idNegocio}`).update(perfil)
         this.setPalabras(perfil)
+        if (perfil.productos && perfil.productos > 0) this.setDisplay(perfil)
         resolve()
       } catch (error) {
         reject(error)
       }
+    })
+  }
+
+  setDisplay(perfil: Perfil) {
+    return new Promise(async (resolve, reject) => {
+      try {        
+        // Info preview
+        const idNegocio = this.uidService.getUid()
+        const abierto = await this.isOpen()
+        const preview: any = {
+          abierto,
+          foto: perfil.logo,
+          nombre: perfil.nombre,
+          direccion: perfil.direccion
+        }
+        if (perfil.tipo === 'productos') {
+          if (perfil.envio_gratis_pedMin) preview.envio_gratis_pedMin = perfil.envio_gratis_pedMin
+          if (perfil.envio_desp_pedMin) preview.envio_desp_pedMin = perfil.envio_desp_pedMin
+          if (perfil.envio) preview.envio = perfil.envio
+          preview.envio_costo_fijo = perfil.envio_costo_fijo
+          preview.repartidores_propios = perfil.repartidores_propios
+        }
+        if (abierto) {
+          perfil.subCategoria.forEach(async (s) => {
+            await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${s}/abiertos/${idNegocio}`).update(preview)
+          })
+          await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/todos/abiertos/${idNegocio}`).update(preview)
+        } else {
+          perfil.subCategoria.forEach(async(su) => {
+            await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${su}/cerrados/${idNegocio}`).update(preview)
+          })
+          await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/todos/cerrados/${idNegocio}`).update(preview)
+        }
+
+
+        // Info functions
+        const infoFun: any = {
+          abierto,
+          foto: perfil.logo,
+          nombre: perfil.nombre,
+          subCategoria: perfil.subCategoria,
+          direccion: perfil.direccion
+        }
+        if (perfil.tipo === 'productos') {
+          if (perfil.envio_gratis_pedMin) infoFun.envio_gratis_pedMin = perfil.envio_gratis_pedMin
+          if (perfil.envio_desp_pedMin) infoFun.envio_desp_pedMin = perfil.envio_desp_pedMin
+          if (perfil.envio) infoFun.envio = perfil.envio
+          infoFun.envio_costo_fijo = perfil.envio_costo_fijo
+          infoFun.repartidores_propios = perfil.repartidores_propios
+
+        }
+        await this.db.object(`functions/${perfil.region}/${idNegocio}`).update(infoFun)
+
+
+        // Info busqueda
+        const busqueda: any = {
+          abierto,
+          foto: perfil.logo,
+          nombre: perfil.nombre,
+          direccion: perfil.direccion,
+        }
+        if (perfil.tipo === 'productos') {
+          if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
+          if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
+          if (perfil.envio) busqueda.envio = perfil.envio
+          busqueda.envio_costo_fijo = perfil.envio_costo_fijo
+          busqueda.repartidores_propios = perfil.repartidores_propios
+        }
+        if (perfil.plan === 'basico') delete busqueda.idNegocio
+        await this.db.object(`busqueda/${perfil.region}/${idNegocio}`).update(busqueda)
+        resolve()
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  isOpen(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const idNegocio = this.uidService.getUid()
+      const region = this.uidService.getRegion()
+      const abiertoSub = this.db.object(`isOpen/${region}/${idNegocio}/abierto`)
+      .valueChanges().subscribe((abierto: boolean) => {
+        abiertoSub.unsubscribe()
+        resolve(abierto)
+      })
     })
   }
 
