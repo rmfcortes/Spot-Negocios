@@ -257,10 +257,10 @@ export class HomePage {
       }
       const num = parseInt(resp.preparacion, 10)
       const dias =  num * 86400000
-      this.pedido.aceptado = Date.now() + dias
       const dia = await this.datePipe.transform(this.pedido.aceptado, 'EEEE d/MMMM/y').toString()
       this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'Cancelar')
       .then(resp => { 
+        this.pedido.aceptado = Date.now() + dias
         if (resp) this.pedidoService.aceptarPedido(this.pedido)
         else this.pedido.aceptado = null
       })

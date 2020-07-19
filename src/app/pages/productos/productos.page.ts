@@ -361,6 +361,7 @@ export class ProductosPage implements OnInit {
                 productos: [producto]
               }
               this.productos.push(prodArray)
+              this.noMore = true
             }
           }
         }

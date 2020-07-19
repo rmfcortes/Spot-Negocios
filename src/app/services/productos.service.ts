@@ -254,7 +254,7 @@ export class ProductosService {
           if (perfil.envio_gratis_pedMin) preview.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) preview.envio_desp_pedMin = perfil.envio_desp_pedMin
           if (perfil.envio) preview.envio = perfil.envio
-          preview.envio_costo_fijo = perfil.envio_costo_fijo
+          if (perfil.envio_costo_fijo) preview.envio_costo_fijo = perfil.envio_costo_fijo
           preview.repartidores_propios = perfil.repartidores_propios
         }
         if (perfil.abierto) {
@@ -298,7 +298,7 @@ export class ProductosService {
           if (perfil.envio_gratis_pedMin) infoFun.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) infoFun.envio_desp_pedMin = perfil.envio_desp_pedMin
           if (perfil.envio) infoFun.envio = perfil.envio
-          infoFun.envio_costo_fijo = perfil.envio_costo_fijo
+          if (perfil.envio_costo_fijo) infoFun.envio_costo_fijo = perfil.envio_costo_fijo
           infoFun.repartidores_propios = perfil.repartidores_propios
 
         }
@@ -321,7 +321,7 @@ export class ProductosService {
           if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
           if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
           if (perfil.envio) busqueda.envio = perfil.envio
-          busqueda.envio_costo_fijo = perfil.envio_costo_fijo
+          if (perfil.envio_costo_fijo) busqueda.envio_costo_fijo = perfil.envio_costo_fijo
           busqueda.repartidores_propios = perfil.repartidores_propios
         }
         if (plan === 'basico') delete busqueda.idNegocio
