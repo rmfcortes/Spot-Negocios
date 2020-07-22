@@ -135,7 +135,7 @@ export class ProductoPage implements OnInit {
           this.base64Oferta = resp.data.split('data:image/png;base64,')[1]
         }
       }
-    });
+    })
     return await modal.present()
   }
 

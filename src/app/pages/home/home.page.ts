@@ -261,6 +261,12 @@ export class HomePage {
       this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'Cancelar')
       .then(resp => { 
         this.pedido.aceptado = Date.now() + dias
+        this.pedido.avances = [
+          {
+            fecha: Date.now(),
+            concepto: `${this.pedido.negocio.nombreNegocio} ha aceptado tu pedido`
+          },
+        ]
         if (resp) this.pedidoService.aceptarPedido(this.pedido)
         else this.pedido.aceptado = null
       })
@@ -348,6 +354,7 @@ export class HomePage {
     this.avance.fecha = Date.now()
     this.pedido.avances.push(this.avance)
     this.pedidoService.pushAvance(this.pedido)
+    this.avance.concepto = ''
   }
 
   listenRepartidorPendiente() {

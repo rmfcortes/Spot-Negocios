@@ -4,23 +4,29 @@
 </ion-item-divider>
 <ion-item lines="none">
     <ion-label>
+        <h2 *ngIf="pedido_selected.negocio.entrega === 'inmediato'" class="ion-text-wrap">Fecha:
+            <ion-text color="medium">{{pedido_selected.createdAt | date:'d/MMMM/y'}}</ion-text>
+        </h2>        
         <h2>Solicitado:
-            <ion-text color="medium">{{pedido_selected.createdAt | date:'h:mm a'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.negocio.entrega === 'inmediato'">{{pedido_selected.createdAt | date:'h:mm a'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.negocio.entrega === 'planeado'" class="ion-text-wrap">{{pedido_selected.createdAt | date:'d/MMMM/y h:mm a'}}</ion-text>
         </h2>
         <h2 *ngIf="pedido_selected.cancelado_by_negocio">Rechazado:
-            <ion-text color="medium">{{pedido_selected.cancelado_by_negocio | date:'h:mm a'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.negocio.entrega === 'inmediato'">{{pedido_selected.cancelado_by_negocio | date:'h:mm a'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.negocio.entrega === 'planeado'" class="ion-text-wrap">{{pedido_selected.cancelado_by_negocio | date:'d/MMMM/y h:mm a'}}</ion-text>
         </h2>
         <h2 *ngIf="pedido_selected.entregado">Entregado:
-            <ion-text color="medium">{{pedido_selected.entregado | date:'h:mm a'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.negocio.entrega === 'inmediato'">{{pedido_selected.entregado | date:'h:mm a'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.negocio.entrega === 'planeado'" class="ion-text-wrap">{{pedido_selected.entregado | date:'d/MMMM/y h:mm a'}}</ion-text>
         </h2>
         <h2 *ngIf="pedido_selected.entregado">Forma de pago:
-            <ion-text color="medium">{{pedido_selected.formaPago.forma}}</ion-text>
+            <ion-text color="medium">{{pedido_selected.formaPago.tipo | titlecase}}</ion-text>
         </h2>
         <h2 *ngIf="pedido_selected.entregado">Total:
             <ion-text color="medium">{{pedido_selected.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>        
         <h2 *ngIf="pedido_selected.entregado">Comisión:
-            <ion-text color="medium" *ngIf="pedido_selected.comision">{{pedido_selected.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+            <ion-text color="medium" *ngIf="pedido_selected.comision">-{{pedido_selected.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>
     </ion-label>
 </ion-item>

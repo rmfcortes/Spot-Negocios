@@ -14,6 +14,7 @@
             <ion-grid class="escritorio" fixed>
                 <ion-row>
                     <ion-col size-md="4" class="separate-scroll">
+                        <!-- Perfil Negocio -->
                         <ion-card [ngStyle]="{'border-right': negSel ? 'solid var(--ion-color-primary) 5px' : null}" class="resaltar">
                             <ion-item detail (click)="setDatos(perfilNegocio.id, 'negocio', rate.calificaciones, perfilNegocio.nombre, null)" [style.cursor]="negSel? null :'pointer'">
                                 <ion-avatar style="margin-right: 0.5rem;">
@@ -26,6 +27,7 @@
                                 </ion-label>
                             </ion-item>
                         </ion-card>
+                        <!-- Lista repartidores -->
                         <ion-list *ngIf="repartidores.length > 0">
                             <ion-list-header>
                                 <ion-label color="primary">Repartidores</ion-label>
@@ -51,6 +53,9 @@
                             </ion-item>
                         </ng-container>
                         <ng-template #loadComTemplate>
+
+
+                            <!-- Lista comentarios -->
                             <ion-list *ngFor="let item of comentarios; let i = index">
                                 <ion-card (click)="verPedido(item, i)" style="cursor: pointer;" [ngStyle]="{'border-right': i === calSel  ? 'solid var(--ion-color-primary) 5px' : null}" class="resaltar">
                                     <div style="margin: 0.5rem 0 0 0.5rem;">
@@ -72,6 +77,8 @@
                             </ion-infinite-scroll-content>
                         </ion-infinite-scroll>
                     </ion-col>
+
+                    <!-- Detalles de pedido -->
                     <ion-col size="4" class="separate-scroll">
                          <app-trip-selected *ngIf="pedido" [pedido_selected]="pedido"></app-trip-selected>
                     </ion-col>

@@ -17,21 +17,21 @@ import { RepartidorPreview, Repartidor } from 'src/app/interfaces/repartidor';
 })
 export class RepartidoresPage implements OnInit {
 
-  repartidores: RepartidorPreview[] = [];
-  repartidoresReady = false;
+  repartidores: RepartidorPreview[] = []
+  repartidoresReady = false
 
-  noRepartidor = '../../../assets/img/avatar/no-repartidor.jpg';
+  noRepartidor = '../../../assets/img/avatar/no-repartidor.jpg'
 
   ////////////// Escritorio
 
-  noFoto = '../../../assets/img/no-portada.png';
+  noFoto = '../../../assets/img/no-portada.png'
   fotoVieja = '';
   base64 = '';
 
   editRepa = false;
   guardando = false;
   bloquearUser = false;
-  repartidorPrev: RepartidorPreview;
+  repartidorPrev: RepartidorPreview
 
   repartidor: Repartidor = {
     preview: {
@@ -51,10 +51,10 @@ export class RepartidoresPage implements OnInit {
     }
   };
 
-  iSel: number;
-  eliminando = false;
+  iSel: number
+  eliminando = false
 
-  back: Subscription;
+  back: Subscription
 
   constructor(
     private ngZone: NgZone,
@@ -67,42 +67,42 @@ export class RepartidoresPage implements OnInit {
 
   ngOnInit() {
     this.menu.enable(true)
-    this.getRepartidores();
+    this.getRepartidores()
   }
 
   ionViewWillEnter() {
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
-      return;
-    });
+      return
+    })
   }
 
   getRepartidores() {
     this.repartidorService.getRepartidores().then(repartidores => {
-      this.repartidores = repartidores;
-      this.repartidoresReady = true;
-    });
+      this.repartidores = repartidores
+      this.repartidoresReady = true
+    })
   }
 
   async verRepartidor(repartidorPrev: RepartidorPreview) {
     const modal = await this.modalCtrl.create({
       component: RepartidorPage,
       componentProps: {repartidorPrev}
-    });
+    })
 
     modal.onWillDismiss().then(resp => {
       if (resp.data) {
         if (resp.data === 'eliminado') {
-          this.repartidores = this.repartidores.filter(r => r === repartidorPrev);
+          this.repartidores = this.repartidores.filter(r => r === repartidorPrev)
         } else {
           if (repartidorPrev) {
-            const i = this.repartidores.findIndex(r => r.id === resp.data.preview.id);
-            this.repartidores[i] = resp.data.preview;
+            const i = this.repartidores.findIndex(r => r.id === resp.data.preview.id)
+            this.repartidores[i] = resp.data.preview
           } else {
-            this.repartidores.unshift(resp.data.preview);
+            this.repartidores.unshift(resp.data.preview)
           }
         }
       }
-    });
+    })
 
     return await modal.present();
   }
@@ -114,8 +114,8 @@ export class RepartidoresPage implements OnInit {
     this.iSel = i
 
     if (this.repartidorPrev) {
-      this.fotoVieja = this.repartidorPrev.foto;
-      this.getRepartidor();
+      this.fotoVieja = this.repartidorPrev.foto
+      this.getRepartidor()
     } else {
       const preview = {
         foto: '',
@@ -133,48 +133,47 @@ export class RepartidoresPage implements OnInit {
           sexo: '',
           user: ''
       };
-      this.repartidor.detalles = detalles;
-      this.editRepa = true;
-      this.bloquearUser = false;
-
+      this.repartidor.detalles = detalles
+      this.editRepa = true
+      this.bloquearUser = false
     }
   }
 
   getRepartidor() {
-    this.repartidor.preview = this.repartidorPrev;
+    this.repartidor.preview = this.repartidorPrev
     this.repartidorService.getRepartidor(this.repartidor.preview.id).then(detalles => {
-      this.repartidor.detalles = detalles;
-      this.bloquearUser = true;
-      this.editRepa = true;
-    });
+      this.repartidor.detalles = detalles
+      this.bloquearUser = true
+      this.editRepa = true
+    })
   }
 
   async cropImage(imageChangedEvent, aspect, quality, width) {
     const modal = await this.modalCtrl.create({
       component: CropImagePage,
       componentProps: {imageChangedEvent, aspect, quality, width}
-    });
+    })
     modal.onWillDismiss().then(resp => {
       if (resp.data) {
-        this.repartidor.preview.foto = resp.data;
-        this.base64 = resp.data.split('data:image/png;base64,')[1];
+        this.repartidor.preview.foto = resp.data
+        this.base64 = resp.data.split('data:image/png;base64,')[1]
       }
     });
-    return await modal.present();
+    return await modal.present()
   }
 
   sexoElegido(event) {
-    this.repartidor.detalles.sexo = event.detail.value;
+    this.repartidor.detalles.sexo = event.detail.value
   }
 
   async guardarCambios() {
-    this.repartidor.preview.telefono = this.repartidor.preview.telefono.replace(/ /g, "");
+    this.repartidor.preview.telefono = this.repartidor.preview.telefono.replace(/ /g, "")
     if (this.repartidor.preview.telefono.length !== 10) {
-      this.alertService.presentAlert('Número incorrecto', 'El teléfono debe ser de 10 dígitos, por favor intenta de nuevo');
-      return;
+      this.alertService.presentAlert('Número incorrecto', 'El teléfono debe ser de 10 dígitos, por favor intenta de nuevo')
+      return
     }
     if (!this.repartidorPrev) {
-      this.repartidor.detalles.correo = this.repartidor.detalles.user.trim() + '@spot.com';
+      this.repartidor.detalles.correo = this.repartidor.detalles.user.trim() + '@spot.com'
     }
     try {
       this.guardando = true

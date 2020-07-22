@@ -18,8 +18,9 @@ export class PedidosService {
   repartidorSub: Subscription
   timeOutActivo = false
 
-
   entradas = 0
+
+  espera = 0
 
   constructor(
     public platform: Platform,
@@ -89,10 +90,10 @@ export class PedidosService {
 
   solicitarRepartidor(pedido: Pedido, i?: number) {
     const uid = this.uidService.getUid()
+    pedido.last_solicitud = Date.now()
     this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
     this.db.object(`pedidos/repartidor_pendiente/${uid}/${pedido.id}`).set(pedido)
     this.db.object(`pedidos/activos/${uid}/repartidor_pendiente/${pedido.id}`).set(pedido.id)
-    pedido.last_solicitud = Date.now()
     if (this.pedidos_pendientes_repartidor.length === 0) {
       this.pedidos_pendientes_repartidor.push(pedido)
     } else {
@@ -144,6 +145,17 @@ export class PedidosService {
   }
 
   timeOutRepartidorPendiente() {
+    if (!this.espera) {
+      const region = this.uidService.getRegion()
+      const espSub = this.db.object(`ciudades/${region}/espera`).valueChanges().subscribe((espera: number) => {
+        espSub.unsubscribe()
+        this.espera = espera
+        this.conteo()
+      })
+    } else this.conteo()
+  }
+
+  conteo() {
     setTimeout(() => {
       this.entradas++
       this.timeOutActivo = true
@@ -154,7 +166,7 @@ export class PedidosService {
         return
       }
       for (let i = 0; i < this.pedidos_pendientes_repartidor.length; i++) {
-        const lapso = this.pedidos_pendientes_repartidor[i].last_solicitud + 45000
+        const lapso = this.pedidos_pendientes_repartidor[i].last_solicitud + this.espera
         if (Date.now() > lapso) this.solicitarRepartidor(this.pedidos_pendientes_repartidor[i], i)
       }
       this.timeOutRepartidorPendiente()

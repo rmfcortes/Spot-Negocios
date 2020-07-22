@@ -6,6 +6,11 @@ import { IonicModule } from '@ionic/angular';
 
 import { RatesPageRoutingModule } from './rates-routing.module';
 
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeEsMX from '@angular/common/locales/es-MX';
+registerLocaleData(localeEsMX, 'es-MX');
+
 import { RatesPage } from './rates.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ComentariosPageModule } from 'src/app/modals/comentarios/comentarios.module';
@@ -19,6 +24,7 @@ import { ComentariosPageModule } from 'src/app/modals/comentarios/comentarios.mo
     ComentariosPageModule,
     RatesPageRoutingModule
   ],
-  declarations: [RatesPage]
+  declarations: [RatesPage],
+  providers: [{provide: LOCALE_ID, useValue: "es-MX"}]
 })
 export class RatesPageModule {}

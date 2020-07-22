@@ -75,7 +75,7 @@
                 </ng-template>
             </div>
 
-            <ion-grid class="escritorio ion-no-padding">
+            <ion-grid fixed class="escritorio ion-no-padding">
                 <ion-row>
                     <ion-col size="6" class="separate-scroll">
 
@@ -96,7 +96,7 @@
                         <!-- Section list -->
                         <ion-card style="padding-bottom: 1rem;">
                             <ion-item lines="none">
-                                <ion-button (click)="showSectionInput()" expand="block" fill="outline" color="medium" class="btn_agregar ion-text-wrap">
+                                <ion-button (click)="showSectionInput()" color="primary" fill="outline" class="btn_agregar ion-text-wrap">
                                     Agregar Departamento
                                 </ion-button>
                               </ion-item>
@@ -134,7 +134,7 @@
 
                         <ion-card *ngIf="listaPasillos.length > 0" style="padding-bottom: 1rem;">
                             <ion-item lines="none">
-                                <ion-button (click)="verProducto(null)" expand="block" fill="outline" color="medium" class="btn_agregar ion-text-wrap">
+                                <ion-button (click)="verProducto(null)" fill="outline" color="primary" class="btn_agregar ion-text-wrap">
                                     Agregar Producto
                                 </ion-button>
                               </ion-item>
