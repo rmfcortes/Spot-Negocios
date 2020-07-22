@@ -25,8 +25,8 @@
         <h2 *ngIf="pedido_selected.entregado">Total:
             <ion-text color="medium">{{pedido_selected.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>        
-        <h2 *ngIf="pedido_selected.entregado">Comisión:
-            <ion-text color="medium" *ngIf="pedido_selected.comision">-{{pedido_selected.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+        <h2 *ngIf="pedido_selected.entregado && pedido_selected.comision">Comisión:
+            <ion-text color="medium">-{{pedido_selected.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>
     </ion-label>
 </ion-item>
@@ -91,7 +91,7 @@
 <ion-item-divider style="text-align: center;">
     <ion-label color="primary" style="font-size: x-large;">Productos</ion-label>
 </ion-item-divider>
-<ion-item *ngFor="let producto of pedido_selected.productos" lines="full">
+<ion-item *ngFor="let producto of pedido_selected.productos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
     <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
     <ion-thumbnail slot="start">
         <img [src]="producto.url">

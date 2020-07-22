@@ -48,6 +48,7 @@ export class HomePage {
   }
 
   avancesSub: Subscription
+  para_llegar: number
 
   constructor(
     private ngZone: NgZone,
@@ -80,19 +81,22 @@ export class HomePage {
 
   getPedidos() {
     this.pedidos = []
-    // this.pushPedido()
     this.pedidoService.getPedidos().query.ref.on('child_added', snapshot => {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
         this.pedidos.unshift(pedido)
-        if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato') this.pedidoService.solicitarRepartidor(pedido)
-        if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'planeado' && pedido.repartidor_solicitado) this.pedidoService.solicitarRepartidor(pedido)
+        if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato') this.solicitarRepartidor(pedido)
+        if (pedido.aceptado && !pedido.repartidor && pedido.entrega === 'planeado' && pedido.repartidor_solicitado) this.solicitarRepartidor(pedido)
       })
     })
 
     this.pedidoService.getPedidos().query.ref.on('child_removed', snapshot => {
       this.ngZone.run(() => {
         const pedido: Pedido = snapshot.val()
+        if (this.pedido && this.pedido.id === pedido.id) {
+          if (this.avancesSub) this.avancesSub.unsubscribe()
+          if (this.escuchaRepAnterior) this.repSub.unsubscribe()
+        }
         this.pedidos = this.pedidos.filter(p => p.id !== pedido.id)
         if (this.pedido && this.pedido.id === pedido.id) this.pedido = null
       })
@@ -101,62 +105,6 @@ export class HomePage {
     setTimeout(() => {
       this.pedidosReady = true
     }, 1500)
-  }
-
-  pushPedido() { // Eliminar está función
-    const direccion: Direccion = {
-      direccion: 'Av. Siempre Viva 4545',
-      lat: 20.185687,
-      lng: -103.546875
-    }
-    const cliente: Cliente = {
-      direccion,
-      nombre: 'Pablo Flores',
-      uid: 'pabloflores',
-      telefono: '33145786485'
-    }
-    const formaPago: FormaPago = {
-      forma: '4242',
-      id: 'src_2nVA2khLbxoDvuGfr',
-      tipo: 'visa'
-    }
-    const negocio: Negocio = {
-      categoria: 'Moda',
-      direccion,
-      envio: 16,
-      idNegocio: 'fñjasd',
-      logo: 'klafjsd',
-      nombreNegocio: 'Novedades Elvia',
-      repartidores_propios: false,
-      telefono: '14564887'
-    }
-    const pedido: Pedido =  {
-      aceptado: false,
-      avances: [],
-      cliente,
-      comision: 12,
-      createdAt: 1593465814655,
-      entrega: 'inmediato',
-      envio: 35,
-      formaPago,
-      negocio,
-      productos: [{
-        descripcion: 'Excelente calidad',
-        id: 'aklsjdfasd',
-        nombre: 'Tenis clon',
-        pasillo: 'Abrigos',
-        precio: 280,
-        url: 'https://firebasestorage.googleapis.com/v0/b/revistaojo-9a8d3.appspot.com/o/negocios%2Fproductos%2FNX0Pt5gOnqQ20yqaLMxdbXpUkfS2%2F-M9VrdoSd8iMXksgExzA%2Fproducto?alt=media&token=27101131-5b12-420d-981a-129426db3ecc',
-        cantidad: 1,
-        total: 280,
-
-      }],
-      propina: 0,
-      total: 320,
-      id: 'fdklajñerm',
-      repartidor_solicitado: false
-    }
-    this.pedidos.push(pedido)
   }
 
   async verPedido(pedido) {
@@ -171,7 +119,7 @@ export class HomePage {
   ionViewWillLeave() {
     this.pedidoService.getPedidos().query.ref.off('child_removed')
     this.pedidoService.getPedidos().query.ref.off('child_added')
-
+    if (this.avancesSub) this.avancesSub.unsubscribe()
     if (this.escuchaRepAnterior) this.repSub.unsubscribe()
     if (this.back) this.back.unsubscribe()
     this.escuchaRepAnterior = ''
@@ -251,16 +199,21 @@ export class HomePage {
     'Tiempo estimado en días para tener listos los productos. ' +
     'Por favor introduce sólo números')
     .then(async (resp: any) => {
+      if (resp === undefined) {
+        this.alertService.presentAlert('', 'Define el tiempo de preparación para este pedido')
+        return
+      }
       if (!/^[0-9]+$/.test(resp.preparacion)) {
         this.alertService.presentAlert('Tiempo inválido', 'Por favor introduce un número entero entre 1-100')
         return
       }
       const num = parseInt(resp.preparacion, 10)
       const dias =  num * 86400000
-      const dia = await this.datePipe.transform(this.pedido.aceptado, 'EEEE d/MMMM/y').toString()
+      const entrega = Date.now() + dias
+      const dia = await this.datePipe.transform(entrega, 'EEEE d/MMMM/y').toString()
       this.alertService.presentAlertAction('Entrega', `Confirma si tendrás listos los productos el ${dia}`, 'Si', 'Cancelar')
       .then(resp => { 
-        this.pedido.aceptado = Date.now() + dias
+        this.pedido.aceptado = entrega
         this.pedido.avances = [
           {
             fecha: Date.now(),
@@ -274,7 +227,7 @@ export class HomePage {
   }
 
   entregaInmediata() {
-    if (this.tiempoPreparacion) this.asignaRepartidor()
+    if (this.tiempoPreparacion) this.asignaRepartidor(this.tiempoPreparacion)
     else {
       this.alertService.presentPromptPreparacion('Tiempo de preparacion',
       'Agrega el tiempo estimado de preparación en minutos. ' +
@@ -285,10 +238,14 @@ export class HomePage {
           this.alertService.presentAlert('', 'Define el tiempo de preparación para este pedido')
           return
         }
+        if (!/^[0-9]+$/.test(resp.preparacion)) {
+          this.alertService.presentAlert('Tiempo inválido', 'Por favor introduce un número entero entre 1-500')
+          return
+        }
         const num = parseInt(resp.preparacion, 10)
         if (num) {
-          this.tiempoPreparacion =  (num * 60000)
-          this.asignaRepartidor()
+          const preparacion = num * 60000
+          this.asignaRepartidor(preparacion)
         } else {
           this.alertService.presentAlert('Tiempo inválido', 'Por favor introduce un número entero entre 1-100');
         }
@@ -296,56 +253,70 @@ export class HomePage {
     }
   }
 
-  asignaRepartidor() {
+  async asignaRepartidor(preparacion: number) {
+    if (!this.pedido.negocio.repartidores_propios) {
+      this.pedido.aceptado = Date.now() + preparacion
+      this.pedido.avances = [
+        {
+          fecha: Date.now(),
+          concepto: `${this.pedido.negocio.nombreNegocio} ha aceptado tu pedido`
+        }
+      ]
+      await this.pedidoService.aceptarPedido(this.pedido)
+      this.solicitarRepartidor(this.pedido)
+      return
+    }
     if (this.radioRepartidores.length === 0) {
       return this.alertService.presentAlertAction('', 'No tienes repartidores registrados. Para aceptar el pedido debes tener al menos ' +
       'un repartidor registrado. ¿Te gustaría registrar tu primer repartidor?', 'Registrar', 'Cancelar')
       .then(resp => resp ? this.router.navigate(['/repartidores']) : null)
     }
     this.alertService.presentAlertRadio('Elige un repartidor',
-    'Elige a un colaborador disponible para entregar este envío o solicita uno a Spot',
-    this.radioRepartidores).then(resp => {
-      if (resp === undefined) {
-        this.alertService.presentAlert('', 'Elige alguna de las opciones para asignar el pedido o solicitar un repartidor')
+    'Elige a un colaborador disponible para entregar este envío',
+    this.radioRepartidores)
+    .then(async (resp) => {
+      if (!resp || resp === undefined) {
+        this.alertService.presentAlert('', 'Para aceptar el pedido, tienes que asignar algún repartidor para la entrega')
         return
       }
-      if (resp) {
-        if (this.pedido.entrega === 'inmediato') this.pedido.aceptado = Date.now() + (this.tiempoPreparacion)
-        this.pedidoService.aceptarPedido(this.pedido)
-        if (resp === 'spot') this.solicitarRepartidor()
-        else {
-          const repartidor = this.repartidores.filter(r => r.id === resp)
-          const rep: RepartidorPedido = {
-            nombre: repartidor[0].nombre,
-            foto: repartidor[0].foto,
-            id: repartidor[0].id,
-            telefono: repartidor[0].telefono,
-            externo: false
-          }
-          this.pedido.repartidor = rep
-          this.pedido.avances = [
-            {
-              fecha: Date.now(),
-              concepto: `${this.pedido.negocio.nombreNegocio} ha aceptado tu pedido`
-            },
-            {
-              fecha: Date.now(),
-              concepto: `${rep.nombre} está esperando tu pedido`
-            }
-          ]
-          this.pedidoService.asignarRepartidor(this.pedido)
-        }
-        const i = this.pedidos.findIndex(p => p.id === this.pedido.id)
-        this.pedidos[i] = this.pedido
+      this.pedido.aceptado = Date.now() + preparacion
+      const repartidor = this.repartidores.filter(r => r.id === resp)
+      const rep: RepartidorPedido = {
+        nombre: repartidor[0].nombre,
+        foto: repartidor[0].foto,
+        id: repartidor[0].id,
+        telefono: repartidor[0].telefono,
+        externo: false
       }
+      this.pedido.repartidor = rep
+      this.pedido.avances = [
+        {
+          fecha: Date.now(),
+          concepto: `${this.pedido.negocio.nombreNegocio} ha aceptado tu pedido`
+        },
+        {
+          fecha: Date.now(),
+          concepto: `${rep.nombre} está esperando tu pedido`
+        }
+      ]
+      await this.pedidoService.aceptarPedido(this.pedido)
+      this.pedidoService.asignarRepartidor(this.pedido)
+      const i = this.pedidos.findIndex(p => p.id === this.pedido.id)
+      this.pedidos[i] = this.pedido
     })
   }
 
-  async solicitarRepartidor() {
-    this.pedido.repartidor_solicitado = true
-    this.pedido.banderazo = await this.pedidoService.getBanderazo()
-    this.pedidoService.solicitarRepartidor(this.pedido)
-    this.listenRepartidorPendiente()
+  async solicitarRepartidor(pedido: Pedido) {
+    pedido.repartidor_solicitado = true
+    if (!pedido.banderazo) pedido.banderazo = await this.pedidoService.getBanderazo()
+    this.pedidoService.solicitarRepartidor(pedido)
+    if (this.pedido) this.listenRepartidorPendiente()
+  }
+
+  repartidorEnCamino() {
+    this.pedido.recolectado = true
+    this.avance.concepto = `Productos listos, ${this.pedido.repartidor.nombre} está en camino`
+    this.agregarAvance()
   }
 
   agregarAvance() {
@@ -362,8 +333,10 @@ export class HomePage {
     this.escuchaRepAnterior = this.pedido.id
     this.repSub = this.pedidoService.listenRepartidorTs(this.pedido.id).subscribe((repartidor: RepartidorPedido) => {
       this.ngZone.run(() => {
-        this.pedido.repartidor = repartidor
-        this.pedidoService.borraPendiente(this.pedido.id)
+        if (this.pedido && repartidor) {
+          this.pedido.repartidor = repartidor
+          this.pedidoService.borraPendiente(this.pedido.id)
+        }
       })
     })
   }
@@ -371,7 +344,7 @@ export class HomePage {
   listenAvances() {
     if (this.avancesSub) this.avancesSub.unsubscribe()
     this.avancesSub = this.pedidoService.listenAvances(this.pedido.id).subscribe((avances: Avance[]) => {
-      this.ngZone.run(() => this.pedido.avances = avances)
+      this.ngZone.run(() => this.pedido ? this.pedido.avances = avances : null)
     })
   }
 

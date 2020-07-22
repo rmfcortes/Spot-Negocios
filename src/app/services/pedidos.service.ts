@@ -60,8 +60,11 @@ export class PedidosService {
   }
 
   aceptarPedido(pedido: Pedido) {
-    const uid = this.uidService.getUid()
-    this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
+    return new Promise(async (resolve, reject) => {      
+      const uid = this.uidService.getUid()
+      await this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
+      resolve()
+    })
   }
 
   rechazarPedido(pedido: Pedido) {
@@ -74,7 +77,6 @@ export class PedidosService {
       try {        
         const idNegocio = this.uidService.getUid()
         this.pedidos_pendientes_repartidor = this.pedidos_pendientes_repartidor.filter(p => p.id !== pedido.id)
-        await this.db.object(`pedidos/activos/${idNegocio}/detalles/${pedido.id}`).update(pedido)
         this.db.object(`pedidos/activos/${idNegocio}/repartidor_pendiente/${pedido.id}`).remove()
         resolve()
       } catch (error) {
@@ -118,11 +120,22 @@ export class PedidosService {
         resolve(banderazo)
       })
     })
+  }   
+  
+  getTimeParaLLegar(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const region = this.uidService.getRegion()
+      const banSub = this.db.object(`ciudades/${region}/envio/para_llegar`)
+      .valueChanges().subscribe((para_llegar: number) => {
+        banSub.unsubscribe()
+        resolve(para_llegar)
+      })
+    })
   } 
 
   pushAvance(pedido: Pedido) {
     const uid = this.uidService.getUid()
-    this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}/avances`).set(pedido.avances)
+    this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
   }
 
     // Esucha de una lista de pedidos pendientes de repartidores. Cuando se elimina de esa lista, sabemos que ya tiene repartidor
@@ -169,7 +182,7 @@ export class PedidosService {
         const lapso = this.pedidos_pendientes_repartidor[i].last_solicitud + this.espera
         if (Date.now() > lapso) this.solicitarRepartidor(this.pedidos_pendientes_repartidor[i], i)
       }
-      this.timeOutRepartidorPendiente()
+      this.conteo()
     }, 1000)
   }
 

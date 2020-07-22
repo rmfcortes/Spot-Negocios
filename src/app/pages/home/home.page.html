@@ -135,14 +135,26 @@
                             <ion-button *ngIf="pedido.negocio.repartidores_propios" (click)="asignaRepartidor()" shape="round">
                                 Asignar repartidor
                             </ion-button>                            
-                            <ion-button *ngIf="!pedido.negocio.repartidores_propios" (click)="solicitarRepartidor()" shape="round">
+                            <ion-button *ngIf="!pedido.negocio.repartidores_propios" (click)="solicitarRepartidor(pedido)" shape="round">
                                 Solicitar repartidor
                             </ion-button>
                         </ion-item>
                     </ion-card>
 
+                    <!-- Avisa al cliente repartidor en camino -->
+                    <ion-card *ngIf="pedido.repartidor && pedido.negocio.repartidores_propios && !pedido.recolectado">
+                        <ion-list-header>
+                            <ion-label color="primary">Notifica al cliente cuando tu repartidor esté en camino</ion-label>
+                        </ion-list-header>
+                        <ion-item lines="none">
+                            <ion-button (click)="repartidorEnCamino()" expand="block" shape="round" class="ion-text-wrap">
+                                ¡Productos listos! El repartidor está en camino
+                            </ion-button>
+                        </ion-item>
+                    </ion-card>
+
                     <!-- Detalles de avances -->
-                    <ion-card *ngIf="pedido.aceptado && pedido.entrega === 'planeado'" style="padding-bottom: 1rem;">
+                    <ion-card *ngIf="pedido.aceptado" style="padding-bottom: 1rem;">
                         <ion-list-header>
                             <ion-label color="primary">Avances</ion-label>
                         </ion-list-header>
@@ -166,7 +178,7 @@
                         <ion-list-header>
                             <ion-label color="primary">Productos</ion-label>
                         </ion-list-header>
-                        <ion-item *ngFor="let producto of pedido.productos; let i = index" lines="full">
+                        <ion-item *ngFor="let producto of pedido.productos; let i = index; let odd = odd" [ngClass]="{'contraste': odd}" lines="none">
                             <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
                             <ion-thumbnail slot="start">
                                 <img [src]="producto.url">

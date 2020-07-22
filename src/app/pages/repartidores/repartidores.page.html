@@ -125,7 +125,7 @@
                         </ion-item>
                         <ion-item>
                             <ion-label color="medium" position="floating">Teléfono</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="repartidor.preview.telefono" type="tel" name="telefono" minlength="3"></ion-input>
+                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="repartidor.preview.telefono" type="tel" name="telefono" minlength="10" required></ion-input>
                         </ion-item>
                         <ion-item>
                             <ion-label color="medium" position="floating">Edad</ion-label>
