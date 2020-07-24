@@ -214,6 +214,10 @@ export class AppComponent {
     if (this.pedSub) this.pedSub.unsubscribe()
     if (this.planSub)  this.planSub.unsubscribe()
     if (this.cambiosSub) this.cambiosSub.unsubscribe()
+    const i = this.appPages.findIndex(p => p.title === 'Historial')
+    if (i >= 0) this.appPages.splice(i, 1)
+    const y = this.appPages.findIndex(p => p.title === 'Repartidores')
+    if (y >= 0) this.appPages.splice(y, 1)
     this.authService.logout()
     this.router.navigate(['/login'])
   }

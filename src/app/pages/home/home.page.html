@@ -132,7 +132,7 @@
                         </ion-list-header>
                         <ion-item>
                             <ion-label color="medium">Repartidor pendiente</ion-label>
-                            <ion-button *ngIf="pedido.negocio.repartidores_propios" (click)="asignaRepartidor()" shape="round">
+                            <ion-button *ngIf="pedido.negocio.repartidores_propios" (click)="asignaRepartidorPlaneado()" shape="round">
                                 Asignar repartidor
                             </ion-button>                            
                             <ion-button *ngIf="!pedido.negocio.repartidores_propios" (click)="solicitarRepartidor(pedido)" shape="round">

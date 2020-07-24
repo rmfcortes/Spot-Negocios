@@ -306,6 +306,42 @@ export class HomePage {
     })
   }
 
+  asignaRepartidorPlaneado() {
+    if (this.radioRepartidores.length === 0) {
+      return this.alertService.presentAlertAction('', 'No tienes repartidores registrados. Para aceptar el pedido debes tener al menos ' +
+      'un repartidor registrado. ¿Te gustaría registrar tu primer repartidor?', 'Registrar', 'Cancelar')
+      .then(resp => resp ? this.router.navigate(['/repartidores']) : null)
+    }
+    this.alertService.presentAlertRadio('Elige un repartidor',
+    'Elige a un colaborador disponible para entregar este envío',
+    this.radioRepartidores)
+    .then(async (resp) => {
+      if (!resp || resp === undefined) {
+        this.alertService.presentAlert('', 'Para aceptar el pedido, tienes que asignar algún repartidor para la entrega')
+        return
+      }
+      const repartidor = this.repartidores.filter(r => r.id === resp)
+      const rep: RepartidorPedido = {
+        nombre: repartidor[0].nombre,
+        foto: repartidor[0].foto,
+        id: repartidor[0].id,
+        telefono: repartidor[0].telefono,
+        externo: false
+      }
+      this.pedido.repartidor = rep
+      this.pedido.avances.push(
+        {
+          fecha: Date.now(),
+          concepto: `${rep.nombre} es tu repartidor, y está en espera de tus productos`
+        }
+      )
+      await this.pedidoService.aceptarPedido(this.pedido)
+      this.pedidoService.asignarRepartidor(this.pedido)
+      const i = this.pedidos.findIndex(p => p.id === this.pedido.id)
+      this.pedidos[i] = this.pedido
+    })
+  }
+
   async solicitarRepartidor(pedido: Pedido) {
     pedido.repartidor_solicitado = true
     if (!pedido.banderazo) pedido.banderazo = await this.pedidoService.getBanderazo()
