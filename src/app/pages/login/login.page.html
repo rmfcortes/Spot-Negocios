@@ -4,13 +4,18 @@
         <ion-row class="ion-align-items-center" style="height: 100%;">
             <!-- Image login -->
             <ion-col>
-                <!-- <img src="../../../assets/img/login.jpg"> -->
+                <img class="img-plaza" src="../../../assets/img/login.jpg">
             </ion-col>
             <ion-col style="text-align: center; padding: 1.5rem;">
                 <!-- Sign in form -->
                 <form [formGroup]="form" (ngSubmit)="signIn()" class="box-form">
                     <ion-item lines="none" style="text-align: center;">
-                        <ion-label>Spot</ion-label>
+                        <div style="width: 100%; text-align: center;">
+                            <img src="../../../assets/img/logo.png" style="width: 15%;">
+                        </div>
+                    </ion-item>
+                    <ion-item lines="none" style="text-align: center;">
+                        <ion-label>Plaza</ion-label>
                     </ion-item>
                     <h1 style="color: var(--ion-color-primary); font-size: xx-large;">Bienvenido</h1>
                     <p style="margin-bottom: 4rem;">Spot para administradores</p>
@@ -57,9 +62,6 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-
-
-
 
 
     <!-- Mobile design -->
