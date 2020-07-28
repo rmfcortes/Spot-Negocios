@@ -54,7 +54,8 @@ ion-card {
 }
 
 .resaltar:hover {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 20px 0 rgba(0, 0, 0, 0.10)
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 20px 0 rgba(0, 0, 0, 0.10);
+    z-index: 250;
 }
 
 .active {
@@ -86,6 +87,18 @@ ion-item {
     --padding-end: 1rem;
     --padding-start: 1rem;
     --padding-top: 1rem;
+}
+
+.gradient-- {
+    --background: linear-gradient(197deg, #F37208 0%, #Ef0808 100%);
+}
+
+.gradient_inverse-- {
+    --background: linear-gradient(197deg, #Ef0808  0%, #F37208 100%);
+}
+
+.gradient {
+    background: linear-gradient(197deg, #F37208 0%, #Ef0808 100%);
 }
 
 

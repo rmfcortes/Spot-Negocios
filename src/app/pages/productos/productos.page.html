@@ -3,7 +3,7 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="comfortaa">Productos</ion-title>
+        <ion-title>Productos</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -12,67 +12,74 @@
         <ng-container *ngIf="categoria; else mainTemplate">
             <div class="mobile">
                 <!-- Lista mobile Productos-->
-                <ng-container *ngIf="tipo === 'productos'; else prodServMobileTemplate">
-                    <ng-container *ngIf="pasillos.vista === 'lista'; else vistaMobileTemplate">
-                        <ion-list *ngFor="let item of productos; let i = index">
-                            <ion-list-header>
-                                <ion-label color="primary">{{item.nombre | titlecase}}</ion-label>
-                            </ion-list-header>
-                            <ion-item *ngFor="let prod of item.productos; let y = index" (click)="verProducto(prod)" style="--padding-start: 0" detail>
-                                <ion-grid fixed>
-                                    <ion-row>
-                                        <ion-col size="8">
-                                            <ion-item lines="none">
-                                                <ion-label class="ion-text-wrap">
-                                                    <h2>{{prod.nombre}}</h2>
-                                                    <p style="font-size: 10pt; color:var(--ion-color-medium);">{{prod.descripcion}}</p>
-                                                    <p style="font-size: 12pt; color:var(--ion-color-primary);">{{prod.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</p>
-                                                </ion-label>
-                                            </ion-item>
-                                        </ion-col>
-                                        <ion-col size="4">
-                                            <preload-image [ratio]="{w: 1, h: .65}" [src]="prod.url">
-                                            </preload-image>
-                                        </ion-col>
-                                    </ion-row>
-                                </ion-grid>
-                            </ion-item>
-                        </ion-list>
-                    </ng-container>
-                    <ng-template #vistaMobileTemplate>
-                        <div [id]="item.nombre" *ngFor="let item of productos; let i = index; let first = first">
-                            <ion-item lines="none">
-                                <h4 style="color: var(--ion-color-primary)" class="ion-text-wrap">{{item.nombre | titlecase}}</h4>
-                            </ion-item>
-                            <div class="card" *ngFor="let prod of item.productos; let y = index" (click)="verProducto(prod)">
-                                <ion-img [src]="prod.url" alt=""></ion-img>
-                                <div class="product-name">
-                                    <h6 class="ion-text-wrap">{{prod.nombre}}</h6>
-                                </div>
-                                <span style="color: var(--ion-color-medium); font-size: 13pt">
-                                    {{prod.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}
-                                </span> <br>
-                                <span style="color: var(--ion-color-medium); font-size: 12pt">
-                                        {{prod.unidad}}
-                                </span>
-                            </div>
-                        </div>
-                    </ng-template>
-                </ng-container>
-                <!-- Lista mobile Servicios-->
 
-                <ng-template #prodServMobileTemplate>
-                    <ion-list *ngFor="let item of productos; let i = index">
-                        <ion-list-header style="--color: var(--ion-color-primary);">
-                            <ion-label>{{item.nombre | titlecase}}</ion-label>
-                        </ion-list-header>
-                        <ion-item *ngFor="let serv of item.productos; let y = index" (click)="verProducto(serv)" style="--padding-start: 0" detail>
-                            <ion-item lines="none">
-                                <ion-label class="ion-text-wrap">{{serv.nombre}}</ion-label>
-                            </ion-item>
+                <!-- Views selector -->
+                <ion-card>
+                    <ion-item>
+                        <ion-label color="medium">Plantilla</ion-label>
+                        <ion-select [(ngModel)]="pasillos.vista" color="medium" okText="Aceptar" cancelText="Cancelar" (ionChange)="vistaElegida($event)">
+                            <ion-select-option value="list-img">Lista con imágenes</ion-select-option>
+                            <ion-select-option value="list">Lista</ion-select-option>
+                            <ion-select-option value="block">Tarjetas pequeñas</ion-select-option>
+                            <ion-select-option value="cards">Tarjetas</ion-select-option>
+                            <ion-select-option value="gallery">Galería</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-card>
+
+                <!-- Section list -->
+                <ion-card style="padding-bottom: 1rem;">
+                    <ion-item lines="none" *ngIf="listaPasillos.length > 0">
+                        <ion-label color="medium">Ver departamentos</ion-label>
+                        <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
+                        <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
+                        <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
+                    </ion-item>
+                    <ion-item *ngIf="viewSectionInput" lines="none">
+                        <ion-input (keyup.enter)="addPasillo()" type="text" [(ngModel)]="nuevo_pasillo" placeholder="Bebidas, Lacteos, Ropa dama" autoFocus="true" id="inputSection" #inputSection></ion-input>
+                        <ion-icon slot="end" name="close" color="medium" (click)="viewSectionInput = false"></ion-icon>
+                        <ion-button slot="end" (click)="addPasillo()" shape="round" class="gradint--">
+                            Agregar
+                        </ion-button>
+                    </ion-item>
+                    <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
+                        <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
+                            <ng-container *ngIf="section.edit; else editTemplate">
+                                <ion-input [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
+                                <ion-reorder slot="end"></ion-reorder>
+                                <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
+                                <ion-icon slot="end" name="close" color="danger" (click)="cancelEditPasillo(i)"></ion-icon>
+                            </ng-container>
+                            <ng-template #editTemplate>
+                                <ion-label>{{section.nombre}}</ion-label>
+                                <ion-reorder slot="end"></ion-reorder>
+                                <ion-icon slot="end" name="pencil" color="primary" (click)="editPasillo(i)"></ion-icon>
+                                <ion-icon slot="end" name="trash" color="danger" (click)="deletePasillo(i, section.nombre)"></ion-icon>
+                            </ng-template>
                         </ion-item>
-                    </ion-list>
-                </ng-template>
+                    </ion-reorder-group>
+                </ion-card>
+
+                <div [ngSwitch]="pasillos.vista" *ngIf="productosCargados > 0">
+                    <div *ngSwitchCase="'list-img'">
+                        <app-list-img [sections]="productos" (showProduct)="verProducto($event)"></app-list-img>
+                    </div>
+                    <div *ngSwitchCase="'block'">
+                        <app-block [sections]="productos" (showProduct)="verProducto($event)"></app-block>
+                    </div>
+                    <div *ngSwitchCase="'cards'">
+                        <app-cards [sections]="productos" (showProduct)="verProducto($event)"></app-cards>
+                    </div>
+                    <div *ngSwitchCase="'list'">
+                        <app-list [sections]="productos" (showProduct)="verProducto($event)"></app-list>
+                    </div>
+                    <div *ngSwitchCase="'gallery'">
+                        <app-gallery [sections]="productos" (showProduct)="verProducto($event)"></app-gallery>
+                    </div>
+                    <div *ngSwitchDefault>
+                        <app-list-img [sections]="productos" (showProduct)="verProducto($event)"></app-list-img>
+                    </div>
+                </div>
             </div>
 
             <ion-grid fixed class="escritorio ion-no-padding">
@@ -95,20 +102,16 @@
 
                         <!-- Section list -->
                         <ion-card style="padding-bottom: 1rem;">
-                            <ion-item lines="none">
-                                <ion-button (click)="showSectionInput()" color="primary" fill="outline" class="btn_agregar ion-text-wrap">
-                                    Agregar Departamento
-                                </ion-button>
-                              </ion-item>
                             <ion-item lines="none" *ngIf="listaPasillos.length > 0">
                                 <ion-label color="medium">Ver departamentos</ion-label>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
                                 <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
+                                <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
                             </ion-item>
                             <ion-item *ngIf="viewSectionInput" lines="none">
                                 <ion-input (keyup.enter)="addPasillo()" type="text" [(ngModel)]="nuevo_pasillo" placeholder="Bebidas, Lacteos, Ropa dama" autoFocus="true" id="inputSection" #inputSection></ion-input>
                                 <ion-icon slot="end" name="close" color="medium" (click)="viewSectionInput = false"></ion-icon>
-                                <ion-button slot="end" (click)="addPasillo()" shape="round">
+                                <ion-button slot="end" (click)="addPasillo()" shape="round" class="gradint--">
                                     Agregar
                                 </ion-button>
                             </ion-item>
@@ -133,24 +136,19 @@
                         <!-- Products list -->
 
                         <ion-card *ngIf="listaPasillos.length > 0" style="padding-bottom: 1rem;">
-                            <ion-item lines="none">
-                                <ion-button (click)="verProducto(null)" fill="outline" color="primary" class="btn_agregar ion-text-wrap">
-                                    Agregar Producto
-                                </ion-button>
-                              </ion-item>
                             <ion-item lines="none" *ngIf="productosCargados > 0">
                                 <ion-label color="medium">Productos</ion-label>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="viewProducts === false && productosCargados > 0" (click)="viewProducts = true"></ion-icon>
                                 <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="viewProducts === true" (click)="viewProducts = false"></ion-icon>
+                                <ion-icon slot="end" name="add" color="primary" (click)="verProducto(null)"></ion-icon>
                             </ion-item>
                             <ng-container *ngIf="viewProducts">
                                 <ion-list *ngFor="let section of productos; trackBy: trackByPasilloProducto">
-                                    <ion-list-header *ngIf="section.productos && section.productos.length > 0">
-                                        <ion-label color="primary" style="font-size: 10px;">{{section.nombre}}</ion-label>
-                                    </ion-list-header>
-                                    <ion-item *ngFor="let product of section.productos; trackBy: trackByProducto; let odd = odd" [ngClass]="{'contraste': odd}" lines="none">
-                                        <ion-label>{{product.nombre}}</ion-label>
-                                        <ion-icon name="pencil" slot="end" color="primary" (click)="verProducto(product)"></ion-icon>
+                                    <h2 *ngIf="section.productos && section.productos.length > 0" style="font-weight: 700; margin-left: 2rem;" class="primario">
+                                        {{section.nombre}}</h2>
+                                    <ion-item (click)="verProducto(product)" *ngFor="let product of section.productos; trackBy: trackByProducto; let odd = odd" [ngClass]="{'contraste': odd}" lines="none" class="resaltar">
+                                        <ion-label>{{product.precio | currency:'CAD':'symbol-narrow':'1.0-2'}} / {{product.nombre}}</ion-label>
+                                        <ion-icon name="pencil" slot="end" color="primary"></ion-icon>
                                     </ion-item>
                                 </ion-list>
                                 <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProducts()" expand="block" fill="clear" shape="round">
@@ -216,7 +214,6 @@
                                         Ver más
                                     </ion-button>
                                 </ng-template>
-
 
                                 <ion-item style="padding-top: 3rem; text-align: center;" *ngIf="noMore" lines="none">
                                     <ion-label color="medium">No hay más resultados</ion-label>

@@ -214,6 +214,11 @@ export class AlertService {
     if (this.loader) this.loader.dismiss()
   }
 
+  playAlert() {
+    const audio = new Audio()
+    audio.src = '../../assets/sound/notification.mp3'
+    audio.play()
+  }
 
 
   formatDate(d: Date): Promise<string> {

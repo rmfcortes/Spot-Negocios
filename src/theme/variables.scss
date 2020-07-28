@@ -3,6 +3,20 @@
 
 /** Ionic CSS Variables **/
 
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    
+    src: url('../assets/fonts/Nunito/nunito-v13-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local('Nunito Regular'), local('Nunito-Regular'),
+         url('../assets/fonts/Nunito/nunito-v13-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('../assets/fonts/Nunito/nunito-v13-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+         url('../assets/fonts/Nunito/nunito-v13-latin-regular.woff') format('woff'), /* Modern Browsers */
+         url('../assets/fonts/Nunito/nunito-v13-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('../assets/fonts/Nunito/nunito-v13-latin-regular.svg#Nunito') format('svg'); /* Legacy iOS */
+  }
+
 :root {
     /** primary **/
     --ion-color-primary: #f37208;
@@ -69,17 +83,29 @@
     --ion-color-light-tint: #f5f6f9;
 }
 
+:root,
+:root[mode='ios'],
+:root[mode='md'] {
+    --ion-font-family: 'Nunito', sans-serif !important;
+    font-family: 'Nunito', sans-serif !important;
+}
+
+/* nunito-700 - latin */
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../assets/fonts/Nunito/nunito-v13-latin-700.eot'); /* IE9 Compat Modes */
+    src: local('Nunito Bold'), local('Nunito-Bold'),
+            url('../assets/fonts/Nunito/nunito-v13-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('../assets/fonts/Nunito/nunito-v13-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+            url('../assets/fonts/Nunito/nunito-v13-latin-700.woff') format('woff'), /* Modern Browsers */
+            url('../assets/fonts/Nunito/nunito-v13-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('../assets/fonts/Nunito/nunito-v13-latin-700.svg#Nunito') format('svg'); /* Legacy iOS */
+}
+
 .split-pane-visible>.split-pane-side {
     max-width: 250px!important;
-}
-
-@font-face {
-    font-family: 'Comfortaa';
-    src: url('../assets/fonts/Comfortaa-Regular.ttf');
-}
-
-.comfortaa {
-    font-family: "Comfortaa";
 }
 
 .boton-margen {

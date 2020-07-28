@@ -3,86 +3,90 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="comfortaa">{{perfil?.nombre}}</ion-title>
+        <ion-title>{{perfil?.nombre}}</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <!-- Mobile -->
-    <!-- <div class="mobile">
+    <div class="mobile">
         <ng-container *ngIf="perfilReady; else loadMobileTemplate">
-            <div>
-                <ng-container *ngIf="!perfil.portada; else portadaTemplate">
-                    <div style="text-align: center;">
-                        <img [src]="noPortada" style="width: 35%;" (click)="foto1.click()" /> <br>
-                        <input style="display: none" (change)="cropImage($event, 1/.33, true, 60, 450)" type="file" #foto1> <br>
-                        <ion-label color="medium" *ngIf="!perfil.portada">Elige tu portada. Toma una fotografía del negocio o producto estrella</ion-label>
-                    </div>
-                </ng-container>
-                <ng-template #portadaTemplate>
-                    <img [src]="perfil.portada" style="width: 100%;" (click)="foto1.click()" /> <br>
-                    <input style="display: none" (change)="cropImage($event, 1/.33, true, 60, 450)" type="file" #foto1> <br>
-                </ng-template>
-
-                <div class="boton-margen">
-                    <form #forma="ngForm" (submit)="guardarCambios()">
-                        <ion-grid>
-                            <ion-row>
-                                <ion-col size="4">
-                                    <ion-item lines="none">
-                                        <ion-label color="medium" position="fixed">Logo</ion-label>
-                                    </ion-item>
-                                </ion-col>
-                                <ion-col size="8">
-                                    <img [src]="perfil.logo || noLogo" style="height: 2.5rem;" (click)="foto2.click()" />
-                                    <input style="display: none" (change)="cropImage($event, 1/1, false)" type="file" #foto2>
-                                </ion-col>
-                            </ion-row>
-                        </ion-grid>
-                        <ion-item>
-                            <ion-label color="medium" position="floating">Negocio</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.nombre" type="text" name="nombre" required minlength="3"></ion-input>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label color="medium" position="floating">Direccion</ion-label>
-                            <ion-input id="txtHome" #txtHome (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.direccion.direccion" type="text" name="direccion" required minlength="3"></ion-input>
-                        </ion-item>
-                        <agm-map *ngIf="perfil.direccion.lat" [latitude]="perfil.direccion.lat" [longitude]="perfil.direccion.lng" [zoom]="16">
-                            <agm-marker [latitude]="perfil.direccion.lat" [longitude]="perfil.direccion.lng" (dragEnd)="guardaLoc($event)" [markerDraggable]="true"></agm-marker>
-                        </agm-map>
-                        <ion-item>
-                            <ion-label color="medium" position="floating">Telefono (10 dígitos)</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.telefono" type="tel" name="telefono" required minlength="10"></ion-input>
-                        </ion-item>
-                        <ion-item *ngIf="perfil.tipo === 'servicios'">
-                            <ion-label color="medium" position="floating" class="ion-text-wrap">Whatsapp de contacto (10 dígitos)</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.whats" type="tel" name="whats" minlength="10"></ion-input>
-                        </ion-item>
-                        <ion-item *ngIf="perfil.tipo === 'productos'">
-                            <ion-label color="medium" position="floating" class="ion-text-wrap">Tiempo de preparacion aprox. en minutos</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.preparacion" type="number" name="preparacion" minlength="1"></ion-input>
-                        </ion-item>
-                        <ion-item *ngIf="perfil.tipo === 'productos'">
-                            <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.envio" type="number" name="envio" minlength="1"></ion-input>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label color="medium" position="floating">Descripción</ion-label>
-                            <ion-textarea (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.descripcion" type="text" name="descripcion" required minlength="3"></ion-textarea>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label color="medium">Subcategoria(s)</ion-label>
-                            <ion-select multiple="true" [(ngModel)]="perfil.subCategoria" [disabled]="subCategorias.length <= 0" color="medium" okText="Aceptar" cancelText="Cancelar" required name="subCat">
-                                <ion-select-option *ngFor="let item of subCategorias" [value]="item">{{item | titlecase}}</ion-select-option>
-                            </ion-select>
-                        </ion-item>
-
-                        <ion-button class="boton-margen" style="margin-top: 2rem" [disabled]="!forma.valid || !perfil.logo || !perfil.portada || !perfil.tipo || !perfil.subCategoria || !cobertura" type="submit">
-                            Guardar cambios
-                        </ion-button>
-                    </form>
+            <ion-card>
+                <div>
+                    <img [src]="perfil.portada || noPortada" style="width: 100%; cursor: pointer;" (click)="foto1.click()" /> <br>
+                    <input style="display: none" (change)="cropImage($event, 1/.33, true, 80, 450)" type="file" #foto1> <br>
                 </div>
-            </div>
+                <div class="logo">
+                    <img [src]="perfil.logo || noLogo" style="position: relative;" (click)="foto2.click()" />
+                    <input style="display: none" (change)="cropImage($event, 1/.9, false)" type="file" #foto2>
+                </div>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Dirección</ion-label>
+                    <ion-input id="txtEscritorio" #txtEscritorio (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.direccion.direccion" type="text" name="direccion" required minlength="3"></ion-input>
+                </ion-item>
+                <agm-map *ngIf="perfil.direccion.lat" [latitude]="perfil.direccion.lat" [longitude]="perfil.direccion.lng" [zoom]="16">
+                    <agm-marker [latitude]="perfil.direccion.lat" [longitude]="perfil.direccion.lng" (dragEnd)="guardaLoc($event)" [markerDraggable]="true"></agm-marker>
+                </agm-map>
+            </ion-card>
+            <ion-card>
+                <form #forma="ngForm" (submit)="guardarCambios()">
+                    <ion-item>
+                        <ion-label color="medium" position="floating">Negocio</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur()" (ionChange)="formularioChange()" [(ngModel)]="perfil.nombre" type="text" name="nombre" required minlength="3"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label color="medium" position="floating">Contacto</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur()" (ionChange)="formularioChange()" [(ngModel)]="perfil.contacto" type="text" name="contacto" required minlength="3"></ion-input>
+                    </ion-item>                            
+                    <ion-item>
+                        <ion-label color="medium" position="floating">Correo</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur()" (ionChange)="formularioChange()" [(ngModel)]="perfil.correo" type="text" name="correo" readonly="true" required minlength="3" color="medium"></ion-input>
+                    </ion-item>                            
+                    <ion-item>
+                        <ion-label color="medium" position="floating">Telefono (10 dígitos)</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.telefono" type="tel" name="telefono" required minlength="10" maxlength="10"></ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="perfil.tipo === 'servicios'">
+                        <ion-label color="medium" position="floating" class="ion-text-wrap">Whatsapp de contacto (10 dígitos)</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.whats" type="tel" name="whats" minlength="10" maxlength="10"></ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="perfil.repartidores_propios">
+                        <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
+                        <ion-label *ngIf="perfil.envio_costo_fijo">Costo de envío fijo</ion-label>
+                        <ion-label *ngIf="!perfil.envio_costo_fijo">Costo de envío en base a distancia</ion-label>
+                        <ion-toggle [(ngModel)]="perfil.envio_costo_fijo" slot="end" color="primary" name="envio_fijo" (ionChange)="formularioChange()"></ion-toggle>
+                    </ion-item>
+                    <ion-item *ngIf="perfil.tipo === 'productos' && perfil.envio_costo_fijo && perfil.repartidores_propios">
+                        <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.envio" type="number" name="envio" minlength="1"></ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="perfil.repartidores_propios">
+                        <ion-label color="medium" position="floating">Pedido mínimo para envío gratis</ion-label>
+                        <ion-input type="number" [(ngModel)]="perfil.envio_gratis_pedMin" name="envio_gratis" (ionChage)="formularioChange()"></ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="perfil.tipo === 'productos' && perfil.entrega === 'inmediato'">
+                        <ion-label color="medium" position="floating" class="ion-text-wrap">Tiempo de preparacion aprox. en minutos</ion-label>
+                        <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.preparacion" type="number" name="preparacion" minlength="1"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label color="medium" position="floating">Descripción</ion-label>
+                        <ion-textarea (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.descripcion" type="text" name="descripcion" required minlength="3"></ion-textarea>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label color="medium">Categoria    {{perfil.categoria | titlecase}}</ion-label>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label color="medium">Subcategoria</ion-label>
+                        <ion-select multiple="true" [(ngModel)]="perfil.subCategoria" (ionChange)="formularioChange()" [disabled]="subCategorias.length <= 0" color="medium" okText="Aceptar" cancelText="Cancelar" required name="subCat">
+                            <ion-select-option *ngFor="let item of subCategorias" [value]="item">{{item | titlecase}}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-button expand="block" class="gradient--" style="margin: 2rem 3rem" [disabled]="!forma.valid || !perfil.logo || !perfil.portada || !perfil.tipo || !perfil.subCategoria || !cobertura" type="submit">
+                        Guardar cambios
+                    </ion-button>
+                </form>
+            </ion-card>
         </ng-container>
         <ng-template #loadMobileTemplate>
             <ion-card>
@@ -103,7 +107,7 @@
                 </ion-list>
             </ion-card>
         </ng-template>
-    </div> -->
+    </div>
 
     <!-- Escritorio -->
     <div class="escritorio">
@@ -153,16 +157,17 @@
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Whatsapp de contacto (10 dígitos)</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.whats" type="tel" name="whats" minlength="10" maxlength="10"></ion-input>
                                 </ion-item>
-                                <ion-item>
+                                <ion-item *ngIf="perfil.repartidores_propios">
+                                    <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
                                     <ion-label *ngIf="perfil.envio_costo_fijo">Costo de envío fijo</ion-label>
                                     <ion-label *ngIf="!perfil.envio_costo_fijo">Costo de envío en base a distancia</ion-label>
                                     <ion-toggle [(ngModel)]="perfil.envio_costo_fijo" slot="end" color="primary" name="envio_fijo" (ionChange)="formularioChange()"></ion-toggle>
                                 </ion-item>
-                                <ion-item *ngIf="perfil.tipo === 'productos' && perfil.envio_costo_fijo">
+                                <ion-item *ngIf="perfil.tipo === 'productos' && perfil.envio_costo_fijo && perfil.repartidores_propios">
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.envio" type="number" name="envio" minlength="1"></ion-input>
                                 </ion-item>
-                                <ion-item>
+                                <ion-item *ngIf="perfil.repartidores_propios">
                                     <ion-label color="medium" position="floating">Pedido mínimo para envío gratis</ion-label>
                                     <ion-input type="number" [(ngModel)]="perfil.envio_gratis_pedMin" name="envio_gratis" (ionChage)="formularioChange()"></ion-input>
                                 </ion-item>
@@ -184,7 +189,7 @@
                                     </ion-select>
                                 </ion-item>
         
-                                <ion-button expand="block" style="margin: 2rem 3rem" [disabled]="!forma.valid || !perfil.logo || !perfil.portada || !perfil.tipo || !perfil.subCategoria || !cobertura" type="submit">
+                                <ion-button expand="block" class="gradient--" style="margin: 2rem 3rem" [disabled]="!forma.valid || !perfil.logo || !perfil.portada || !perfil.tipo || !perfil.subCategoria || !cobertura" type="submit">
                                     Guardar cambios
                                 </ion-button>
                             </form>

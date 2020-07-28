@@ -56,20 +56,16 @@
 
 
                             <!-- Lista comentarios -->
-                            <ion-list *ngFor="let item of comentarios; let i = index">
-                                <ion-card (click)="verPedido(item, i)" style="cursor: pointer;" [ngStyle]="{'border-right': i === calSel  ? 'solid var(--ion-color-primary) 5px' : null}" class="resaltar">
-                                    <div style="margin: 0.5rem 0 0 0.5rem;">
+                            <div (click)="verPedido(item, i)" [ngClass]="{'active': calSel === i }" *ngFor="let item of comentarios; let i = index; let odd = odd" class="resaltar">
+                                <ion-item detail lines="none" [ngClass]="{'contraste': odd}">
+                                    <ion-label>
                                         <app-stars [calificacion]="item.puntos"></app-stars>
-                                    </div>
-                                    <ion-item detail lines="none">
-                                        <ion-label>
-                                            <h2 class="ion-text-wrap" [style.color]="item.puntos < 3 ? 'red' : item.puntos < 4 ? 'orange' : '#595756' ">
-                                                {{item.comentarios}}
-                                            </h2>
-                                        </ion-label>
-                                    </ion-item>
-                                </ion-card>
-                            </ion-list>
+                                        <h2 class="ion-text-wrap" [style.color]="item.puntos < 3 ? 'red' : item.puntos < 4 ? 'orange' : '#595756' ">
+                                            {{item.comentarios}}
+                                        </h2>
+                                    </ion-label>
+                                </ion-item>
+                            </div>
                         </ng-template>
 
                         <ion-infinite-scroll threshold="50px" (ionInfinite)="loadComentarios($event)">

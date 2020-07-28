@@ -1,12 +1,12 @@
-<ion-header>
-    <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+    <ion-toolbar>
         <ion-buttons slot="start">
             <ion-button (click)="regresar()">
-                <ion-icon slot="start" name="arrow-back"></ion-icon>
+                <ion-icon slot="start" name="chevron-back" color="primary"></ion-icon>
             </ion-button>
         </ion-buttons>
         <ion-buttons slot="end" *ngIf="producto.id">
-            <ion-button (click)="eliminarProducto()">
+            <ion-button (click)="eliminarProducto()" color="primary" fill="clear">
                 Eliminar
                 <ion-icon slot="start" name="trash"></ion-icon>
             </ion-button>
@@ -26,7 +26,7 @@
             <div class="foto-container">
                 <img [src]="noFoto" style="height: 50%" (click)="foto1.click()" /> <br>
                 <input style="display: none" (change)="cropImage($event, 1/.75, true, 60)" type="file" #foto1> <br>
-                <ion-label color="light" *ngIf="!producto.url">Agrega una imagen o foto de tu producto</ion-label>
+                <ion-label *ngIf="!producto.url">Agrega una imagen o foto de tu producto</ion-label>
             </div>
         </ng-template>
 
@@ -69,7 +69,7 @@
                 </ion-grid>
                 <ion-item *ngIf="tipo === 'productos'">
                     <ion-label color="medium">Complementos</ion-label>
-                    <ion-button (click)="addComplemento()" size="small">
+                    <ion-button (click)="addComplemento()" size="small" class="gradient--">
                         Nuevo complemento
                         <ion-icon name="add"></ion-icon>
                     </ion-button>
@@ -100,7 +100,7 @@
                         </ion-item>
                     </ion-list>
                 </div>
-                <ion-button class="boton-margen" style="margin-top: 2rem" [disabled]="!forma.valid || !producto.url || !producto.pasillo || guardando" expand="block" type="submit">
+                <ion-button class="boton-margen gradient--" style="margin-top: 2rem" [disabled]="!forma.valid || !producto.url || !producto.pasillo || guardando" expand="block" type="submit">
                     Guardar cambios
                     <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
                 </ion-button>

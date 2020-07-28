@@ -10,9 +10,8 @@ import { PedidosService } from 'src/app/services/pedidos.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UidService } from 'src/app/services/uid.service';
 
-import { Pedido, RepartidorPedido, Cliente, FormaPago, Negocio, Avance } from 'src/app/interfaces/pedido';
+import { Pedido, RepartidorPedido, Avance } from 'src/app/interfaces/pedido';
 import { RepartidorPreview } from 'src/app/interfaces/repartidor';
-import { Direccion } from '../../interfaces/direccion';
 
 
 @Component({
@@ -70,6 +69,8 @@ export class HomePage {
     })
   }
 
+  // Get info inicial para ambas vistas
+
   getPlan() {
     this.plan = this.uidService.getPlan()
     if (this.plan !== 'basico') {
@@ -77,6 +78,32 @@ export class HomePage {
       this.getRepartidores()
       this.getPedidos()
     }
+  }
+
+  getTiempoPreparcion() {
+    this.pedidoService.getTiempoPreparacion().then((tiempo: number) => {
+      this.tiempoPreparacion = tiempo * 60000
+      this.tiempoReady= true
+    })
+  }
+
+  getRepartidores() {
+    this.radioRepartidores = []
+    this.pedidoService.getRepartidores().then((repartidores: RepartidorPreview[]) => {
+      if (repartidores.length > 0) {
+        this.repartidores = repartidores
+        repartidores.forEach((r, i) => {
+          const input = {
+            name: `radio${i}`,
+            type: 'radio',
+            label: r.nombre,
+            value: r.id,
+          };
+          this.radioRepartidores.push(input)
+        })
+      }
+      this.repartidoresReady = true
+    })
   }
 
   getPedidos() {
@@ -107,14 +134,25 @@ export class HomePage {
     }, 1500)
   }
 
+  // Pedido Modal, mobile view
+
   async verPedido(pedido) {
     const modal = await this.modalCtrl.create({
       component: PedidoPage,
-      componentProps: {pedido, tiempo: this.tiempoPreparacion, repartidores: this.repartidores}
+      componentProps: {pedido, tiempoPreparcion: this.tiempoPreparacion, repartidores: this.repartidores}
+    })
+
+    modal.onWillDismiss().then(resp => {
+      if (resp) {
+        console.log(resp)
+        if (resp.data === 'eliminado') this.pedidos = this.pedidos.filter(p => p.id !== pedido.id)
+      }
     })
 
     return await modal.present()
   }
+
+  // Salida
 
   ionViewWillLeave() {
     this.pedidoService.getPedidos().query.ref.off('child_removed')
@@ -135,31 +173,29 @@ export class HomePage {
     this.listenAvances()
   }
 
-  getTiempoPreparcion() {
-    this.pedidoService.getTiempoPreparacion().then((tiempo: number) => {
-      this.tiempoPreparacion = tiempo
-      this.tiempoReady= true
+  // Listeners
+
+  listenAvances() {
+    if (this.avancesSub) this.avancesSub.unsubscribe()
+    this.avancesSub = this.pedidoService.listenAvances(this.pedido.id).subscribe((avances: Avance[]) => {
+      this.ngZone.run(() => this.pedido ? this.pedido.avances = avances : null)
     })
   }
 
-  getRepartidores() {
-    this.radioRepartidores = []
-    this.pedidoService.getRepartidores().then((repartidores: RepartidorPreview[]) => {
-      if (repartidores.length > 0) {
-        this.repartidores = repartidores
-        repartidores.forEach((r, i) => {
-          const input = {
-            name: `radio${i}`,
-            type: 'radio',
-            label: r.nombre,
-            value: r.id,
-          };
-          this.radioRepartidores.push(input)
-        })
-      }
-      this.repartidoresReady = true
+  listenRepartidorPendiente() {
+    if (this.escuchaRepAnterior) this.repSub.unsubscribe()
+    this.escuchaRepAnterior = this.pedido.id
+    this.repSub = this.pedidoService.listenRepartidorTs(this.pedido.id).subscribe((repartidor: RepartidorPedido) => {
+      this.ngZone.run(() => {
+        if (this.pedido && repartidor) {
+          this.pedido.repartidor = repartidor
+          this.pedidoService.borraPendiente(this.pedido.id)
+        }
+      })
     })
   }
+
+  // Acciones
 
   rechazarPedido() {
     this.alertService.presentAlertPrompt('Rechazar pedido', 'No tengo producto en existencia', 'Rechazar pedido', 'Cancelar', 'Ingresa la razón por la que rechazas el pedido')
@@ -362,26 +398,6 @@ export class HomePage {
     this.pedido.avances.push(this.avance)
     this.pedidoService.pushAvance(this.pedido)
     this.avance.concepto = ''
-  }
-
-  listenRepartidorPendiente() {
-    if (this.escuchaRepAnterior) this.repSub.unsubscribe()
-    this.escuchaRepAnterior = this.pedido.id
-    this.repSub = this.pedidoService.listenRepartidorTs(this.pedido.id).subscribe((repartidor: RepartidorPedido) => {
-      this.ngZone.run(() => {
-        if (this.pedido && repartidor) {
-          this.pedido.repartidor = repartidor
-          this.pedidoService.borraPendiente(this.pedido.id)
-        }
-      })
-    })
-  }
-
-  listenAvances() {
-    if (this.avancesSub) this.avancesSub.unsubscribe()
-    this.avancesSub = this.pedidoService.listenAvances(this.pedido.id).subscribe((avances: Avance[]) => {
-      this.ngZone.run(() => this.pedido ? this.pedido.avances = avances : null)
-    })
   }
 
   radioEntregas() {

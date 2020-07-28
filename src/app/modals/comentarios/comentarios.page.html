@@ -1,8 +1,8 @@
-<ion-header>
-    <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+    <ion-toolbar>
         <ion-buttons slot="start">
             <ion-button (click)="regresar()">
-                <ion-icon slot="start" name="arrow-back"></ion-icon>
+                <ion-icon slot="start" name="chevron-back"></ion-icon>
             </ion-button>
         </ion-buttons>
         <ion-title class="comfortaa">Comentarios</ion-title>
@@ -10,9 +10,14 @@
 </ion-header>
 
 <ion-content>
-    <ion-list *ngFor="let item of comentarios">
+    <ng-container *ngIf="ver_pedido; else pedidoTemplate">
         <ion-card>
-            <ion-item>
+            <app-trip-selected *ngIf="pedido" [pedido_selected]="pedido"></app-trip-selected>
+        </ion-card>
+    </ng-container>
+    <ng-template #pedidoTemplate>        
+        <ion-list *ngFor="let item of comentarios; let odd = odd">
+            <ion-item detail lines="none" [ngClass]="{'contraste': odd}" (click)="verPedido(item)">
                 <ion-label>
                     <ion-grid fixed>
                         <ion-row>
@@ -28,8 +33,9 @@
                     </ion-grid>
                 </ion-label>
             </ion-item>
-        </ion-card>
-    </ion-list>
+        </ion-list>
+    </ng-template>
+    
 
     <ion-infinite-scroll threshold="50px" (ionInfinite)="loadComentarios($event)">
         <ion-infinite-scroll-content loadingSpinner="bubbles">

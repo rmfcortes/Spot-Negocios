@@ -46,13 +46,11 @@ export class LoginPage implements OnInit {
   ionViewWillEnter() {
     this.menu.enable(false)
     this.title.setTitle('Spot admin - login')
-    this.netSub = this.netService.isConnected.subscribe(res => {
-      this.isConnected = res;
-    });
+    this.netSub = this.netService.isConnected.subscribe(res => this.isConnected = res)
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
-      const nombre = 'app';
-      navigator[nombre].exitApp();
-    });
+      const nombre = 'app'
+      navigator[nombre].exitApp()
+    })
   }
 
   setForm() {
@@ -103,8 +101,8 @@ export class LoginPage implements OnInit {
 
 
   ionViewWillLeave() {
-    if (this.netSub) { this.netSub.unsubscribe(); }
-    if (this.back) {this.back.unsubscribe()}
+    if (this.netSub) this.netSub.unsubscribe()
+    if (this.back) this.back.unsubscribe()
   }
 
 

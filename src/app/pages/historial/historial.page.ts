@@ -75,12 +75,12 @@ export class HistorialPage implements OnInit {
   ngOnInit() {
     this.menu.enable(true)
     this.getToday()
-    this.getFirstDate()
   }
-
+  
   async getToday() {
     this.today = await this.commonService.formatDate(new Date())
     this.datePickerObj.inputDate = this.today
+    this.getFirstDate()
   }
 
   async getFirstDate() {

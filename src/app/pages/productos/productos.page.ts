@@ -120,6 +120,7 @@ export class ProductosPage implements OnInit {
   getOfertas() {
     this.cargando_productos = true
     this.productosCargados = 0
+    this.productos = []
     this.productoService.getOfertas(this.tipo, this.categoria).then(async (ofertas: Producto[]) => {
       if (ofertas && ofertas.length > 0) {
         this.hasOfertas = true

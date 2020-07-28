@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
@@ -78,9 +78,12 @@ export class AppComponent {
   no_horario = false
   cambios = false
 
+  last_count = 0
+
   constructor(
     private title: Title,
     private router: Router,
+    private ngZone: NgZone,
     private platform: Platform,
     private animationService: AnimationsService,
     private horarioService: HorarioService,
@@ -176,22 +179,24 @@ export class AppComponent {
 
   getPedidos() {
     this.pedSub = this.pedidoService.getPedidosCount().subscribe((count: number) => {
-      const nombre = this.uidService.getNombre()
-      if (count) {
-        this.pedidos = count
-        this.title.setTitle(`${nombre} (${this.pedidos})`)
-      }
-      else {
-        this.title.setTitle(nombre)
-        this.pedidos = 0
-      }
+      this.ngZone.run(() => {
+        const nombre = this.uidService.getNombre()
+        if (count) {
+          this.pedidos = count
+          this.title.setTitle(`${nombre} (${count})`)
+          if (this.last_count < count) this.commonService.playAlert()
+        }
+        else {
+          this.title.setTitle(nombre)
+          this.pedidos = 0
+        }
+        this.last_count = count
+      })
     })
   }
 
   listenCambios() {
-    this.cambiosSub = this.uidService.cambios.subscribe(value => {
-      this.cambios = value
-    })
+    this.cambiosSub = this.uidService.cambios.subscribe(value => this.cambios = value)
   }
 
   irA(page: string, i: number) {

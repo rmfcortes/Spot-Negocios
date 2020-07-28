@@ -1,8 +1,8 @@
-<ion-header>
-    <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+    <ion-toolbar>
         <ion-buttons slot="start">
             <ion-button (click)="regresar()">
-                <ion-icon slot="start" name="arrow-back"></ion-icon>
+                <ion-icon slot="start" name="chevron-back"></ion-icon>
             </ion-button>
         </ion-buttons>
     </ion-toolbar>
@@ -56,7 +56,7 @@
             </ion-card>
         </ng-template>
 
-        <ion-button class="boton-margen" color="primary" type="submit" [disabled]="forma.invalid">
+        <ion-button class="boton-margen gradient--" color="primary" type="submit" [disabled]="forma.invalid">
             Guardar cambios
         </ion-button>
     </form>

@@ -3,19 +3,7 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="comfortaa">Horario</ion-title>
-        <ion-buttons slot="end" class="mobile">
-            <ion-button (click)="verDia(null)" class="comfortaa">
-                <ion-icon slot="start" name="add"></ion-icon>
-                Nuevo
-            </ion-button>
-        </ion-buttons>
-        <ion-buttons slot="end" class="escritorio">
-            <ion-button (click)="newEditDia(null)" class="comfortaa">
-                <ion-icon slot="start" name="add"></ion-icon>
-                Nuevo
-            </ion-button>
-        </ion-buttons>
+        <ion-title>Horario</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -80,7 +68,7 @@
                         <ng-container *ngIf="hasHorario; else mainEscritorioTemplate">
                             <ion-card (click)="newEditDia(null)" style="cursor: pointer;">
                                 <ion-item lines="none">
-                                    <ion-label>Agregar/editar horario</ion-label>
+                                    <ion-label>Agregar / editar horario</ion-label>
                                     <ion-icon slot="end" name="add" color="primary"></ion-icon>
                                 </ion-item>
                             </ion-card>
@@ -165,7 +153,7 @@
                                 </ion-card>
                             </ng-template>
 
-                            <ion-button class="boton-margen" color="primary" type="submit" [disabled]="forma.invalid">
+                            <ion-button class="boton-margen gradient--" type="submit" [disabled]="forma.invalid">
                                 Guardar cambios
                             </ion-button>
                         </form>
@@ -200,7 +188,7 @@
         </ng-template>
     </div>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="mobile">
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile">
         <ion-fab-button (click)="verDia(null)">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
