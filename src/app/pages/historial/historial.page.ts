@@ -1,8 +1,7 @@
 import { ModalController, Platform, MenuController } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
+import { HostListener } from "@angular/core";
 import { Subscription } from 'rxjs';
-
-import { PedidoPage } from 'src/app/modals/pedido/pedido.page';
 
 import { HistorialService } from 'src/app/services/historial.service';
 
@@ -16,6 +15,15 @@ import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepic
   styleUrls: ['./historial.page.scss'],
 })
 export class HistorialPage implements OnInit {
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize() {
+    this.scrHeight = window.innerHeight
+    this.scrWidth = window.innerWidth
+  }
+  scrHeight: number
+  scrWidth: number
+  hideMainCol = false
 
   today: string
   first_date: string
@@ -69,7 +77,7 @@ export class HistorialPage implements OnInit {
     private modalCtrl: ModalController,
     private historialService: HistorialService,
     private commonService: AlertService,
-  ) { }
+  ) { this.getScreenSize() }
 
     // Info inicial
   ngOnInit() {
@@ -187,13 +195,14 @@ export class HistorialPage implements OnInit {
     if (event) event.target.complete()
   }
 
-  async verPedido(pedido) {
-    const modal = await this.modalCtrl.create({
-      component: PedidoPage,
-      componentProps: {pedido}
-    })
+  async verPedido(pedido: Pedido) {
+    this.pedido = pedido
+    if (this.scrWidth < 992) this.hideMainCol = true
+  }
 
-    return await modal.present()
+  regresa() {
+    this.hideMainCol = false
+    this.pedido = null
   }
 
   ionViewWillLeave() {

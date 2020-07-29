@@ -1,62 +1,37 @@
 <ion-header>
+    <ion-toolbar color="primary" class="escritorio">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Repartidores</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header *ngIf="!editRepa" class="mobile">
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="comfortaa">Repartidores</ion-title>
-        <ion-buttons slot="end">
-            <ion-button (click)="verRepartidor(null)" class="mobile comfortaa">
-                <ion-icon slot="start" name="add"></ion-icon>
-                Nuevo
-            </ion-button>
+        <ion-title>Repartidores</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header *ngIf="editRepa" class="mobile ion-no-border">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-icon slot="start" name="chevron-back" (click)="cancelEdit()"></ion-icon>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
+
 <ion-content>
-    <!-- Mobile -->
-    <div class="mobile">
-        <ng-container *ngIf="repartidoresReady; else loadMobileTemplate">
-            <ng-container *ngIf="repartidores.length > 0; else mobileTemplate">
-                <ion-list>
-                    <ion-card *ngFor="let item of repartidores">
-                        <ion-item (click)="verRepartidor(item)" lines="none" detail>
-                            <ion-avatar slot="start">
-                                <img [src]="item.foto || noRepartidor" />
-                            </ion-avatar>
-                            <ion-label>{{item.nombre | titlecase}}</ion-label>
-                        </ion-item>
-                    </ion-card>
-                </ion-list>
-            </ng-container>
-            <ng-template #mobileTemplate>
-                <ion-item style="text-align: center;" lines="none">
-                    <ion-label class="ion-text-wrap" color="medium">Agrega tu primer repartidor para poder asignarle pedidos.</ion-label>
-                </ion-item>
-            </ng-template>
-        </ng-container>
-        <ng-template #loadMobileTemplate>
-            <ion-list>
-                <ion-card *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
-                    <ion-item lines="none">
-                        <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
-                    </ion-item>
-                    <ion-item lines="none">
-                        <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
-                    </ion-item>
-                </ion-card>
-            </ion-list>
-        </ng-template>
-    </div>
-
     <!-- Escritorio -->
-
-    <ion-grid fixed class="escritorio">
+    <ion-grid fixed>
         <ion-row>
-            <ion-col size-md="6" size-lg="5" size-xl="4">
+            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="5" size-xl="4" *ngIf="!hideMainCol || scrWidth >= 992">
                 <ion-card (click)="newEditRepartidor(null, null)" class="resalta">
                     <ion-item detail lines="none">
-                        <ion-label color="medium" class="resalta">Nuevo repartidor</ion-label>
+                        <ion-label class="resalta">Nuevo repartidor</ion-label>
+                        <ion-icon slot="end" color="primary" name="add"></ion-icon>
                     </ion-item>
                 </ion-card>
                 <ng-container *ngIf="repartidores.length > 0; else noPedTemplate">
@@ -94,7 +69,7 @@
             </ion-col>
 
             <!-- Formulario Escritorio -->
-            <ion-col size-md="6" size-lg="7" size-xl="8" *ngIf="editRepa">
+            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="7" size-xl="8" *ngIf="editRepa">
                 <ng-container *ngIf="repartidor && repartidor.preview && repartidor.preview.foto; else fotoTemplate">
                     <div style="background: white !important; text-align: center; cursor: pointer;">
                         <img [src]="repartidor.preview.foto" style="height: 10rem;" (click)="foto1.click()" /> <br>
@@ -142,12 +117,13 @@
 
                         <ion-item lines="none">
                             <ion-button slot="start" (click)="eliminarRepartidor()" fill="clear" *ngIf="repartidorPrev" [disabled]="guardando || eliminando">
+                                <ion-icon slot="start" name="trash"></ion-icon>
                                 Eliminar
                             </ion-button>                            
                             <ion-button slot="end" (click)="cancelEdit()" [disabled]="guardando || eliminando" fill="outline">
                                 Cancelar
                             </ion-button>                            
-                            <ion-button slot="end" type="submit" [disabled]="!forma.valid || !repartidor.preview.foto || guardando || eliminando">
+                            <ion-button class="gradient--" slot="end" type="submit" [disabled]="!forma.valid || !repartidor.preview.foto || guardando || eliminando">
                                 Guardar
                                 <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
                             </ion-button>
@@ -157,13 +133,6 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-
-
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="mobile">
-        <ion-fab-button (click)="verRepartidor(null)">
-            <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-    </ion-fab>
 
 </ion-content>
 

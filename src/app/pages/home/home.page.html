@@ -1,11 +1,24 @@
 <ion-header>
+    <ion-toolbar color="primary" class="escritorio">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Pedidos activos</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header *ngIf="!pedido" class="mobile">
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title style="font-weight: 700;">
-            Pedidos activos
-        </ion-title>
+        <ion-title>Pedidos activos</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header *ngIf="pedido" class="mobile ion-no-border">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-icon slot="start" name="chevron-back" (click)="regresa()"></ion-icon>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
@@ -16,10 +29,10 @@
 
     <!-- Escritorio -->
 
-    <ion-grid class="escritorio" fixed *ngIf="plan !== 'basico'">
+    <ion-grid fixed *ngIf="plan !== 'basico'">
         <ion-row>
             <!-- Columna lista pedidos -->
-            <ion-col size="4">
+            <ion-col size-lg="4" size-xl="4" size-xs="12" size-sm="12" size-md="12" class="separate-scroll" *ngIf="!hideMainCol || scrWidth >= 992">
                 <ng-container *ngIf="pedidosReady && repartidoresReady && tiempoReady; else loadEscritorioTemplate">
                     <ng-container *ngIf="pedidos.length > 0; else noPedTemplate">
                         <ion-list>
@@ -32,12 +45,15 @@
                                     </ion-item>
                                 </ng-container>
                                 <ng-template #aceptadoTemplate>
-                                    <ion-item detail (click)="getPedido(item, i)" style="--background: #ffde4c" [style.cursor]="i === iSel? null :'pointer'">
+                                    <ion-item lines="none" detail (click)="getPedido(item, i)" [style.cursor]="i === iSel? null :'pointer'">
                                         <ion-label class="ion-text-wrap">
-                                            <h2 *ngIf="!item.aceptado" style="color: red">CONFIRMAR</h2>
                                             {{item.cliente.direccion.direccion}}
                                             <p>{{item.createdAt | date:'h:mm a'}}</p>
                                         </ion-label>
+                                        <ion-badge class="mobile" color="danger" mode="ios">Confirmar</ion-badge>
+                                    </ion-item>
+                                    <ion-item class="escritorio">
+                                        <ion-badge color="danger" mode="ios">Confirmar</ion-badge>
                                     </ion-item>
                                 </ng-template>
                             </ion-card>
@@ -68,17 +84,15 @@
             </ion-col>
 
             <!-- Columna detalles pedido -->
-            <ion-col size="8" *ngIf="pedido">
+            <ion-col size-lg="8" size-xl="8" size-xs="12" size-sm="12" size-md="12" *ngIf="pedido">
                 <div style="max-width: 30rem;">
                     <!-- Resumen pedido y contacto -->
                     <ion-card>
-                        <ion-list-header>
-                            <ion-label color="primary">Resumen</ion-label>
-                        </ion-list-header>
+                        <h3 class="titulo">Resumen</h3>
                         <ion-item lines="none">
                             <ion-label>
-                                <h2><strong>Cliente: {{pedido.cliente.nombre}}</strong></h2>
-                                <h3 *ngIf="pedido.cliente.telefono" class="medium">Teléfono: {{pedido.cliente.telefono}}</h3>
+                                <h2 class="medium"><strong style="color: black;">Cliente:</strong> {{pedido.cliente.nombre}}</h2>
+                                <h2 *ngIf="pedido.cliente.telefono" class="medium"><strong style="color: black;">Teléfono:</strong> {{pedido.cliente.telefono}}</h2>
                             </ion-label>
                         </ion-item>
                         <ion-item lines="none" *ngIf="pedido.aceptado && pedido.entrega === 'planeado'">
@@ -88,10 +102,10 @@
                         </ion-item>                   
                         <ion-item lines="none">
                             <ion-label>
-                                <h3>Forma pago: {{pedido.formaPago.tipo !== 'efectivo' ? 'Tarjeta' : 'Efectivo'}}</h3>
-                                <h3 *ngIf="pedido.comision">Comisión: {{pedido.comision | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h3>
-                                <h3 *ngIf="pedido.negocio.repartidores_propios">Envío: {{pedido.envio | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h3>
-                                <h3 *ngIf="pedido.negocio.repartidores_propios">Propina: {{pedido.propina | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h3>
+                                <h2 class="medium"><strong style="color: black;">Forma pago:</strong> {{pedido.formaPago.tipo !== 'efectivo' ? 'Tarjeta' : 'Efectivo'}}</h2>
+                                <h2 class="medium" *ngIf="pedido.comision"><strong style="color: black;">Comisión:</strong> {{pedido.comision | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h2>
+                                <h2 class="medium" *ngIf="pedido.negocio.repartidores_propios"><strong style="color: black;">Envío:</strong> {{pedido.envio | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h2>
+                                <h2 class="medium" *ngIf="pedido.negocio.repartidores_propios"><strong style="color: black;">Propina:</strong> {{pedido.propina | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h2>
                             </ion-label>
                         </ion-item>
                     </ion-card>
@@ -99,9 +113,7 @@
                     <!-- Detalles repartidor -->
                         <!-- Repartidor asignado -->
                     <ion-card *ngIf="pedido.repartidor">
-                        <ion-list-header>
-                            <ion-label color="primary">Repartidor</ion-label>
-                        </ion-list-header>
+                        <h3 class="titulo">Repartidor</h3>
                         <ion-item>
                             <ion-avatar slot="start">
                                 <img [src]="pedido.repartidor.foto" />
@@ -117,9 +129,7 @@
                     </ion-card>
                         <!-- Repartidor pendiente entrega inmediata -->
                     <ion-card *ngIf="pedido.aceptado && !pedido.repartidor && pedido.entrega === 'inmediato' || pedido.repartidor_solicitado && !pedido.repartidor">
-                        <ion-list-header>
-                            <ion-label color="primary">Repartidor</ion-label>
-                        </ion-list-header>
+                        <h3 class="titulo">Repartidor</h3>
                         <ion-item>
                             <ion-icon slot="start" color="warning" name="time"></ion-icon>
                             <ion-label color="medium">Asignando repartidor</ion-label>
@@ -127,15 +137,13 @@
                     </ion-card>
                         <!-- Repartidor pendiente entrega planeado -->
                     <ion-card *ngIf="pedido.aceptado && !pedido.repartidor && pedido.entrega === 'planeado' && !pedido.repartidor_solicitado">
-                        <ion-list-header>
-                            <ion-label color="primary">Repartidor</ion-label>
-                        </ion-list-header>
+                        <h3 class="titulo">Repartidor</h3>
                         <ion-item>
                             <ion-label color="medium">Repartidor pendiente</ion-label>
-                            <ion-button *ngIf="pedido.negocio.repartidores_propios" (click)="asignaRepartidorPlaneado()" shape="round">
+                            <ion-button class="gradient--" *ngIf="pedido.negocio.repartidores_propios" (click)="asignaRepartidorPlaneado()" shape="round">
                                 Asignar repartidor
                             </ion-button>                            
-                            <ion-button *ngIf="!pedido.negocio.repartidores_propios" (click)="solicitarRepartidor(pedido)" shape="round">
+                            <ion-button class="gradient--" *ngIf="!pedido.negocio.repartidores_propios" (click)="solicitarRepartidor(pedido)" shape="round">
                                 Solicitar repartidor
                             </ion-button>
                         </ion-item>
@@ -155,9 +163,7 @@
 
                     <!-- Detalles de avances -->
                     <ion-card *ngIf="pedido.aceptado" style="padding-bottom: 1rem;">
-                        <ion-list-header>
-                            <ion-label color="primary">Avances</ion-label>
-                        </ion-list-header>
+                        <h3 class="titulo">Avances</h3>
                         <div class="input_avance">
                             <ion-item lines="none">
                                 <ion-label position="floating">Agregar avance</ion-label>
@@ -175,16 +181,14 @@
 
                     <!-- Lista de productos -->
                     <ion-card>
-                        <ion-list-header>
-                            <ion-label color="primary">Productos</ion-label>
-                        </ion-list-header>
+                        <h3 class="titulo">Productos</h3>
                         <ion-item *ngFor="let producto of pedido.productos; let i = index; let odd = odd" [ngClass]="{'contraste': odd}" lines="none">
                             <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
                             <ion-thumbnail slot="start">
                                 <img [src]="producto.url">
                             </ion-thumbnail>
                             <ion-label>
-                                <h2 class="ion-text-wrap">{{producto.nombre | titlecase}}
+                                <h2 class="ion-text-wrap" style="font-weight: 700;">{{producto.nombre | titlecase}}
                                     <ion-text color="medium">{{producto.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
                                 </h2>
                                 <p>{{producto.observaciones | titlecase}}</p>
@@ -197,10 +201,11 @@
                                 </h2>
                             </ion-label>
                         </ion-item>
-                        <ion-item style="text-align: center;" lines="none">
+                        <hr style="border-bottom: var(--ion-color-medium) 1px solid;">
+                        <ion-item style="text-align: right;" lines="none">
                             <ion-label color="primary">
-                                <h1 *ngIf="pedido.negocio.repartidores_propios">Total: {{pedido.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h1>
-                                <h1 *ngIf="!pedido.negocio.repartidores_propios">Total: {{pedido.total - pedido.envio -pedido.propina | currency:'CAD':'symbol-narrow':'1.0-2'}}</h1>
+                                <h2 style="font-weight: 700;" *ngIf="pedido.negocio.repartidores_propios">Total: {{pedido.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
+                                <h2 style="font-weight: 700;" *ngIf="!pedido.negocio.repartidores_propios">Total: {{pedido.total - pedido.envio -pedido.propina | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
                             </ion-label>
                         </ion-item>
                     </ion-card>
@@ -225,39 +230,6 @@
         </ion-row>
     </ion-grid>
 
-
-    <!-- Mobile -->
-    <ion-list class="mobile" *ngIf="plan !== 'basico'">
-        <ng-container *ngIf="pedidosReady && repartidoresReady && tiempoReady; else loadMobile">
-            <ng-container *ngIf="pedidos.length > 0; else noPedTemplateMobile">
-                <ion-list>
-                    <ion-card *ngFor="let item of pedidos">
-                        <ion-item detail (click)="verPedido(item)">
-                            <ion-label class="ion-text-wrap">{{item.cliente.direccion.direccion}}</ion-label>
-                            <ion-badge *ngIf="!item.aceptado" color="danger" slot="end">CONFIRMAR</ion-badge>
-                        </ion-item>
-                    </ion-card>
-                </ion-list>
-            </ng-container>
-        </ng-container>
-        <ng-template #noPedTemplateMobile>
-            <ion-item style="text-align: center;" lines="none">
-                <ion-label color="medium">En este momento no tienes pedidos activos</ion-label>
-            </ion-item>
-        </ng-template>
-        <ng-template #loadMobile>
-            <ion-list>
-                <ion-card *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
-                    <ion-item lines="none">
-                        <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
-                    </ion-item>
-                    <ion-item lines="none">
-                        <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
-                    </ion-item>
-                </ion-card>
-            </ion-list>
-        </ng-template>
-    </ion-list>
 </ion-content>
 
 <app-no-network></app-no-network>

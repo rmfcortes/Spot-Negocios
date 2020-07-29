@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
 
-import { PedidoPageModule } from 'src/app/modals/pedido/pedido.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { LOCALE_ID } from '@angular/core';
@@ -20,7 +19,6 @@ registerLocaleData(localeEsMX, 'es-MX');
     FormsModule,
     IonicModule,
     SharedModule,
-    PedidoPageModule,
     RouterModule.forChild([
       {
         path: '',
@@ -29,6 +27,6 @@ registerLocaleData(localeEsMX, 'es-MX');
     ])
   ],
   declarations: [HomePage],
-  providers: [{provide: LOCALE_ID, useValue: "es-MX"}]
+  providers: [{provide: LOCALE_ID, useValue: "es-MX"}, DatePipe]
 })
 export class HomePageModule {}

@@ -1,8 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ModalController, Platform, MenuController } from '@ionic/angular';
+import { HostListener } from "@angular/core";
 import { Subscription } from 'rxjs';
 
-import { RepartidorPage } from 'src/app/modals/repartidor/repartidor.page';
 import { CropImagePage } from 'src/app/modals/crop-image/crop-image.page';
 
 import { RepartidoresService } from 'src/app/services/repartidores.service';
@@ -16,6 +16,15 @@ import { RepartidorPreview, Repartidor } from 'src/app/interfaces/repartidor';
   styleUrls: ['./repartidores.page.scss'],
 })
 export class RepartidoresPage implements OnInit {
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize() {
+    this.scrHeight = window.innerHeight
+    this.scrWidth = window.innerWidth
+  }
+  scrHeight: number
+  scrWidth: number
+  hideMainCol = false
 
   repartidores: RepartidorPreview[] = []
   repartidoresReady = false
@@ -63,7 +72,7 @@ export class RepartidoresPage implements OnInit {
     private modalCtrl: ModalController,
     private repartidorService: RepartidoresService,
     private alertService: AlertService,
-  ) { }
+  ) { this.getScreenSize() }
 
   ngOnInit() {
     this.menu.enable(true)
@@ -83,32 +92,10 @@ export class RepartidoresPage implements OnInit {
     })
   }
 
-  async verRepartidor(repartidorPrev: RepartidorPreview) {
-    const modal = await this.modalCtrl.create({
-      component: RepartidorPage,
-      componentProps: {repartidorPrev}
-    })
-
-    modal.onWillDismiss().then(resp => {
-      if (resp.data) {
-        if (resp.data === 'eliminado') {
-          this.repartidores = this.repartidores.filter(r => r === repartidorPrev)
-        } else {
-          if (repartidorPrev) {
-            const i = this.repartidores.findIndex(r => r.id === resp.data.preview.id)
-            this.repartidores[i] = resp.data.preview
-          } else {
-            this.repartidores.unshift(resp.data.preview)
-          }
-        }
-      }
-    })
-
-    return await modal.present();
-  }
-
+  
   ///////////////// Escritorio
   newEditRepartidor(repartidor: RepartidorPreview, i: number) {
+    if (this.scrWidth < 992) this.hideMainCol = true
     this.repartidorPrev = repartidor
     this.listenErrores()
     this.iSel = i
@@ -140,6 +127,7 @@ export class RepartidoresPage implements OnInit {
   }
 
   getRepartidor() {
+    if (this.scrWidth < 992) this.hideMainCol = true
     this.repartidor.preview = this.repartidorPrev
     this.repartidorService.getRepartidor(this.repartidor.preview.id).then(detalles => {
       this.repartidor.detalles = detalles
@@ -158,7 +146,7 @@ export class RepartidoresPage implements OnInit {
         this.repartidor.preview.foto = resp.data
         this.base64 = resp.data.split('data:image/png;base64,')[1]
       }
-    });
+    })
     return await modal.present()
   }
 
@@ -211,47 +199,48 @@ export class RepartidoresPage implements OnInit {
   async listenErrores() {
     this.repartidorService.getCreateUserResult().query.ref.on('child_added', snapshot => {
       this.ngZone.run(() => {
-        this.guardando = false;
-        this.alertService.dismissLoading();
-        const status = snapshot.val();
-        this.repartidorService.cleanResult();
+        this.guardando = false
+        const status = snapshot.val()
+        this.alertService.dismissLoading()
+        this.repartidorService.cleanResult()
         switch (status) {
           case 'auth/email-already-exists':
             this.alertService.presentAlert('Email registrado',
               'El correo que intentas registrar corresponde a una cuenta existente. Intenta con otro');
-            break;
+            break
           case 'auth/invalid-email':
             this.alertService.presentAlert('Email inválido', 'El correo que intentas registrar no corresponde a un email válido');
-            break;
+            break
           case 'auth/invalid-password':
             this.alertService.presentAlert('Contraseña insegura', 'La contraseña debe tener al menos 6 caracteres');
-            break;
+            break
           case 'ok':
-            this.alertService.presentToast('Repartidor agregado con éxito');
-            this.cancelEdit();
+            this.alertService.presentToast('Repartidor agregado con éxito')
+            this.cancelEdit()
             if (this.iSel >= 0 && this.iSel) {
-              const i = this.repartidores.findIndex(r => r.id === this.repartidor.preview.id);
-              this.repartidores[i] = this.repartidor.preview;
+              const i = this.repartidores.findIndex(r => r.id === this.repartidor.preview.id)
+              this.repartidores[i] = this.repartidor.preview
             } else {
-              this.repartidores.unshift(this.repartidor.preview);
+              this.repartidores.unshift(this.repartidor.preview)
             }
-            break;
+            break
           default:
             this.alertService.presentAlert('Error', 'Algo salió mal, por favor intenta de nuevo ' + status);
-            break;
+            break
         }
-      });
-    });
+      })
+    })
   }
 
   cancelEdit() {
-    this.repartidorService.getCreateUserResult().query.ref.off('child_added');
-    this.editRepa = false;
-    this.iSel = null;
+    this.hideMainCol = false
+    this.repartidorService.getCreateUserResult().query.ref.off('child_added')
+    this.editRepa = false
+    this.iSel = null
   }
 
   ionViewWillLeave() {
-    if (this.back) {this.back.unsubscribe()}
+    if (this.back) this.back.unsubscribe()
   }
 
 }

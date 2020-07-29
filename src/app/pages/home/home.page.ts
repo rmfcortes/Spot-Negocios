@@ -1,10 +1,9 @@
 import { Component, NgZone } from '@angular/core';
-import { ModalController, Platform, MenuController } from '@ionic/angular';
+import { Platform, MenuController } from '@ionic/angular';
+import { HostListener } from "@angular/core";
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
-import { PedidoPage } from 'src/app/modals/pedido/pedido.page';
 
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -20,6 +19,15 @@ import { RepartidorPreview } from 'src/app/interfaces/repartidor';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize() {
+    this.scrHeight = window.innerHeight
+    this.scrWidth = window.innerWidth
+  }
+  scrHeight: number
+  scrWidth: number
+  hideMainCol = false
 
   pedidos: Pedido[] = []
 
@@ -55,11 +63,10 @@ export class HomePage {
     private datePipe: DatePipe,
     private platform: Platform,
     private menu: MenuController,
-    private modalCtrl: ModalController,
     private pedidoService: PedidosService,
     private alertService: AlertService,
     private uidService: UidService,
-  ) {}
+  ) { this.getScreenSize() }
 
   ionViewWillEnter() {
     this.menu.enable(true)
@@ -136,20 +143,9 @@ export class HomePage {
 
   // Pedido Modal, mobile view
 
-  async verPedido(pedido) {
-    const modal = await this.modalCtrl.create({
-      component: PedidoPage,
-      componentProps: {pedido, tiempoPreparcion: this.tiempoPreparacion, repartidores: this.repartidores}
-    })
-
-    modal.onWillDismiss().then(resp => {
-      if (resp) {
-        console.log(resp)
-        if (resp.data === 'eliminado') this.pedidos = this.pedidos.filter(p => p.id !== pedido.id)
-      }
-    })
-
-    return await modal.present()
+  regresa() {
+    this.hideMainCol = false
+    this.pedido = null
   }
 
   // Salida
@@ -167,6 +163,7 @@ export class HomePage {
 
   // Lógia para escritorio. Vista en una sola pantalla, sin Modal
   getPedido(pedido: Pedido, i: number) {
+    if (this.scrWidth < 992)this.hideMainCol = true
     this.pedido = pedido
     this.iSel = i
     if (this.pedido.aceptado && !this.pedido.repartidor) this.listenRepartidorPendiente()

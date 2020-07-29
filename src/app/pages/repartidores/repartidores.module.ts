@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { RepartidoresPageRoutingModule } from './repartidores-routing.module';
 
 import { RepartidoresPage } from './repartidores.page';
-import { RepartidorPageModule } from 'src/app/modals/repartidor/repartidor.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
@@ -16,7 +15,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     FormsModule,
     IonicModule,
     SharedModule,
-    RepartidorPageModule,
     RepartidoresPageRoutingModule
   ],
   declarations: [RepartidoresPage]

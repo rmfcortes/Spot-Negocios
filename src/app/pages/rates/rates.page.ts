@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
 import { ModalController, Platform, MenuController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { HostListener } from "@angular/core";
 import { Subscription } from 'rxjs';
-
-import { ComentariosPage } from 'src/app/modals/comentarios/comentarios.page';
 
 import { RatesService } from 'src/app/services/rates.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -17,6 +16,15 @@ import { Pedido, CalificacionDetalles } from '../../interfaces/pedido';
   styleUrls: ['./rates.page.scss'],
 })
 export class RatesPage implements OnInit {
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize() {
+    this.scrHeight = window.innerHeight
+    this.scrWidth = window.innerWidth
+  }
+  scrHeight: number
+  scrWidth: number
+  hideMainCol = false
 
   rate: Rate
   perfilNegocio: PerfilNegRate
@@ -40,6 +48,7 @@ export class RatesPage implements OnInit {
   iSel: number
   calSel: number
 
+  nombreRepartidor = ''
   loadingComentarios = false
 
   back: Subscription
@@ -52,7 +61,7 @@ export class RatesPage implements OnInit {
     private modalCtrl: ModalController,
     private alertService: AlertService,
     private rateService: RatesService,
-  ) { }
+  ) { this.getScreenSize() }
 
   ngOnInit() {
     this.getPerfil()
@@ -87,21 +96,14 @@ export class RatesPage implements OnInit {
     })
   }
 
-  async verCalificaciones(id, tipo, calificaciones, nombre) {
-    if (tipo === 'negocio' && calificaciones === 5) {
-      this.alertService.presentAlert('Sin reseñas', `${nombre} aún no ha recibido su primer reseña`)
-      return
-    }
-    if (tipo === 'repartidor' && calificaciones === 1) {
-      this.alertService.presentAlert('Sin reseñas', `${nombre} aún no ha recibido su primer reseña`)
-      return
-    }
-    const modal = await this.modalCtrl.create({
-      component: ComentariosPage,
-      componentProps: { id, tipo }
-    })
-
-    return await modal.present()
+  regresa() {
+    this.nombreRepartidor = ''
+    this.hideMainCol = false
+    this.comentarios = []
+    this.negSel = false
+    this.calSel = null
+    this.pedido = null
+    this.iSel = null
   }
 
   ///////////////////////
@@ -125,6 +127,8 @@ export class RatesPage implements OnInit {
     this.tipo = tipo
     this.id = id
     this.iSel = i
+    if (this.scrWidth < 992) this.hideMainCol = true
+    this.nombreRepartidor = nombre
     this.getComentarios()
   }
 

@@ -3,7 +3,7 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="comfortaa">Historial</ion-title>
+        <ion-title>Historial</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-header *ngIf="!pedido" class="mobile">
@@ -11,91 +11,114 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="comfortaa">Historial</ion-title>
+        <ion-title>Historial</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-header *ngIf="pedido" class="mobile ion-no-border">
-    <ion-toolbar>
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
         <ion-buttons slot="start">
-            <ion-icon slot="start" name="chevron-back" (click)="pedido = null"></ion-icon>
+            <ion-icon slot="start" name="chevron-back" (click)="regresa()"></ion-icon>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
+    <ion-grid fixed>
+        <ion-row>
+            <ion-col size-lg="8" size-xl="8" size-xs="12" size-sm="12" size-md="12" *ngIf="!hideMainCol || scrWidth >= 992" class="separate-scroll">            
+                <!-- Selector rango fechas -->
+                    <!-- Vista escritorio -->
+                <ion-row *ngIf="first_date" class="escritorio">
+                    <ion-col size="6">
+                        <ion-card class="background-gris">
+                            <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(true)">
+                                <ion-label color="light">Fecha inicial</ion-label>
+                                <ion-label slot="end" style="color: #a9bd1c;" *ngIf="inicial_date">{{inicial_date}}</ion-label>
+                            </ion-item>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-card class="background-gris">
+                            <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(false)">
+                                <ion-label color="light">Fecha final</ion-label>
+                                <ion-label slot="end" style="color: #a9bd1c;" *ngIf="end_date">{{end_date}}</ion-label>
+                            </ion-item>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
 
-        <!--  Vista movil -->
-    <div class="mobile">
-        <ng-container *ngIf="pedido; else pedTemplate">
-            <ion-card>
-                <app-trip-selected *ngIf="pedido" [pedido_selected]="pedido"></app-trip-selected>
-            </ion-card>
-        </ng-container>
-        <ng-template #pedTemplate>
-            <ion-card class="background-gris">
-                <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(true)">
-                    <ion-label color="light">Fecha inicial</ion-label>
-                    <ion-label slot="end" style="color: #a9bd1c;" *ngIf="inicial_date">{{inicial_date}}</ion-label>
-                </ion-item>
-            </ion-card>
-            <ion-card class="background-gris">
-                <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(false)">
-                    <ion-label color="light">Fecha final</ion-label>
-                    <ion-label slot="end" style="color: #a9bd1c;" *ngIf="end_date">{{end_date}}</ion-label>
-                </ion-item>
-            </ion-card>
-    
-            <!-- Loading spinner -->
-            <ion-item lines="none" *ngIf="loading_pedidos">
-                <ion-spinner name="dots" style="margin:auto"></ion-spinner>
-            </ion-item>
-    
-                <!-- Sin servicios label -->
-            <ion-item lines="none" style="text-align: center" *ngIf="no_registros">
-                <ion-label color="medium" class="ion-text-wrap">{{no_registros}}</ion-label>
-            </ion-item>
-    
-            <div *ngIf="pedidos.length > 0">
-                <ion-card>
-                    <ion-item lines="none">
-                        <ion-label>
-                            <h3>Completados: {{completados}}</h3>
-                            <h3>Rechazados: {{rechazados}}</h3>
-                            <h3>Total: {{total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h3>
-                            <h3>Comisiones: {{comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}</h3>
-                        </ion-label>
+                    <!-- Vista móvil -->
+                <ion-card class="background-gris mobile">
+                    <ion-item class="linea_blanca" (click)="openDatePicker(true)" detail>
+                        <ion-label color="light">Fecha inicial</ion-label>
+                        <ion-label slot="end" style="color: #a9bd1c;" *ngIf="inicial_date">{{inicial_date}}</ion-label>
+                    </ion-item>
+                    <ion-item lines="none" class="linea_blanca" (click)="openDatePicker(false)" detail>
+                        <ion-label color="light">Fecha final</ion-label>
+                        <ion-label slot="end" style="color: #a9bd1c;" *ngIf="end_date">{{end_date}}</ion-label>
                     </ion-item>
                 </ion-card>
-        
-                <ion-card class="background-gris">                                    
-                    <ion-item lines="none">
-                        <ion-label color="light">
-                            <h2>Saldo: 
-                                <ion-text color="primary">
-                                    {{total - comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}
-                                </ion-text>
-                            </h2>
-                        </ion-label>
-                    </ion-item>
+
+                    <!-- Loading spinner -->
+                <ion-item lines="none" *ngIf="loading_pedidos">
+                    <ion-spinner name="dots" style="margin:auto"></ion-spinner>
+                </ion-item>
+    
+                    <!-- Sin servicios label -->
+                <ion-item lines="none" style="text-align: center" *ngIf="no_registros">
+                    <ion-label color="medium" class="ion-text-wrap">{{no_registros}}</ion-label>
+                </ion-item>
+
+                <!-- Resumen pedidos -->
+                <ion-row *ngIf="pedidos.length > 0">
+                    <ion-col size-lg="6" size-xl="6" size-xs="12" size-sm="12" size-md="12">
+                        <ion-card>
+                            <ion-row>
+                                <ion-col size="6" style="border-right: var(--ion-color-medium) 1px solid; text-align: center;">
+                                    <h1>{{completados}}</h1>
+                                    <p>Completados</p>
+                                </ion-col>                            
+                                <ion-col size="6" style="text-align: center;">
+                                    <h1>{{rechazados}}</h1>
+                                    <p>Rechazados</p>
+                                </ion-col>
+                            </ion-row>
+                        </ion-card>                    
+                    </ion-col>
+                    <ion-col size-lg="6" size-xl="6" size-xs="12" size-sm="12" size-md="12">
+                        <ion-card>
+                            <ion-row>
+                                <ion-col size="6" style="border-right: var(--ion-color-medium) 1px solid; text-align: center;">
+                                    <h2 style="font-weight: 400;"> {{total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
+                                    <p>Total</p>
+                                </ion-col>                                                       
+                                <ion-col size="6" style="text-align: center;">
+                                    <h2 style="font-weight: 400;">{{comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
+                                    <p>Comisión</p>
+                                </ion-col>
+                            </ion-row>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+                <ion-card *ngIf="pedidos.length > 0" style="border: solid 2px var(--ion-color-primary); text-align: center">
+                    <h1 style="color: var(--ion-color-primary)"> {{total - comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}</h1>
+                    <p class="primario">Saldo</p>
                 </ion-card>
-            </div>
     
-    
-            <!-- Lista de pedidos -->
-            <div>
-                <ion-list *ngFor="let historial of pedidos">
-                    <ion-list-header>
-                        <ion-label color="primary">{{historial.fecha}}</ion-label>
-                    </ion-list-header>
-                    <ion-item>
-                    <ion-label>Creado</ion-label>
-                    <ion-label>Total</ion-label>
-                    <ion-label>Pago</ion-label>
-                    <ion-label>Repartidor</ion-label>
-                    <ion-label>Entregado</ion-label>
-                    </ion-item>         
-                    <ion-item *ngFor="let ped of historial.pedidos" class="resaltar" (click)="pedido = ped">
-                        <ng-container *ngIf="!ped.cancelado_by_negocio; else cancelTemplate">
+                <!-- Pedidos -->
+                <div style="padding-bottom: 2.5rem;">
+                    <ion-list *ngFor="let historial of pedidos">
+                        <ion-list-header>
+                            <ion-label style="font-weight: 700;">{{historial.fecha | date: 'EEEE dd/MMMM/yyyy'}}</ion-label>
+                        </ion-list-header>
+                        <ion-item>
+                        <ion-label>Creado</ion-label>
+                        <ion-label>Total</ion-label>
+                        <ion-label>Pago</ion-label>
+                        <ion-label>Repartidor</ion-label>
+                        <ion-label>Entrega</ion-label>
+                        </ion-item>         
+                        <ion-item *ngFor="let ped of historial.pedidos" class="resaltar" (click)="verPedido(ped)" [ngClass]="ped === pedido ? 'active' : ''">
                             <ion-label color="medium">{{ped.createdAt | date:'shortTime'}}</ion-label>
                             <ion-label color="medium">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
                             <ng-container *ngIf="ped.comision; else comisionTemp">
@@ -115,147 +138,8 @@
                             <ng-template #repartidorTemp>
                                 <ion-label color="medium">--</ion-label>
                             </ng-template>
-                            <ion-label color="medium">{{ped.entregado ? (ped.entregado | date:'shortTime') : '--'}}</ion-label>
-                        </ng-container>
-                        <ng-template #cancelTemplate>
-                            <ion-label color="danger" style="text-decoration: line-through;">{{ped.createdAt | date:'shortTime'}}</ion-label>
-                            <ion-label color="danger" style="text-decoration: line-through;">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                            <ng-container *ngIf="ped.comision; else comisionTemp">
-                                <ion-label color="danger" style="text-decoration: line-through;">{{ped.formaPago.forma | titlecase}} / {{ped.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                            </ng-container>
-                            <ng-template #comisionTemp>
-                                <ion-label color="danger" style="text-decoration: line-through;">{{ped.formaPago.forma | titlecase}}</ion-label>
-                            </ng-template>
-                            <ion-label color="danger">--</ion-label>
-                            <ion-label color="danger">--</ion-label>
-                        </ng-template>
-                    </ion-item>
-                </ion-list>        
-            </div>
-            
-        </ng-template>
-        
-
-
-    </div>
-
-
-
-
-            <!-- Vista escritorio -->
-    <ion-grid fixed class="escritorio">
-        <ion-row>
-            <ion-col size="8" class="separate-scroll">            
-                <!-- Selector rango fechas -->
-                <ion-row *ngIf="first_date">
-                    <ion-col size="6">
-                        <ion-card class="background-gris">
-                            <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(true)">
-                                <ion-label color="light">Fecha inicial</ion-label>
-                                <ion-label slot="end" style="color: #a9bd1c;" *ngIf="inicial_date">{{inicial_date}}</ion-label>
-                            </ion-item>
-                        </ion-card>
-                    </ion-col>
-                    <ion-col size="6">
-                        <ion-card class="background-gris">
-                            <ion-item lines="none" style="cursor: pointer;" (click)="openDatePicker(false)">
-                                <ion-label color="light">Fecha final</ion-label>
-                                <ion-label slot="end" style="color: #a9bd1c;" *ngIf="end_date">{{end_date}}</ion-label>
-                            </ion-item>
-                        </ion-card>
-                    </ion-col>
-                </ion-row>
-
-
-                    <!-- Loading spinner -->
-                <ion-item lines="none" *ngIf="loading_pedidos">
-                    <ion-spinner name="dots" style="margin:auto"></ion-spinner>
-                </ion-item>
-    
-                    <!-- Sin servicios label -->
-                <ion-item lines="none" style="text-align: center" *ngIf="no_registros">
-                    <ion-label color="medium" class="ion-text-wrap">{{no_registros}}</ion-label>
-                </ion-item>
-
-                <!-- Resumen pedidos -->
-                <ion-grid fixed *ngIf="pedidos.length > 0">
-                    <ion-row>
-                        <ion-col size="6">
-                        <ion-card>
-                            <ion-item lines="none">
-                                <ion-label>
-                                    <h3>Completados: {{completados}}</h3>
-                                    <h3>Rechazados: {{rechazados}}</h3>
-                                    <h3>Total: {{total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h3>
-                                    <h3>Comisiones: {{comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}</h3>
-                                </ion-label>
-                            </ion-item>
-                        </ion-card>
-                        </ion-col>
-                        <ion-col size="6">
-                            <ion-card class="background-gris">                                    
-                                <ion-item lines="none">
-                                    <ion-label color="light">
-                                        <h2>Saldo: 
-                                            <ion-text color="primary">
-                                                {{total - comisiones | currency:'CAD':'symbol-narrow':'1.0-2'}}
-                                            </ion-text>
-                                        </h2>
-                                    </ion-label>
-                                </ion-item>
-                            </ion-card>
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
-    
-                <!-- Pedidos -->
-                <div>
-                    <ion-list *ngFor="let historial of pedidos">
-                        <ion-list-header>
-                        <ion-label color="primary">{{historial.fecha}}</ion-label>
-                        </ion-list-header>
-                        <ion-item>
-                        <ion-label>Creado</ion-label>
-                        <ion-label>Total</ion-label>
-                        <ion-label>Pago</ion-label>
-                        <ion-label>Repartidor</ion-label>
-                        <ion-label>Entregado</ion-label>
-                        </ion-item>         
-                        <ion-item *ngFor="let ped of historial.pedidos" class="resaltar" (click)="pedido = ped" [ngClass]="ped === pedido ? 'active' : ''">
-                            <ng-container *ngIf="!ped.cancelado_by_negocio; else cancelTemplate">
-                                <ion-label color="medium">{{ped.createdAt | date:'shortTime'}}</ion-label>
-                                <ion-label color="medium">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                                <ng-container *ngIf="ped.comision; else comisionTemp">
-                                    <ion-label color="medium">{{ped.formaPago.forma | titlecase}} / {{ped.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                                </ng-container>
-                                <ng-template #comisionTemp>
-                                    <ion-label color="medium">{{ped.formaPago.forma | titlecase}}</ion-label>
-                                </ng-template>
-                                <ng-container *ngIf="ped.repartidor; else repartidorTemp">
-                                    <ng-container *ngIf="ped.repartidor.ganancia; else gananciaTemp">
-                                    <ion-label color="medium">{{ped.repartidor.nombre}} - {{ped.repartidor.ganancia | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                                    </ng-container>
-                                    <ng-template #gananciaTemp>
-                                    <ion-label color="medium">{{ped.repartidor.nombre}}</ion-label>
-                                    </ng-template>
-                                </ng-container>
-                                <ng-template #repartidorTemp>
-                                    <ion-label color="medium">--</ion-label>
-                                </ng-template>
-                                <ion-label color="medium">{{ped.entregado ? (ped.entregado | date:'shortTime') : '--'}}</ion-label>
-                            </ng-container>
-                            <ng-template #cancelTemplate>
-                                <ion-label color="danger" style="text-decoration: line-through;">{{ped.createdAt | date:'shortTime'}}</ion-label>
-                                <ion-label color="danger" style="text-decoration: line-through;">{{ped.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                                <ng-container *ngIf="ped.comision; else comisionTemp">
-                                    <ion-label color="danger" style="text-decoration: line-through;">{{ped.formaPago.forma | titlecase}} / {{ped.comision | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                                </ng-container>
-                                <ng-template #comisionTemp>
-                                    <ion-label color="danger" style="text-decoration: line-through;">{{ped.formaPago.forma | titlecase}}</ion-label>
-                                </ng-template>
-                                <ion-label color="danger">--</ion-label>
-                                <ion-label color="danger">--</ion-label>
-                            </ng-template>
+                            <ion-label color="medium" *ngIf="!ped.cancelado_by_negocio">{{ped.entregado ? (ped.entregado | date:'shortTime') : '--'}}</ion-label>
+                            <ion-label color="danger" *ngIf="ped.cancelado_by_negocio">Cancelado</ion-label>
                         </ion-item>
                     </ion-list>        
                 </div>
@@ -263,7 +147,7 @@
     
     
               <!-- Detalles pedido -->
-            <ion-col size="4" class="separate-scroll">
+            <ion-col size-lg="4" size-xl="4" size-xs="12" size-sm="12" size-md="12" class="separate-scroll" style="padding-bottom: 2.5rem;">
                 <!-- Detalles -->
                 <app-trip-selected *ngIf="pedido" [pedido_selected]="pedido"></app-trip-selected>
             </ion-col>

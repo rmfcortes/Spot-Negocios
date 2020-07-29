@@ -13,7 +13,6 @@ registerLocaleData(localeEsMX, 'es-MX');
 
 import { RatesPage } from './rates.page';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ComentariosPageModule } from 'src/app/modals/comentarios/comentarios.module';
 
 @NgModule({
   imports: [
@@ -21,7 +20,6 @@ import { ComentariosPageModule } from 'src/app/modals/comentarios/comentarios.mo
     FormsModule,
     IonicModule,
     SharedModule,
-    ComentariosPageModule,
     RatesPageRoutingModule
   ],
   declarations: [RatesPage],

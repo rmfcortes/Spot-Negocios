@@ -15,7 +15,7 @@
         </ion-card-header>
         <ion-item lines="none" style="margin-bottom: 0.75rem;">
             <ng-container *ngIf="palabrasReady; else palTemplate">
-                <ion-textarea autoGrow="true" [(ngModel)]="palabrasClave" class="cuadro-claves" placeholder="Ej. masajes, hamburguesas, tornillos, ropa dama"></ion-textarea>
+                <ion-textarea style="max-height: 80vh;" autoGrow="true" [(ngModel)]="palabrasClave" class="cuadro-claves" placeholder="Ej. masajes, hamburguesas, tornillos, ropa dama"></ion-textarea>
             </ng-container>
             <ng-template #palTemplate>
                 <ion-spinner color="primary" name="dots"></ion-spinner>

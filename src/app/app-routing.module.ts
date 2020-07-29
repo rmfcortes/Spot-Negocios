@@ -33,10 +33,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/repartidores/repartidores.module').then(m => m.RepartidoresPageModule), canActivate: [AuthGuard]
   },
   {
-    path: 'pasillos',
-    loadChildren: () => import('./pages/pasillos/pasillos.module').then( m => m.PasillosPageModule), canActivate: [AuthGuard]
-  },
-  {
     path: 'horario',
     loadChildren: () => import('./pages/horario/horario.module').then( m => m.HorarioPageModule), canActivate: [AuthGuard]
   },

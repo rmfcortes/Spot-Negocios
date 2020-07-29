@@ -1,6 +1,6 @@
 <!-- Detalles -->
 <ion-item-divider style="text-align: center;">
-    <ion-label color="primary" style="font-size: x-large;">Detalles</ion-label>
+    <ion-label style="font-size: large; font-weight: 700;">Detalles</ion-label>
 </ion-item-divider>
 <ion-item lines="none">
     <ion-label>
@@ -33,11 +33,11 @@
 
 <!-- Cliente -->
 <ion-item-divider style="text-align: center;">
-    <ion-label color="primary" style="font-size: x-large;">Cliente</ion-label>
+    <ion-label style="font-size: large; font-weight: 700;">Cliente</ion-label>
 </ion-item-divider>
 <ion-item lines="none">
     <ion-label>
-        <h2>Cliente:
+        <h2>Nombre:
             <ion-text color="medium">{{pedido_selected.cliente.nombre | titlecase}}</ion-text>
         </h2>
         <h2>Teléfono:
@@ -49,7 +49,7 @@
 
 <!-- Negocio -->
 <ion-item-divider style="text-align: center;">
-    <ion-label color="primary" style="font-size: x-large;">Negocio</ion-label>
+    <ion-label style="font-size: large; font-weight: 700;">Negocio</ion-label>
 </ion-item-divider>
 <ion-item lines="none">
     <ion-avatar>
@@ -69,7 +69,7 @@
 
 <!-- Repartidor -->
 <ion-item-divider style="text-align: center;" *ngIf="pedido_selected.repartidor">
-    <ion-label color="primary" style="font-size: x-large;">Repartidor</ion-label>
+    <ion-label style="font-size: large; font-weight: 700;">Repartidor</ion-label>
 </ion-item-divider>
 <ion-item lines="none" *ngIf="pedido_selected.repartidor">
     <ion-avatar>
@@ -89,7 +89,7 @@
 
 <!-- Productos -->
 <ion-item-divider style="text-align: center;">
-    <ion-label color="primary" style="font-size: x-large;">Productos</ion-label>
+    <ion-label style="font-size: large; font-weight: 700;">Productos</ion-label>
 </ion-item-divider>
 <ion-item *ngFor="let producto of pedido_selected.productos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
     <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
@@ -110,3 +110,5 @@
         </h2>
     </ion-label>
 </ion-item>
+
+<div style="height: 2.5rem;"></div>
