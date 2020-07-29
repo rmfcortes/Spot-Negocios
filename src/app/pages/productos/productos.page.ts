@@ -212,18 +212,14 @@ export class ProductosPage implements OnInit {
   }
 
   loadMoreProducts() {
-    this.infiniteCall++;
-    if (this.noMore) {
-      return;
-    }
-    this.getProds();
+    this.infiniteCall++
+    if (this.noMore) return
+    this.getProds()
   }
 
   loadMoreProductsFiltrados() {
     this.infiniteCall++
-    if (this.noMore) {
-      return
-    }
+    if (this.noMore) return
     this.getProdsFiltrados()
   }
 
@@ -240,7 +236,7 @@ export class ProductosPage implements OnInit {
     } else {
       if (event) event.target.complete()
       this.cargando_productos = false
-      this.noMore = true;
+      this.noMore = true
     }
   }
 

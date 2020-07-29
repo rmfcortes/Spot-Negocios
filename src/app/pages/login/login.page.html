@@ -1,6 +1,6 @@
 <ion-content>
     <!-- Desktop design -->
-    <ion-grid style="height: 100vh;" class="desktop">
+    <ion-grid style="height: 100vh;" class="escritorio">
         <ion-row class="ion-align-items-center" style="height: 100%;">
             <!-- Image login -->
             <ion-col>
@@ -64,14 +64,18 @@
 
 
     <!-- Mobile design -->
-    <div class="mobile-container" class="mobile">
+    <div class="mobile">
         <!-- Sign in form -->
         <form [formGroup]="form" (ngSubmit)="signIn()" class="mobile-box">
             <ion-item lines="none" style="text-align: center;">
-                <ion-label>Spot</ion-label>
+                <div style="width: 100%; text-align: center;">
+                    <img src="../../../assets/img/logo.png" style="width: 15%;">
+                </div>
             </ion-item>
-            <h1 style="color: var(--ion-color-primary); font-size: xx-large;">Bienvenido</h1>
-            <p style="margin-bottom: 4rem;">Spot para administradores</p>
+            <ion-item lines="none" style="text-align: center;">
+                <ion-label>Plaza</ion-label>
+            </ion-item>
+            <h1 style="color: var(--ion-color-primary); font-size: xx-large; font-weight: 700;">Bienvenido</h1>
             <ion-item lines="none" class="input margin">
                 <ion-label position="floating" class="grey">Correo</ion-label>
                 <ion-input type="email" formControlName="email" class="form-control" required></ion-input>
@@ -108,7 +112,7 @@
             <div class="error-message ion-text-wrap" *ngIf="err">
                 {{ err }}
             </div>
-            <ion-button (click)="signIn()" shape="round">
+            <ion-button (click)="signIn()" shape="round" class="gradient--">
                 Ingresar
             </ion-button>
         </form>

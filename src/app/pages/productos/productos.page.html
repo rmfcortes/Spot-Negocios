@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header *ngIf="!hideMainCol">
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
@@ -80,6 +80,24 @@
                         <app-list-img [sections]="productos" (showProduct)="verProducto($event)"></app-list-img>
                     </div>
                 </div>
+                <ion-item lines="none" *ngIf="cargando_productos">
+                    <ion-spinner style="margin: auto;" name="dots" color="primary"></ion-spinner>
+                </ion-item>
+
+                <ng-container *ngIf="pasilloFiltro; else elseTemplate">
+                    <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProductsFiltrados()" expand="block" class="gradient--" shape="round">
+                        Ver más
+                    </ion-button>
+                </ng-container>
+                <ng-template #elseTemplate>
+                    <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProducts()" expand="block" class="gradient--" shape="round">
+                        Ver más
+                    </ion-button>
+                </ng-template>
+
+                <ion-item style="padding-top: 3rem; text-align: center;" *ngIf="noMore" lines="none">
+                    <ion-label color="medium">No hay más resultados</ion-label>
+                </ion-item>
             </div>
 
             <ion-grid fixed class="escritorio ion-no-padding">
