@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter() {
     this.menu.enable(false)
-    this.title.setTitle('Spot admin - login')
+    this.title.setTitle('Plaza Socios - login')
     this.netSub = this.netService.isConnected.subscribe(res => this.isConnected = res)
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
       const nombre = 'app'

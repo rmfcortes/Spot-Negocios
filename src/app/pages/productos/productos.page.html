@@ -1,4 +1,4 @@
-<ion-header *ngIf="!hideMainCol">
+<ion-header>
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
@@ -100,6 +100,8 @@
                 </ion-item>
             </div>
 
+            <!-- Vista escritorio -->
+
             <ion-grid fixed class="escritorio ion-no-padding">
                 <ion-row>
                     <ion-col size="6" class="separate-scroll">
@@ -198,22 +200,22 @@
                                 <ng-container *ngIf="productosCargados > 0">
                                     <div [ngSwitch]="pasillos.vista">
                                         <div *ngSwitchCase="'list-img'">
-                                            <app-list-img [sections]="productos" (showProduct)="showProduct($event)"></app-list-img>
+                                            <app-list-img [sections]="productos"></app-list-img>
                                         </div>
                                         <div *ngSwitchCase="'block'">
-                                            <app-block [sections]="productos" (showProduct)="showProduct($event)"></app-block>
+                                            <app-block [sections]="productos"></app-block>
                                         </div>
                                         <div *ngSwitchCase="'cards'">
-                                            <app-cards [sections]="productos" (showProduct)="showProduct($event)"></app-cards>
+                                            <app-cards [sections]="productos"></app-cards>
                                         </div>
                                         <div *ngSwitchCase="'list'">
-                                            <app-list [sections]="productos" (showProduct)="showProduct($event)"></app-list>
+                                            <app-list [sections]="productos"></app-list>
                                         </div>
                                         <div *ngSwitchCase="'gallery'">
-                                            <app-gallery [sections]="productos" (showProduct)="showProduct($event)"></app-gallery>
+                                            <app-gallery [sections]="productos"></app-gallery>
                                         </div>
                                         <div *ngSwitchDefault>
-                                            <app-list-img [sections]="productos" (showProduct)="showProduct($event)"></app-list-img>
+                                            <app-list-img [sections]="productos"></app-list-img>
                                         </div>
                                     </div>
                                 </ng-container>

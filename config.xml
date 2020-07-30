@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.spot_negocios.kifteam" version="0.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Spot Negocios</name>
-    <description>App de administración para negocios registrados en Spot</description>
+<widget id="com.spot_negocios.kifteam" version="0.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Plaza Socios</name>
+    <description>App de administración para negocios registrados en Plaza</description>
     <author email="hi@ionicframework.com" href="http://ionicframework.com/">KIF Team</author>
     <content src="index.html" />
     <access origin="*" />

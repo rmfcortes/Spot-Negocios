@@ -32,6 +32,18 @@ ion-card {
     border-radius: 15px;
 }
 
+.loading-wrapper {
+    border: 1px solid var(--ion-color-primary);
+    border-radius: 20px !important;
+    overflow: hidden;
+}
+
+.alert-wrapper {
+    border: 1px solid var(--ion-color-primary);
+    border-radius: 20px !important;
+    overflow: hidden;
+}
+
 .primario {
     color: var(--ion-color-primary)
 }

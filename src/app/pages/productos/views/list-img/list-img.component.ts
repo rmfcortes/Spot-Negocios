@@ -11,9 +11,9 @@ import { ProductoPasillo, Producto } from 'src/app/interfaces/producto';
 })
 export class ListImgComponent {
 
-  @Input() sections: ProductoPasillo[]
   @Output() showProduct = new EventEmitter<Producto>()
   @Output() load = new EventEmitter<any>()
+  @Input() sections: ProductoPasillo[]
 
 
   constructor(
@@ -29,16 +29,15 @@ export class ListImgComponent {
   }
 
   loadData(event) {
-    console.log('Emit load');
     this.load.emit(event)
   }
 
   trackSections(index:number, el:ProductoPasillo): number {
-    return index;
+    return index
   }
 
   trackProducts(index:number, el:Producto): string {
-    return el.id;
+    return el.id
   }
 
 }

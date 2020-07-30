@@ -13,12 +13,12 @@ export class BlockComponent implements OnInit {
 
   @ViewChild(NgxMasonryComponent, {static: false}) masonry: NgxMasonryComponent;
 
-  @Input() sections: ProductoPasillo[]
   @Output() showProduct = new EventEmitter<Producto>()
+  @Input() sections: ProductoPasillo[]
 
   public myOptions: NgxMasonryOptions = {
     gutter: 10
-  };
+  }
 
   constructor(
   ) { }

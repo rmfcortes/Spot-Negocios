@@ -16,7 +16,7 @@ import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepic
 })
 export class HistorialPage implements OnInit {
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   getScreenSize() {
     this.scrHeight = window.innerHeight
     this.scrWidth = window.innerWidth

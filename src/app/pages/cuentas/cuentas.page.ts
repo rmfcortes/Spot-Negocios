@@ -109,7 +109,6 @@ export class CuentasPage implements OnInit {
       this.iSel = i
     } catch (error) {
       this.alertService.presentAlert('Error', 'Algo salió mal, por favor intenta de nuevo ' + error)
-      console.log(error)
     }
   }
 

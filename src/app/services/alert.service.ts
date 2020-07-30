@@ -71,9 +71,6 @@ export class AlertService {
           text: 'Ok',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: (blah) => {
-            console.log('Confirm Cancel: blah');
-          }
         }
       ]
     })
@@ -132,9 +129,6 @@ export class AlertService {
             text: 'Cancelar',
             role: 'cancel',
             cssClass: 'secondary',
-            handler: () => {
-              console.log('Confirm Cancel');
-            }
           }, {
             text: 'Ok',
             handler: (data) => {

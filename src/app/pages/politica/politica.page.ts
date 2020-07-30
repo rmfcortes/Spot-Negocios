@@ -22,13 +22,13 @@ export class PoliticaPage implements OnInit {
 
   ionViewWillEnter() {
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
-      const nombre = 'app';
-      navigator[nombre].exitApp();
-    });
+      const nombre = 'app'
+      navigator[nombre].exitApp()
+    })
   }
 
   ionViewWillLeave() {
-    if (this.back) {this.back.unsubscribe()}
+    if (this.back) this.back.unsubscribe()
   }
 
 }

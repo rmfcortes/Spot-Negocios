@@ -17,7 +17,7 @@ import { RepartidorPreview, Repartidor } from 'src/app/interfaces/repartidor';
 })
 export class RepartidoresPage implements OnInit {
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   getScreenSize() {
     this.scrHeight = window.innerHeight
     this.scrWidth = window.innerWidth

@@ -9,7 +9,6 @@ import { ProductoPasillo, Producto } from 'src/app/interfaces/producto';
 export class GalleryComponent implements OnInit {
 
   @Input() sections: ProductoPasillo[]
-  
   @Output() showProduct = new EventEmitter<Producto>()
 
 

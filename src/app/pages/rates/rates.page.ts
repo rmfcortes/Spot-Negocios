@@ -17,7 +17,7 @@ import { Pedido, CalificacionDetalles } from '../../interfaces/pedido';
 })
 export class RatesPage implements OnInit {
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   getScreenSize() {
     this.scrHeight = window.innerHeight
     this.scrWidth = window.innerWidth

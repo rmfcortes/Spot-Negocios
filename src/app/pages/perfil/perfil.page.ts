@@ -143,7 +143,7 @@ export class PerfilPage implements OnInit {
               this.perfil.direccion.lat = null
               this.perfil.direccion.direccion = ''
               this.alertService.presentAlert('Fuera de cobertura', 'La dirección está muy lejos de la región elegida ' +
-              'Cambia de región o espera a que Spot llegue a tu región')
+              'Cambia de región o espera a que Plaza-Socios llegue a tu región')
               this.cobertura = false
             }
         })
@@ -229,7 +229,6 @@ export class PerfilPage implements OnInit {
       this.alertService.presentToast('Cambios guardados')
       this.uidService.setCambios(false)
     } catch (error) {
-      console.log(error)
       this.alertService.dismissLoading()
       this.alertService.presentAlert('Error', 'Algo salió mal. Haz una captura de pantalla de este error y enviala a Soporte ' + error)
     }

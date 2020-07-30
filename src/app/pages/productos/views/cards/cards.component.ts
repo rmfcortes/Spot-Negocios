@@ -9,7 +9,6 @@ import { ProductoPasillo, Producto } from 'src/app/interfaces/producto';
 export class CardsComponent implements OnInit {
 
   @Input() sections: ProductoPasillo[]
-
   @Output() showProduct = new EventEmitter<Producto>()
 
 

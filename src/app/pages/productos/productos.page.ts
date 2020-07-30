@@ -264,7 +264,6 @@ export class ProductosPage implements OnInit {
   }
 
   resetProds(pasillo?) {
-    console.log('reset');
     this.cambiandoPasillo = true
     this.lastKey = ''
     this.yPasillo = 0
@@ -365,10 +364,6 @@ export class ProductosPage implements OnInit {
       }
     })
     return await modal.present()
-  }
-
-  showProduct(event) {
-    console.log(event)
   }
 
   vistaElegida(event) {
