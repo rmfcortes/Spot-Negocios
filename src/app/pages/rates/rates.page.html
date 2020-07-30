@@ -1,13 +1,13 @@
-<ion-header>
-    <ion-toolbar color="primary" class="escritorio">
+<ion-header class="escritorio">
+    <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Reseñas</ion-title>
     </ion-toolbar>
 </ion-header>
-<ion-header *ngIf="comentarios.length === 0" class="mobile">
-    <ion-toolbar color="primary">
+<ion-header class="mobile" *ngIf="comentarios.length === 0 && !pedido">
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>

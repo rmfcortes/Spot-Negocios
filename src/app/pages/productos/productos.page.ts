@@ -428,9 +428,7 @@ export class ProductosPage implements OnInit {
     this.unselectEdit()
     this.beforeEdit = this.listaPasillos[i].nombre
     this.listaPasillos[i].edit = true
-    setTimeout(() => {
-      this.inputSectionEdit.setFocus()
-    }, 300)
+    setTimeout(() => this.inputSectionEdit.setFocus(), 300)
   }
 
   cancelEditPasillo(i: number) {
@@ -441,6 +439,8 @@ export class ProductosPage implements OnInit {
 
   saveEditSection(i) {
     this.unselectEdit()
+    this.listaPasillos[i].nombre =  this.listaPasillos[i].nombre.trim()
+    if (!this.listaPasillos[i].nombre) return
     this.pasillosService.editPasillo(this.categoria, i, this.beforeEdit, this.listaPasillos[i].nombre)
     const y = this.productos.findIndex(p => p.nombre === this.beforeEdit)
     this.productos[y].nombre = this.listaPasillos[i].nombre

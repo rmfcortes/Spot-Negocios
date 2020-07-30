@@ -1,21 +1,16 @@
-<ion-header>
-    <ion-toolbar color="primary">
-        <ion-buttons slot="end">
+<ion-header class="ion-no-border">
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
+        <ion-buttons slot="start">
             <ng-container *ngIf="verPrevio; else iconTemplate">
                 <ion-button (click)="verPrevio = false">
-                    <ion-icon slot="icon-only" name="close"></ion-icon>
+                    <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
                 </ion-button>
             </ng-container>
             <ng-template #iconTemplate>
                 <ion-button (click)="salir()">
-                    <ion-icon slot="icon-only" name="close"></ion-icon>
+                    <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
                 </ion-button>
             </ng-template>
-        </ion-buttons>
-        <ion-buttons slot="start" *ngIf="!verPrevio">
-            <ion-button [disabled]="!croppedImage" (click)="verPrevio = true" class="comfortaa">
-                Vista previa
-            </ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -33,10 +28,15 @@
     </ng-template>
 
 </ion-content>
-<ion-footer no-border>
+<ion-footer class="ion-no-border">
     <ion-toolbar>
-        <ion-button [disabled]="!croppedImage || !imageReady" expand="block" (click)="guardar()">
-            Guardar
-        </ion-button>
+        <ion-item>
+            <ion-button *ngIf="!verPrevio" fill="clear" slot="start" (click)="verPrevio = true">
+                Vista previa
+            </ion-button>            
+            <ion-button slot="end" [disabled]="!croppedImage || !imageReady" class="gradient--" (click)="guardar()">
+                Guardar <ion-icon slot="end" name="save-outline"></ion-icon>
+            </ion-button>
+        </ion-item>
     </ion-toolbar>
 </ion-footer>

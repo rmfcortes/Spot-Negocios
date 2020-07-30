@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="escritorio">
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
@@ -6,6 +6,15 @@
         <ion-title>Búsqueda</ion-title>
     </ion-toolbar>
 </ion-header>
+<ion-header class="mobile">
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Búsqueda</ion-title>
+    </ion-toolbar>
+</ion-header>
+
 
 <ion-content>
     <ion-card class="card-search">
@@ -15,7 +24,7 @@
         </ion-card-header>
         <ion-item lines="none" style="margin-bottom: 0.75rem;">
             <ng-container *ngIf="palabrasReady; else palTemplate">
-                <ion-textarea style="max-height: 80vh;" autoGrow="true" [(ngModel)]="palabrasClave" class="cuadro-claves" placeholder="Ej. masajes, hamburguesas, tornillos, ropa dama"></ion-textarea>
+                <ion-textarea (keyup.enter)="$event.target.blur();" style="max-height: 80vh;" autoGrow="true" [(ngModel)]="palabrasClave" class="cuadro-claves" placeholder="Ej. masajes, hamburguesas, tornillos, ropa dama"></ion-textarea>
             </ng-container>
             <ng-template #palTemplate>
                 <ion-spinner color="primary" name="dots"></ion-spinner>

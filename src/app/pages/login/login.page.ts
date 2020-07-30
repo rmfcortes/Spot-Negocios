@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Platform, MenuController } from '@ionic/angular';
-import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Platform, MenuController, IonInput } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { HostListener } from "@angular/core";
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { NetworkService } from 'src/app/services/network.service';
@@ -16,6 +17,15 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+
+  @HostListener('window:resize')
+  getScreenSize() {
+    this.scrHeight = window.innerHeight
+    this.scrWidth = window.innerWidth
+  }
+  scrHeight: number
+  scrWidth: number
+  hideMainCol = false
 
   form: FormGroup
   validation_messages: any
@@ -37,7 +47,7 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private alertService: AlertService,
     private netService: NetworkService,
-  ) { }
+  ) { this.getScreenSize() }
 
   ngOnInit() {
     this.setForm()
@@ -71,6 +81,17 @@ export class LoginPage implements OnInit {
           { type: 'minlength', message: 'La contraseña debe tener al menos 6 caracteres' },
         ],
       }
+  }
+
+
+  focus(nextElement: IonInput) {
+    nextElement.setFocus()
+  }  
+  
+  async blur(nextElement: IonInput) {
+    const h: HTMLInputElement = await nextElement.getInputElement()
+    h.blur()
+    this.signIn()
   }
 
   async signIn() {

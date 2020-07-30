@@ -1,17 +1,17 @@
-<ion-header>
-    <ion-toolbar color="primary" class="escritorio">
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Pedidos activos</ion-title>
-    </ion-toolbar>
-</ion-header>
-<ion-header *ngIf="!pedido" class="mobile">
+<ion-header class="escritorio">
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Pedidos activos</ion-title>
+        <ion-title>Pedidos en curso</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header class="mobile" *ngIf="!pedido">
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Pedidos en curso</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-header *ngIf="pedido" class="mobile ion-no-border">
@@ -167,7 +167,7 @@
                         <div class="input_avance">
                             <ion-item lines="none">
                                 <ion-label position="floating">Agregar avance</ion-label>
-                                <ion-input [(ngModel)]="avance.concepto" name="avance" type="text" placeholder="Ej. Productos listos"></ion-input>
+                                <ion-input (keyup.enter)="agregarAvance()" [(ngModel)]="avance.concepto" name="avance" type="text" placeholder="Ej. Productos listos"></ion-input>
                                 <ion-button slot="end" (click)="agregarAvance()" shape="round">
                                     Agregar
                                 </ion-button>
@@ -211,7 +211,7 @@
                     </ion-card>
 
 
-                    <ion-grid fixed>
+                    <ion-grid fixed class="escritorio">
                         <ion-row>
                             <ion-col size="6">
                                 <ion-button *ngIf="!pedido.aceptado" fill="outline" color="danger" (click)="rechazarPedido()">
@@ -220,11 +220,20 @@
                             </ion-col>
                             <ion-col size="6">
                                 <ion-button class="gradient--" *ngIf="!pedido.aceptado" expand="block" (click)="aceptarPedido()">
-                                    Tomar pedido
-                                </ion-button>                                
+                                    Tomar pedido 
+                                    <ion-icon slot="end" name="checkmark-done"></ion-icon>
+                                </ion-button>                                     
                             </ion-col>
                         </ion-row>
                     </ion-grid>
+                    <ion-item lines="none" class="mobile" *ngIf="!pedido.aceptado">
+                        <ion-button expand="block" fill="outline" (click)="rechazarPedido()">
+                            Rechazar
+                        </ion-button>                                
+                        <ion-button slot="end" class="gradient--" expand="block" (click)="aceptarPedido()">
+                            Tomar pedido 
+                        </ion-button>                                
+                    </ion-item>                    
                 </div>
             </ion-col>
         </ion-row>

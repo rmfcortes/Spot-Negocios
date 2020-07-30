@@ -2,7 +2,7 @@
     <ion-toolbar>
         <ion-buttons slot="start">
             <ion-button (click)="regresar()">
-                <ion-icon slot="start" name="chevron-back" color="primary"></ion-icon>
+                <ion-icon slot="start" name="chevron-back"></ion-icon>
             </ion-button>
         </ion-buttons>
         <ion-buttons slot="end" *ngIf="producto.id">
@@ -38,7 +38,11 @@
                 </ion-item>
                 <ion-item *ngIf="tipo === 'productos'">
                     <ion-label color="medium" position="floating">Precio</ion-label>
-                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" required minlength="3"></ion-input>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" required minlength="1"></ion-input>
+                </ion-item>                
+                <ion-item *ngIf="tipo === 'servicios'">
+                    <ion-label color="medium" position="floating">Precio (opcional)</ion-label>
+                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" minlength="1"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label color="medium" position="floating">Código(opcional)</ion-label>

@@ -19,12 +19,12 @@ import { Pasillo } from 'src/app/interfaces/pasillo';
 })
 export class ProductoPage implements OnInit {
 
-  @Input() producto: Producto
-  @Input() categoria: string
   @Input() tipo: string
   @Input() plan: string
-  @Input() agregados: number
   @Input() nuevo: boolean
+  @Input() agregados: number
+  @Input() categoria: string
+  @Input() producto: Producto
 
   pasillos: Pasillo[] = []
   complementos: Complemento[] = []
@@ -152,15 +152,18 @@ export class ProductoPage implements OnInit {
   }
 
   async guardarCambios() {
-    this.guardando = true
-    await this.alertService.presentLoading('Estamos guardando la información del producto. Este proceso puede tardar algunos minutos. Por favor no cierres ni actualices la página')
     this.producto.nombre = this.producto.nombre.trim()
     this.producto.descripcion = this.producto.descripcion.trim()
-    if (!this.producto.nombre || !this.producto.descripcion) {
-      this.alertService.dismissLoading()
+    if (!this.producto.nombre || !this.producto.descripcion || !this.producto.precio) {
       this.alertService.presentAlert('', 'Por favor completa todos los campos')
       return
     }
+    if (this.producto.precio && this.tipo === 'productos' && !/^[0-9]+$/.test(this.producto.precio.toString())) {
+      this.alertService.presentAlert('Precio inválido', 'El precio debe incluir sólo números enteros')
+      return
+    }
+    await this.alertService.presentLoading('Estamos guardando la información del producto. Este proceso puede tardar algunos minutos. Por favor no cierres ni actualices la página')
+    this.guardando = true
     try {
       if (this.base64) {
         this.producto.url = await this.productoService.uploadFoto(this.base64, this.producto, 'producto')

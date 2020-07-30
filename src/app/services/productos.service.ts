@@ -327,6 +327,7 @@ export class ProductosService {
         if (plan === 'basico') delete busqueda.idNegocio
         await this.db.object(`busqueda/${perfil.region}/${idNegocio}`).update(busqueda)
         await this.db.object(`rate/resumen/${idNegocio}`).update(calificacion)
+        await this.db.object(`categoria/${perfil.region}/${perfil.categoria}/cantidad`).query.ref.transaction(cantidad => cantidad ? cantidad + 1 : 1)
         resolve()
       } catch (error) {
         this.db.object(`perfiles/${idNegocio}/productos`).set(0)

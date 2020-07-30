@@ -1,5 +1,13 @@
-<ion-header>
+<ion-header class="escritorio">
     <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>{{perfil?.nombre}}</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header class="mobile">
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
@@ -8,7 +16,6 @@
 </ion-header>
 
 <ion-content>
-    <!-- Escritorio -->
         <ng-container *ngIf="perfilReady; else loadTemplate">
             <ion-grid fixed>
                 <ion-row>
@@ -74,7 +81,7 @@
                                 </ion-item>
                                 <ion-item *ngIf="perfil.repartidores_propios">
                                     <ion-label color="medium" position="floating">Pedido mínimo para envío gratis</ion-label>
-                                    <ion-input type="number" [(ngModel)]="perfil.envio_gratis_pedMin" name="envio_gratis" (ionChage)="formularioChange()"></ion-input>
+                                    <ion-input (keyup.enter)="$event.target.blur();" type="number" [(ngModel)]="perfil.envio_gratis_pedMin" name="envio_gratis" (ionChage)="formularioChange()"></ion-input>
                                 </ion-item>
                                 <ion-item *ngIf="perfil.tipo === 'productos' && perfil.entrega === 'inmediato'">
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Tiempo de preparacion aprox. en minutos</ion-label>

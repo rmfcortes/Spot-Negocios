@@ -1,6 +1,5 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, HostListener } from '@angular/core';
 import { ModalController, Platform, MenuController } from '@ionic/angular';
-import { HostListener } from "@angular/core";
 import { Subscription } from 'rxjs';
 
 import { CropImagePage } from 'src/app/modals/crop-image/crop-image.page';
@@ -155,14 +154,21 @@ export class RepartidoresPage implements OnInit {
   }
 
   async guardarCambios() {
+    this.repartidor.detalles.user = this.repartidor.detalles.user.trim()
+    this.repartidor.detalles.pass = this.repartidor.detalles.pass.trim()
+    this.repartidor.preview.nombre = this.repartidor.preview.nombre.trim()
     this.repartidor.preview.telefono = this.repartidor.preview.telefono.replace(/ /g, "")
     if (this.repartidor.preview.telefono.length !== 10) {
       this.alertService.presentAlert('Número incorrecto', 'El teléfono debe ser de 10 dígitos, por favor intenta de nuevo')
       return
     }
-    if (!this.repartidorPrev) {
-      this.repartidor.detalles.correo = this.repartidor.detalles.user.trim() + '@spot.com'
-    }
+    if (!this.repartidor.detalles.user ||
+        !this.repartidor.detalles.pass ||
+        !this.repartidor.preview.nombre){
+          this.alertService.presentAlert('Formulario incompleto', 'Por favor llena todos los campos antes de guardar los cambios')
+          return
+        }
+    if (!this.repartidorPrev) this.repartidor.detalles.correo = this.repartidor.detalles.user.trim() + '@spot.com'
     try {
       this.guardando = true
       this.alertService.presentLoading()
@@ -215,7 +221,7 @@ export class RepartidoresPage implements OnInit {
             this.alertService.presentAlert('Contraseña insegura', 'La contraseña debe tener al menos 6 caracteres');
             break
           case 'ok':
-            this.alertService.presentToast('Repartidor agregado con éxito')
+            this.alertService.presentToast('Cambios guardados con éxito')
             this.cancelEdit()
             if (this.iSel >= 0 && this.iSel) {
               const i = this.repartidores.findIndex(r => r.id === this.repartidor.preview.id)
@@ -223,6 +229,10 @@ export class RepartidoresPage implements OnInit {
             } else {
               this.repartidores.unshift(this.repartidor.preview)
             }
+            if (this.scrWidth < 992) {
+              this.hideMainCol = false
+            }
+            this.editRepa = false
             break
           default:
             this.alertService.presentAlert('Error', 'Algo salió mal, por favor intenta de nuevo ' + status);

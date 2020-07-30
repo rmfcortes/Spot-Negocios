@@ -1,8 +1,6 @@
-import { ModalController, Platform, MenuController } from '@ionic/angular';
-import { Component, OnInit } from '@angular/core';
+import { Platform, MenuController } from '@ionic/angular';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
-
-import { SetHorarioPage } from 'src/app/modals/set-horario/set-horario.page';
 
 import { HorarioService } from 'src/app/services/horario.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -15,6 +13,15 @@ import { Dia } from 'src/app/interfaces/horario';
   styleUrls: ['./horario.page.scss'],
 })
 export class HorarioPage implements OnInit {
+
+  @HostListener('window:resize')
+  getScreenSize() {
+    this.scrHeight = window.innerHeight
+    this.scrWidth = window.innerWidth
+  }
+  scrHeight: number
+  scrWidth: number
+  hideMainCol = false
 
   horario: Dia[] = []
   dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
@@ -32,10 +39,9 @@ export class HorarioPage implements OnInit {
   constructor(
     private platform: Platform,
     private menu: MenuController,
-    private modalCtrl: ModalController,
     private horarioService: HorarioService,
     private alertService: AlertService,
-  ) { }
+  ) { this.getScreenSize() }
 
   ngOnInit() {
     this.getHorario()
@@ -72,38 +78,12 @@ export class HorarioPage implements OnInit {
     })
   }
 
-  async verDia(dia) {
-    if (!dia) {
-      const x: Dia = {
-        activo: false,
-        comida: '',
-        nombre: '',
-        apertura: '2020-02-12T09:00:00.255-06:00',
-        cierre: '2020-02-12T18:00:00.255-06:00',
-        inicioComida: '2020-02-12T14:00:00.255-06:00',
-        finComida: '2020-02-12T15:00:00.255-06:00',
-      }
-      dia = x
-    }
-    const modal = await this.modalCtrl.create({
-      component: SetHorarioPage,
-      componentProps: {dia}
-    })
-
-    modal.onWillDismiss().then(resp => {
-      if (resp.data) {
-        const semana: Dia[] = resp.data
-        semana.forEach((d, i) => d.activo ? this.horario[i] = d : null)
-        this.hasHorario = false
-        this.horario.forEach(d => d.activo ? this.hasHorario = true : null)
-        this.horarioService.setHorario(this.horario)
-      }
-    })
-
-    return await modal.present()
-  }
-
   deleteDia(dia: string, i: number) {
+    const hoy = new Date().getDay()
+    if (hoy === i + 1) {
+      this.alertService.presentAlert('', 'No puedes eliminar el horario del día en curso, intenta otro día por favor')
+      return
+    }
     this.alertService.presentAlertAction(`Eliminar ${dia}`,
      '¿Estás segura(o) de eliminar la información referente a este día? ' +
      'Será considerado como un día cerrado', 'Eliminar', 'Cancelar')
@@ -119,12 +99,12 @@ export class HorarioPage implements OnInit {
           finComida: '',
         }
         this.horario[i] = x
+        console.log(this.horario);
         this.horarioService.setHorario(this.horario)
       }
     })
   }
 
-  ///////// Escritorio
   newEditDia(dia) {
     if (!dia) {
       dia = {
@@ -152,7 +132,13 @@ export class HorarioPage implements OnInit {
         this.semana.push(x)
       })
     }
+    if (this.scrWidth < 992) this.hideMainCol = true
     this.editHorario = true
+  }
+
+  cancelEdit() {
+    this.editHorario = false
+    this.hideMainCol = false
   }
 
   guardar() {
@@ -213,7 +199,9 @@ export class HorarioPage implements OnInit {
     this.hasHorario = false
     this.horario.forEach(d => d.activo ? this.hasHorario = true : null)
     this.horarioService.setHorario(this.horario)
+    this.alertService.presentToast('Cambios guardados con éxito')
     this.editHorario = false
+    this.hideMainCol = false
   }
 
   ionViewWillLeave() {

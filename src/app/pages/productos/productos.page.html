@@ -1,5 +1,13 @@
-<ion-header>
+<ion-header class="escritorio">
     <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Productos</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-header class="mobile">
+    <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
@@ -29,8 +37,8 @@
 
                 <!-- Section list -->
                 <ion-card style="padding-bottom: 1rem;">
-                    <ion-item lines="none" *ngIf="listaPasillos.length > 0">
-                        <ion-label color="medium">Ver departamentos</ion-label>
+                    <ion-item lines="none">
+                        <ion-label color="medium">Departamentos</ion-label>
                         <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
                         <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
                         <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
@@ -38,14 +46,14 @@
                     <ion-item *ngIf="viewSectionInput" lines="none">
                         <ion-input (keyup.enter)="addPasillo()" type="text" [(ngModel)]="nuevo_pasillo" placeholder="Bebidas, Lacteos, Ropa dama" autoFocus="true" id="inputSection" #inputSection></ion-input>
                         <ion-icon slot="end" name="close" color="medium" (click)="viewSectionInput = false"></ion-icon>
-                        <ion-button slot="end" (click)="addPasillo()" shape="round" class="gradint--">
+                        <ion-button slot="end" (click)="addPasillo()" shape="round" class="gradient--">
                             Agregar
                         </ion-button>
                     </ion-item>
                     <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
                         <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                             <ng-container *ngIf="section.edit; else editTemplate">
-                                <ion-input [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
+                                <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
                                 <ion-reorder slot="end"></ion-reorder>
                                 <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
                                 <ion-icon slot="end" name="close" color="danger" (click)="cancelEditPasillo(i)"></ion-icon>
@@ -59,6 +67,12 @@
                         </ion-item>
                     </ion-reorder-group>
                 </ion-card>
+
+                <ion-item lines="none" *ngIf="listaPasillos.length > 0">
+                    <ion-button slot="end" (click)="verProducto(null)" expand="block" fill="outline" color="primary" class="btn_agregar ion-text-wrap">
+                        Agregar producto
+                    </ion-button>
+                  </ion-item>
 
                 <div [ngSwitch]="pasillos.vista" *ngIf="productosCargados > 0">
                     <div *ngSwitchCase="'list-img'">
@@ -95,7 +109,7 @@
                     </ion-button>
                 </ng-template>
 
-                <ion-item style="padding-top: 3rem; text-align: center;" *ngIf="noMore" lines="none">
+                <ion-item style="padding-top: 3rem; text-align: center;" *ngIf="noMore && productosCargados > 0" lines="none">
                     <ion-label color="medium">No hay más resultados</ion-label>
                 </ion-item>
             </div>
@@ -122,8 +136,8 @@
 
                         <!-- Section list -->
                         <ion-card style="padding-bottom: 1rem;">
-                            <ion-item lines="none" *ngIf="listaPasillos.length > 0">
-                                <ion-label color="medium">Ver departamentos</ion-label>
+                            <ion-item lines="none">
+                                <ion-label color="medium">Departamentos</ion-label>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
                                 <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
                                 <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
@@ -131,14 +145,14 @@
                             <ion-item *ngIf="viewSectionInput" lines="none">
                                 <ion-input (keyup.enter)="addPasillo()" type="text" [(ngModel)]="nuevo_pasillo" placeholder="Bebidas, Lacteos, Ropa dama" autoFocus="true" id="inputSection" #inputSection></ion-input>
                                 <ion-icon slot="end" name="close" color="medium" (click)="viewSectionInput = false"></ion-icon>
-                                <ion-button slot="end" (click)="addPasillo()" shape="round" class="gradint--">
+                                <ion-button slot="end" (click)="addPasillo()" shape="round" class="gradient--">
                                     Agregar
                                 </ion-button>
                             </ion-item>
                             <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
                                 <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                                     <ng-container *ngIf="section.edit; else editTemplate">
-                                        <ion-input [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
+                                        <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
                                         <ion-reorder slot="end"></ion-reorder>
                                         <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
                                         <ion-icon slot="end" name="close" color="danger" (click)="cancelEditPasillo(i)"></ion-icon>
@@ -156,7 +170,7 @@
                         <!-- Products list -->
 
                         <ion-card *ngIf="listaPasillos.length > 0" style="padding-bottom: 1rem;">
-                            <ion-item lines="none" *ngIf="productosCargados > 0">
+                            <ion-item lines="none">
                                 <ion-label color="medium">Productos</ion-label>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="viewProducts === false && productosCargados > 0" (click)="viewProducts = true"></ion-icon>
                                 <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="viewProducts === true" (click)="viewProducts = false"></ion-icon>
@@ -235,7 +249,7 @@
                                     </ion-button>
                                 </ng-template>
 
-                                <ion-item style="padding-top: 3rem; text-align: center;" *ngIf="noMore" lines="none">
+                                <ion-item style="padding-top: 3rem; text-align: center;" *ngIf="noMore && productosCargados > 0" lines="none">
                                     <ion-label color="medium">No hay más resultados</ion-label>
                                 </ion-item>
 
@@ -276,6 +290,13 @@
             </ion-list>
         </ion-card>
     </ng-template>
+
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile" *ngIf="listaPasillos.length > 0">
+        <ion-fab-button (click)="verProducto(null)" class="gradient--">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
 
 </ion-content>
 
