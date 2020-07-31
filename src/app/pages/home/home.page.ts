@@ -132,7 +132,10 @@ export class HomePage {
           if (this.escuchaRepAnterior) this.repSub.unsubscribe()
         }
         this.pedidos = this.pedidos.filter(p => p.id !== pedido.id)
-        if (this.pedido && this.pedido.id === pedido.id) this.pedido = null
+        if (this.pedido && this.pedido.id === pedido.id) {
+          this.pedido = null
+          if (this.scrWidth < 992) this.regresa()
+        }
       })
     })
 
