@@ -75,6 +75,12 @@ export class ProductosPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.lastKey = ''
+    this.yPasillo = 0
+    this.productos = []
+    this.productosCargados = 0
+    this.infiniteCall = 1
+    this.noMore = false
     this.getTipo()
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
       return
@@ -306,6 +312,7 @@ export class ProductosPage implements OnInit {
         return
       }
       producto = {
+        agotado: false,
         codigo: '',
         descripcion: '',
         id: '',
@@ -321,6 +328,7 @@ export class ProductosPage implements OnInit {
     }
     const modal = await this.modalCtrl.create({
       component: ProductoPage,
+      backdropDismiss: false,
       componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados, nuevo, plan}
     })
 

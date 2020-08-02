@@ -3,12 +3,13 @@
         <ion-buttons slot="start">
             <ion-button (click)="regresar()">
                 <ion-icon slot="start" name="chevron-back"></ion-icon>
+                <ion-text class="escritorio">REGRESAR</ion-text>
             </ion-button>
         </ion-buttons>
         <ion-buttons slot="end" *ngIf="producto.id">
             <ion-button (click)="eliminarProducto()" color="primary" fill="clear">
-                Eliminar
                 <ion-icon slot="start" name="trash"></ion-icon>
+                Eliminar producto
             </ion-button>
         </ion-buttons>
     </ion-toolbar>
@@ -34,23 +35,36 @@
             <form #forma="ngForm" (submit)="guardarCambios()">
                 <ion-item>
                     <ion-label color="medium" position="floating">Nombre</ion-label>
-                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.nombre" type="text" name="nombre" required minlength="3"></ion-input>
+                    <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.nombre" type="text" name="nombre" required minlength="3"></ion-input>
                 </ion-item>
                 <ion-item *ngIf="tipo === 'productos'">
                     <ion-label color="medium" position="floating">Precio</ion-label>
-                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" required minlength="1"></ion-input>
+                    <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" required minlength="1"></ion-input>
                 </ion-item>                
                 <ion-item *ngIf="tipo === 'servicios'">
                     <ion-label color="medium" position="floating">Precio (opcional)</ion-label>
-                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" minlength="1"></ion-input>
+                    <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" minlength="1"></ion-input>
                 </ion-item>
+                <ion-radio-group name="agotado" [(ngModel)]="producto.agotado" (ionChange)="formularioChange()" >
+                    <ion-list-header>
+                        <ion-label color="medium">Existencias</ion-label>
+                    </ion-list-header>
+                    <ion-item lines="none">
+                        <ion-label>En inventario</ion-label>
+                        <ion-radio slot="end" [value]="false"></ion-radio>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Temporalmente agotado</ion-label>
+                        <ion-radio slot="end" [value]="true"></ion-radio>
+                    </ion-item>
+                </ion-radio-group>
                 <ion-item>
                     <ion-label color="medium" position="floating">Código(opcional)</ion-label>
-                    <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.codigo" type="text" name="codigo" minlength="3"></ion-input>
+                    <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.codigo" type="text" name="codigo" minlength="3"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label color="medium" position="floating">Descripción</ion-label>
-                    <ion-textarea autoGrow="true" (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.descripcion" type="text" name="descripcion" minlength="5"></ion-textarea>
+                    <ion-textarea (ionChange)="formularioChange()" autoGrow="true" (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.descripcion" type="text" name="descripcion" minlength="5"></ion-textarea>
                 </ion-item>
                 <ion-item>
                     <ion-label color="medium">Departamento</ion-label>
@@ -91,11 +105,11 @@
                         </ion-list-header>
                         <ion-item>
                             <ion-label>Obligatorio</ion-label>
-                            <ion-checkbox [(ngModel)]="item.obligatorio" name="{{i}}"></ion-checkbox>
+                            <ion-checkbox [(ngModel)]="item.obligatorio" name="{{i}}" (ionChange)="formularioChange()" ></ion-checkbox>
                         </ion-item>
                         <ion-item>
                             <ion-label color="medium" position="floating">Máximo de opciones a elegir</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="item.limite" type="number" name="limite" required></ion-input>
+                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="item.limite" type="number" name="limite" required (ionChange)="formularioChange()"></ion-input>
                         </ion-item>
                         <ion-item *ngFor="let prods of item.productos; let y = index">
                             <ion-label color="medium">{{prods.nombre}}</ion-label>

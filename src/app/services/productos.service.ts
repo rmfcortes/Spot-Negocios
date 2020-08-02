@@ -173,9 +173,11 @@ export class ProductosService {
     })
   }
 
-  changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string) {
+  async changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string, producto: Producto) {
     const region = this.uidService.getRegion()
     const idNegocio = this.uidService.getUid()
+    await this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}`).update(producto)
+    await this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}/mudar`).set(true)
     this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}`).remove()
     if (pasilloViejo === 'Ofertas') {
       this.db.object(`ofertas/${region}/${categoria}/${idProducto}`).remove()

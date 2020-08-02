@@ -1,4 +1,5 @@
 export interface Producto {
+    agotado: boolean;
     codigo?: string;
     descripcion: string;
     id: string;
@@ -14,6 +15,7 @@ export interface Producto {
     observaciones?: string;
     complementos?: ListaComplementosElegidos[];
     total?: number;
+    mudar?: boolean;
 }
 
 export interface ListaComplementosElegidos {

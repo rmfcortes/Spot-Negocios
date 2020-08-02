@@ -27,6 +27,15 @@ export class ProductoPage implements OnInit {
   @Input() producto: Producto
 
   pasillos: Pasillo[] = []
+  producto_original: Producto = {
+    agotado: false,
+    descripcion: '',
+    id: '',
+    nombre: '',
+    pasillo: '',
+    precio: 1,
+    url: '',
+  }
   complementos: Complemento[] = []
 
   noFoto = '../../../assets/img/no-portada.png'
@@ -35,6 +44,8 @@ export class ProductoPage implements OnInit {
   base64Oferta = ''
 
   guardando = false
+  activate_cambios = false
+  cambios_pendientes = false
 
   pasilloViejo = ''
 
@@ -50,29 +61,36 @@ export class ProductoPage implements OnInit {
   ) { }
 
   // Info inicio
-  ngOnInit() {
-    this.getPasillos()
-    this.getComplementos()
+  async ngOnInit() {
+    await this.getPasillos()
+    await this.getComplementos()
     this.pasilloViejo = this.producto.pasillo
+    if (!this.nuevo) this.copiar(this.producto, this.producto_original)
   }
 
   ionViewWillEnter() {
+    this.producto.mudar = false
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
       this.regresar()
     })
   }
 
+  ionViewDidEnter() {
+    setTimeout(() => this.activate_cambios = true, 350)
+  }
+
   getPasillos() {
-    this.pasillosService.getPasillos(this.categoria).then((pasillos) => {
-      this.pasillos = pasillos
-      if (this.pasillos.length === 0) {
-        this.alertService.presentAlert('No hay departamentos',
-          'Antes de continuar recomendamos agregar departamentos para poder ' +
-          'organizar adecuadamente tus productos/servicios. Sin departamentos ' +
-          'no podrás completar el formulario')
-        return
-      }
-      const plan = this.uidService.getPlan()
+    return new Promise((resolve, reject) => {      
+      this.pasillosService.getPasillos(this.categoria).then((pasillos) => {
+        this.pasillos = pasillos
+        if (this.pasillos.length === 0) {
+          this.alertService.presentAlert('No hay departamentos',
+            'Antes de continuar recomendamos agregar departamentos para poder ' +
+            'organizar adecuadamente tus productos/servicios. Sin departamentos ' +
+            'no podrás completar el formulario')
+          return
+        }
+        const plan = this.uidService.getPlan()
         if (plan !== 'basico') {
           const oferta: Pasillo = {
             nombre: 'Ofertas',
@@ -80,13 +98,26 @@ export class ProductoPage implements OnInit {
           }
           this.pasillos.unshift(oferta)
         }
+        resolve()
+      })
     })
   }
 
   getComplementos() {
-    if (this.producto.variables) {
-      this.productoService.getComplementos(this.producto.id).then((complementos: Complemento[]) => this.complementos = complementos)
-    }
+    return new Promise((resolve, reject) => {      
+      if (this.producto.variables) {
+        this.productoService.getComplementos(this.producto.id).then((complementos: Complemento[]) => {
+          this.complementos = complementos
+          resolve()
+        })
+      } else resolve()
+    })
+  }
+
+  formularioChange() {
+    if (this.nuevo) return
+    if (!this.activate_cambios) return
+    this.cambios_pendientes = true
   }
 
   // Acciones
@@ -103,6 +134,7 @@ export class ProductoPage implements OnInit {
           productos: []
         }
         this.complementos.push(complemento)
+        this.cambios_pendientes = true
       })
   }
 
@@ -117,6 +149,7 @@ export class ProductoPage implements OnInit {
       }
       producto.precio = parseInt(producto.precio, 10)
       this.complementos[i].productos.unshift(producto)
+      this.cambios_pendientes = true
     })
   }
 
@@ -127,6 +160,7 @@ export class ProductoPage implements OnInit {
     })
     modal.onWillDismiss().then(resp => {
       if (resp.data) {
+        this.cambios_pendientes = true
         if (portada) {
           this.producto.url = resp.data
           this.base64 = resp.data.split('data:image/png;base64,')[1]
@@ -140,14 +174,17 @@ export class ProductoPage implements OnInit {
   }
 
   deleteComplemento(i) {
+    this.cambios_pendientes = true
     this.complementos.splice(i, 1)
   }
 
   deleteProdCom(i, y) {
+    this.cambios_pendientes = true
     this.complementos[i].productos.splice(y, 1)
   }
 
   pasilloElegido(event) {
+    this.cambios_pendientes = true
     this.producto.pasillo = event.detail.value
   }
 
@@ -162,6 +199,10 @@ export class ProductoPage implements OnInit {
       this.alertService.presentAlert('Precio inválido', 'El precio debe incluir sólo números enteros')
       return
     }
+    if (this.producto.pasillo === 'Ofertas' && !this.producto.foto) {
+      this.alertService.presentAlert('Formulario incompleto', 'Por favor agrega una oferta de tu oferta')
+      return
+    }
     await this.alertService.presentLoading('Estamos guardando la información del producto. Este proceso puede tardar algunos minutos. Por favor no cierres ni actualices la página')
     this.guardando = true
     try {
@@ -174,10 +215,11 @@ export class ProductoPage implements OnInit {
         this.base64Oferta = ''
       }
       if (this.pasilloViejo && this.pasilloViejo !== this.producto.pasillo) {
-        this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo)
+        this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo, this.producto)
       }
       await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.nuevo, this.plan)
       this.guardando = false
+      this.cambios_pendientes = false
       this.alertService.dismissLoading()
       this.modalCtrl.dismiss(this.producto)
     } catch (error) {
@@ -203,7 +245,30 @@ export class ProductoPage implements OnInit {
   }
 
   regresar() {
+    if (this.cambios_pendientes) {
+      this.alertService.presentAlertAction('Cambios pendientes', 'Tienes cambios pendientes por guardar, ¿te gustaría guardarlos?', 'Guardar cambios', 'Descartar cambios')
+      .then(resp => resp ? this.guardarCambios() : this.descartarCambios())
+      return
+    }
     this.modalCtrl.dismiss()
+  }
+
+  descartarCambios() {
+    if (!this.nuevo) this.copiar(this.producto_original, this.producto)
+    this.modalCtrl.dismiss()
+  }
+
+  copiar(producto: Producto, copia: Producto) {
+    copia.observaciones = producto.observaciones ? producto.observaciones : null
+    copia.descripcion = producto.descripcion ? producto.descripcion : null
+    copia.codigo = producto.codigo ? producto.codigo : null
+    copia.foto = producto.foto ? producto.foto : null
+    copia.agotado = producto.agotado ? true : false
+    copia.pasillo = producto.pasillo
+    copia.nombre = producto.nombre
+    copia.precio = producto.precio
+    copia.url = producto.url
+    copia.id = producto.id
   }
 
 }
