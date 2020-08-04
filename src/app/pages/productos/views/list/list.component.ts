@@ -9,9 +9,10 @@ import { ProductoPasillo, Producto } from 'src/app/interfaces/producto';
 export class ListComponent implements OnInit {
 
   @Input() sections: ProductoPasillo[]
-
+  @Input() busqueda: boolean
+  @Input() cargando: boolean
   @Output() showProduct = new EventEmitter<Producto>()
-
+  @Output() limpiar = new EventEmitter<boolean>()
 
 
   constructor() { }
@@ -20,6 +21,10 @@ export class ListComponent implements OnInit {
 
   presentProduct(product: Producto) {
     this.showProduct.emit(product)
+  }
+
+  limpiarBusqueda() {
+    this.limpiar.emit(true)
   }
 
 

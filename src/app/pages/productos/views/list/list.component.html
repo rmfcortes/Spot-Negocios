@@ -1,11 +1,21 @@
 <div *ngFor="let item of sections; let i = index" [style.display]="item.productos && item.productos.length > 0 ? 'initial' : 'none'">
-    <ion-item lines="none">
-        <h6 class="ion-text-wrap primario">{{item.nombre | titlecase}}</h6>
+    <ion-item lines="full">
+        <h2 class="ion-text-wrap" style="font-weight: 700;">{{item.nombre | titlecase}}</h2>
+        <div *ngIf="busqueda">
+            <ng-container *ngIf="cargando; else cargTemp">
+                <ion-spinner slot="end" name="dots"></ion-spinner>
+            </ng-container>
+            <ng-template #cargTemp>
+                <ion-button (click)="limpiarBusqueda()" fill="clear" slot="end">
+                    Limpiar
+                </ion-button>
+            </ng-template>
+        </div>
     </ion-item>
     <ion-card>
-        <ion-item *ngFor="let serv of item.productos; let y = index" style="--padding-start: 0; cursor: pointer;" detail (click)="presentProduct(serv)">
+        <ion-item *ngFor="let serv of item.productos; let y = index; let odd = odd" [ngClass]="{'contraste': odd}" style="--padding-start: 0; cursor: pointer;" detail (click)="presentProduct(serv)" lines="none">
             <ion-item lines="none">
-                <h6 class="ion-text-wrap">{{serv.nombre}}</h6>
+                <h6 class="ion-text-wrap">{{serv.precio ? (serv.precio | currency:'CAD':'symbol-narrow':'1.0-2') : ''}} / {{serv.nombre}}</h6>
             </ion-item>
         </ion-item>
     </ion-card>

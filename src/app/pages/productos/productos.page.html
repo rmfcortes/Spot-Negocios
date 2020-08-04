@@ -4,23 +4,45 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Productos</ion-title>
+        <ion-buttons slot="end">
+            <ion-searchbar (keyup.enter)="busca()" (ionChange)="busca()" debounce="1000" placeholder="Código del producto" [(ngModel)]="busqueda"></ion-searchbar>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
-<ion-header class="mobile">
+<ion-header class="mobile" *ngIf="!muestra_searchBar">
     <ion-toolbar style="border-bottom: var(--ion-color-primary) 2px solid;">
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Productos</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="showSearchBar()" *ngIf="prodsReady">
+                <ion-icon slot="end" name="search" color="primary"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-header class="mobile" *ngIf="muestra_searchBar">
+    <ion-toolbar color="primary">
+        <ion-searchbar (keyup.enter)="busca(s)" #s id="s" (ionChange)="busca()" debounce="1000" placeholder="Código del producto" [(ngModel)]="busqueda"></ion-searchbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="muestra_searchBar = false">
+                Cancelar
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar *ngIf="prods_busqueda && prods_busqueda[0].productos.length > 0 || buscando">
+        <!-- Busqueda List -->
+        <div>
+            <app-list-img [sections]="prods_busqueda" [busqueda]="true" [cargando]="buscando" (limpiar)="limpiarBusqueda()" (showProduct)="verProducto($event)"></app-list-img>
+        </div>       
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <ng-container *ngIf="prodsReady; else prodTemplate">
         <ng-container *ngIf="categoria; else mainTemplate">
-            <div class="mobile">
-                <!-- Lista mobile Productos-->
-
+            <div class="mobile" *ngIf="prods_busqueda[0].productos.length === 0">
                 <!-- Views selector -->
                 <ion-card>
                     <ion-item>
@@ -35,7 +57,7 @@
                     </ion-item>
                 </ion-card>
 
-                <!-- Section list -->
+                <!-- Departamentos list -->
                 <ion-card style="padding-bottom: 1rem;">
                     <ion-item lines="none">
                         <ion-label color="medium">Departamentos</ion-label>
@@ -67,6 +89,9 @@
                         </ion-item>
                     </ion-reorder-group>
                 </ion-card>
+
+
+                <!-- Lista productos -->
 
                 <ion-item lines="none" *ngIf="listaPasillos.length > 0">
                     <ion-button slot="end" (click)="verProducto(null)" expand="block" fill="outline" color="primary" class="btn_agregar ion-text-wrap">
@@ -134,7 +159,7 @@
                             </ion-item>
                         </ion-card>
 
-                        <!-- Section list -->
+                        <!-- Departamentos list -->
                         <ion-card style="padding-bottom: 1rem;">
                             <ion-item lines="none">
                                 <ion-label color="medium">Departamentos</ion-label>
@@ -153,18 +178,29 @@
                                 <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                                     <ng-container *ngIf="section.edit; else editTemplate">
                                         <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
-                                        <ion-reorder slot="end"></ion-reorder>
                                         <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
                                         <ion-icon slot="end" name="close" color="danger" (click)="cancelEditPasillo(i)"></ion-icon>
+                                        <ion-button (click)="resetProds(section.nombre)" slot="end" fill="outline">
+                                            Ver Productos
+                                        </ion-button>
+                                        <ion-reorder slot="end"></ion-reorder>
                                     </ng-container>
                                     <ng-template #editTemplate>
                                         <ion-label>{{section.nombre}}</ion-label>
-                                        <ion-reorder slot="end"></ion-reorder>
                                         <ion-icon slot="end" name="pencil" color="primary" (click)="editPasillo(i)"></ion-icon>
                                         <ion-icon slot="end" name="trash" color="danger" (click)="deletePasillo(i, section.nombre)"></ion-icon>
+                                        <ion-button (click)="resetProds(section.nombre)" slot="end" fill="outline">
+                                            Ver Productos
+                                        </ion-button>
+                                        <ion-reorder slot="end"></ion-reorder>
                                     </ng-template>
                                 </ion-item>
                             </ion-reorder-group>
+                        </ion-card>
+
+                        <!-- Busqueda List -->
+                        <ion-card *ngIf="prods_busqueda && prods_busqueda[0].productos.length > 0 || buscando">
+                            <app-list [sections]="prods_busqueda" [busqueda]="true" [cargando]="buscando" (limpiar)="limpiarBusqueda()" (showProduct)="verProducto($event)"></app-list>
                         </ion-card>
 
                         <!-- Products list -->
@@ -200,21 +236,21 @@
                                 <!-- Product view -->
                                 <ng-template #modalProduct>
                                 </ng-template>
-                                <ion-segment scrollable *ngIf="listaPasillos && listaPasillos.length > 0">
-                                    <ion-segment-button (click)="resetProds()">
+                                <ion-segment scrollable *ngIf="listaPasillos && listaPasillos.length > 0" [value]="pasilloFiltro ? pasilloFiltro : 'todos'">
+                                    <ion-segment-button (click)="resetProds()" value="todos">
                                         Todos
                                     </ion-segment-button>
-                                    <ion-segment-button (click)="resetProds('Ofertas')" *ngIf="hasOfertas">
+                                    <ion-segment-button (click)="resetProds('Ofertas')" *ngIf="hasOfertas" value="ofertas">
                                         Ofertas
                                     </ion-segment-button>
-                                    <ion-segment-button (click)="resetProds(item.nombre)" *ngFor="let item of listaPasillos; trackBy: trackByPasillosPasillos">
+                                    <ion-segment-button (click)="resetProds(item.nombre)" *ngFor="let item of listaPasillos; trackBy: trackByPasillosPasillos" [value]="item.nombre">
                                         {{item.nombre}}
                                     </ion-segment-button>
                                 </ion-segment>
                                 <ng-container *ngIf="productosCargados > 0">
                                     <div [ngSwitch]="pasillos.vista">
                                         <div *ngSwitchCase="'list-img'">
-                                            <app-list-img [sections]="productos"></app-list-img>
+                                            <app-list-img [sections]="productos" (showProduct)="verProducto($event)"></app-list-img>
                                         </div>
                                         <div *ngSwitchCase="'block'">
                                             <app-block [sections]="productos"></app-block>
@@ -291,7 +327,7 @@
         </ion-card>
     </ng-template>
 
-    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile" *ngIf="listaPasillos.length > 0">
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile" *ngIf="listaPasillos.length > 0 && prods_busqueda[0].productos.length === 0">
         <ion-fab-button (click)="verProducto(null)" class="gradient--">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>

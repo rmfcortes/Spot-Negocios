@@ -3,9 +3,10 @@ import { AngularFireDatabase } from '@angular/fire/database';
 
 import { UidService } from './uid.service';
 
-import { Rate, PerfilNegRate, ComentarioNegocio, ComentarioRepartidor } from '../interfaces/rate';
+import { Rate, ComentarioNegocio, ComentarioRepartidor } from '../interfaces/rate';
 import { RepartidorPreview } from '../interfaces/repartidor';
-import { CalificacionDetalles, Pedido } from '../interfaces/pedido';
+import { Perfil } from '../interfaces/perfil';
+import { Pedido } from '../interfaces/pedido';
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +28,10 @@ export class RatesService {
     })
   }
 
-  getNegPerfil(): Promise<PerfilNegRate> {
+  getNegPerfil(): Promise<Perfil> {
     return new Promise((resolve, reject) => {
       const idNegocio = this.uidService.getUid()
-      const perSub = this.db.object(`perfiles/${idNegocio}`).valueChanges().subscribe((PerfilNegRate: PerfilNegRate) => {
+      const perSub = this.db.object(`perfiles/${idNegocio}`).valueChanges().subscribe((PerfilNegRate: Perfil) => {
         perSub.unsubscribe()
         resolve(PerfilNegRate)
       })

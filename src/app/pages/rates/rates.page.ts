@@ -1,4 +1,4 @@
-import { ModalController, Platform, MenuController } from '@ionic/angular';
+import { Platform, MenuController } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
 import { HostListener } from "@angular/core";
 import { Subscription } from 'rxjs';
@@ -6,9 +6,10 @@ import { Subscription } from 'rxjs';
 import { RatesService } from 'src/app/services/rates.service';
 import { AlertService } from 'src/app/services/alert.service';
 
+import { Pedido, CalificacionDetalles } from '../../interfaces/pedido';
 import { RepartidorPreview } from 'src/app/interfaces/repartidor';
 import { Rate, PerfilNegRate } from 'src/app/interfaces/rate';
-import { Pedido, CalificacionDetalles } from '../../interfaces/pedido';
+import { Perfil } from 'src/app/interfaces/perfil';
 
 @Component({
   selector: 'app-rates',
@@ -27,11 +28,12 @@ export class RatesPage implements OnInit {
   hideMainCol = false
 
   rate: Rate
-  perfilNegocio: PerfilNegRate
+  perfilNegocio: Perfil
   repartidores: RepartidorPreview[] = []
 
   rateNegReady = false
   rateRepReady = false
+  repartidores_propios = false
 
   comentarios = []
 
@@ -58,41 +60,52 @@ export class RatesPage implements OnInit {
   constructor(
     private platform: Platform,
     private menu: MenuController,
-    private modalCtrl: ModalController,
     private alertService: AlertService,
     private rateService: RatesService,
   ) { this.getScreenSize() }
 
   ngOnInit() {
-    this.getPerfil()
-    this.getRateRepartidores()
     this.menu.enable(true)
   }
 
   ionViewWillEnter() {
+    this.getPerfil()
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
       return
     })
   }
 
   getPerfil() {
-    this.rateService.getNegPerfil().then(perfil => {
+    this.rateService.getNegPerfil().then(async (perfil) => {
       this.perfilNegocio = perfil
+      if (this.perfilNegocio.repartidores_propios) await this.getRateRepartidores()
+      else {
+        this.repartidores_propios = false
+        this.rateRepReady = true
+      }
       this.getNegRate()
     })
   }
 
   getNegRate() {
-    this.rateService.getNegRate().then(rate => {
-      this.rate = rate
-      this.rateNegReady = true
+    return new Promise((resolve, reject) => {
+      this.rateService.getNegRate().then(rate => {
+        this.rate = rate
+        if (rate.calificaciones > 5 && this.scrWidth >= 992 || rate.calificaciones > 5 && !this.repartidores_propios) 
+          this.setDatos(this.perfilNegocio.id, 'negocio', rate.calificaciones, this.perfilNegocio.nombre, null)
+        this.rateNegReady = true
+      })
     })
   }
 
   getRateRepartidores() {
-    this.rateService.getRepartidoresRate().then(perfil => {
-      this.repartidores = perfil
-      this.rateRepReady = true
+    return new Promise((resolve, reject) => {      
+      this.repartidores_propios = true
+      this.rateService.getRepartidoresRate().then(perfil => {
+        this.repartidores = perfil
+        this.rateRepReady = true
+        resolve()
+      })
     })
   }
 
@@ -127,7 +140,7 @@ export class RatesPage implements OnInit {
     this.tipo = tipo
     this.id = id
     this.iSel = i
-    if (this.scrWidth < 992) this.hideMainCol = true
+    if (this.scrWidth < 992 && this.repartidores_propios) this.hideMainCol = true
     this.nombreRepartidor = nombre
     this.getComentarios()
   }

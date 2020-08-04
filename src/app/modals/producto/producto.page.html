@@ -59,7 +59,7 @@
                     </ion-item>
                 </ion-radio-group>
                 <ion-item>
-                    <ion-label color="medium" position="floating">Código(opcional)</ion-label>
+                    <ion-label color="medium" position="floating">Código (Opcional. Útil para búsquedas internas)</ion-label>
                     <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.codigo" type="text" name="codigo" minlength="3"></ion-input>
                 </ion-item>
                 <ion-item>

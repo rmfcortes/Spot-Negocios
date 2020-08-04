@@ -9,8 +9,8 @@ import { PerfilService } from './perfil.service';
 import { UidService } from './uid.service';
 
 import { Producto, Complemento } from '../interfaces/producto';
+import { InfoPasillos, Pasillo } from '../interfaces/pasillo';
 import { Perfil } from '../interfaces/perfil';
-import { InfoPasillos } from '../interfaces/pasillo';
 
 @Injectable({
   providedIn: 'root'
@@ -115,7 +115,6 @@ export class ProductosService {
     })
   }
 
-
   setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number, nuevo: boolean, plan: string) {
     const region = this.uidService.getRegion()
     return new Promise(async (resolve, reject) => {
@@ -146,6 +145,22 @@ export class ProductosService {
       } catch (error) {
         reject(error)
       }
+    })
+  }
+
+  busca(tipo: string, categoria: string, pasillos: Pasillo[], codigo: string): Promise<Producto[]> {
+    return new Promise((resolve, reject) => {      
+      const uid = this.uidService.getUid()
+      let productos: Producto[] = []
+      pasillos.forEach((p, i) => {
+        const busSub = this.db.list(`negocios/${tipo}/${categoria}/${uid}/${p.nombre}`,
+        data => data.orderByChild('codigo').startAt(codigo).endAt(codigo + '\uf8ff'))
+        .valueChanges().subscribe((prods: Producto[]) => {
+          busSub.unsubscribe()
+          productos = productos.concat(prods)
+          if (i === pasillos.length - 1) resolve(productos)
+        })
+      })
     })
   }
 

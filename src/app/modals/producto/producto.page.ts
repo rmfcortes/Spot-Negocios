@@ -205,6 +205,7 @@ export class ProductoPage implements OnInit {
     }
     await this.alertService.presentLoading('Estamos guardando la información del producto. Este proceso puede tardar algunos minutos. Por favor no cierres ni actualices la página')
     this.guardando = true
+    this.producto.codigo = this.producto.codigo ? this.producto.codigo.trim().toLowerCase() : null
     try {
       if (this.base64) {
         this.producto.url = await this.productoService.uploadFoto(this.base64, this.producto, 'producto')

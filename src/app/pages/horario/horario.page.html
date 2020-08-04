@@ -81,21 +81,21 @@
                         <ion-card *ngIf="dia.comida">
                             <ion-item>
                                 <ion-label>Apertura</ion-label>
-                                <ion-datetime [(ngModel)]="dia.apertura" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="apertura"></ion-datetime>
+                                <ion-datetime [(ngModel)]="dia.apertura" minuteValues="0,15,30,45" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="apertura"></ion-datetime>
                             </ion-item>
                             <ion-item>
                                 <ion-label>Cierre</ion-label>
-                                <ion-datetime [(ngModel)]="dia.cierre" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="cierre"></ion-datetime>
+                                <ion-datetime [(ngModel)]="dia.cierre" minuteValues="0,15,30,45" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="cierre"></ion-datetime>
                             </ion-item>
                         </ion-card>
                         <ion-card *ngIf="dia.comida === 'comida'">
                             <ion-item>
                                 <ion-label>Inicio comida</ion-label>
-                                <ion-datetime [(ngModel)]="dia.inicioComida" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="comida"></ion-datetime>
+                                <ion-datetime [(ngModel)]="dia.inicioComida" minuteValues="0,15,30,45" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="comida"></ion-datetime>
                             </ion-item>
                             <ion-item>
                                 <ion-label>Fin comida</ion-label>
-                                <ion-datetime [(ngModel)]="dia.finComida" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="comidaFin"></ion-datetime>
+                                <ion-datetime [(ngModel)]="dia.finComida" minuteValues="0,15,30,45" display-format="h:mm A" picker-format="h:mm A" cancelText="Cancelar" doneText="Aceptar" required name="comidaFin"></ion-datetime>
                             </ion-item>
                         </ion-card>
                         <ng-container *ngIf="dia.comida === 'comida'; else comidaTemplate">

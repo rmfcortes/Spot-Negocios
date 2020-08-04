@@ -14,6 +14,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEsMX from '@angular/common/locales/es-MX';
 registerLocaleData(localeEsMX, 'es-MX');
 
+import { DateFnsModule } from 'ngx-date-fns';
 
 import { Ionic4DatepickerModule } from '@logisticinfotech/ionic4-datepicker';
 
@@ -27,7 +28,7 @@ import { Ionic4DatepickerModule } from '@logisticinfotech/ionic4-datepicker';
     HistorialPageRoutingModule
   ],
   declarations: [HistorialPage],
-  providers: [{provide: LOCALE_ID, useValue: "es-MX"}]
+  providers: [{provide: LOCALE_ID, useValue: "es-MX"}, DateFnsModule]
 
 })
 export class HistorialPageModule {}

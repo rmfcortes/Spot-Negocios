@@ -1,4 +1,4 @@
-import { ModalController, Platform, MenuController, IonInput } from '@ionic/angular';
+import { ModalController, Platform, MenuController, IonInput, IonSearchbar } from '@ionic/angular';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -51,7 +51,7 @@ export class ProductosPage implements OnInit {
 
   back: Subscription
 
-    //////////
+    ////////// Pasillos
 
   beforeEdit = ''
   viewSectionInput = false
@@ -59,6 +59,16 @@ export class ProductosPage implements OnInit {
   nuevo_pasillo = ''
 
   viewProducts = false
+
+   //////////////// Busqueda
+   buscando = false
+   busqueda = ''
+   prods_busqueda: ProductoPasillo[] = [{
+     nombre: 'Resultados búsqueda',
+     productos: []
+   }]
+
+   muestra_searchBar = false
 
   constructor(
     private platform: Platform,
@@ -270,13 +280,14 @@ export class ProductosPage implements OnInit {
   }
 
   resetProds(pasillo?) {
-    this.cambiandoPasillo = true
     this.lastKey = ''
     this.yPasillo = 0
     this.productos = []
-    this.productosCargados = 0
-    this.infiniteCall = 1
     this.noMore = false
+    this.infiniteCall = 1
+    this.viewProducts = true
+    this.productosCargados = 0
+    this.cambiandoPasillo = true
     this.pasilloFiltro = pasillo
     if (!pasillo || pasillo === 'Ofertas') {
       this.getOfertas()
@@ -398,6 +409,38 @@ export class ProductosPage implements OnInit {
     }
   }
 
+  showSearchBar() {
+    this.muestra_searchBar = true
+    setTimeout(() => {
+      const s: any = document.getElementById('s')
+      s.setFocus()
+    }, 500) 
+  }
+
+  async busca(searchBar?: IonSearchbar) {
+    if (searchBar) {
+      const el = await searchBar.getInputElement()
+      el.blur()
+    }
+    this.buscando = false
+    this.busqueda = this.busqueda ? this.busqueda.trim() : null
+    if (!this.busqueda) return
+    this.busqueda = this.busqueda.toLowerCase()
+    try {
+      this.prods_busqueda[0].productos = await this.productoService.busca(this.tipo, this.categoria, this.listaPasillos, this.busqueda)
+      this.buscando = false
+      if (this.prods_busqueda[0].productos.length === 0) this.alertService.presentToast('No hay resultados para el código ingresado')
+      else this.viewProducts = false
+    } catch (error) {
+      this.buscando = false
+    }
+  }
+
+  limpiarBusqueda() {
+    this.buscando = false
+    this.busqueda = ''
+    this.prods_busqueda[0].productos = []
+  }
   
   // Pasillos
   getListaPasillos(pasillos) {

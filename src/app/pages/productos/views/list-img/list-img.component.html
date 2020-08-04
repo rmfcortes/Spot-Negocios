@@ -1,6 +1,22 @@
 <ion-card *ngFor="let item of sections; let i = index; trackBy: trackSections" [style.display]="item.productos && item.productos.length > 0 ? 'initial' : 'none'">
     <ion-list-header>
-        <ion-label color="primary">{{item.nombre | titlecase}}</ion-label>
+        <ng-container *ngIf="busqueda; else busTemp">
+            <ion-label color="dark">{{item.nombre | titlecase}}</ion-label>
+        </ng-container>
+        <ng-template #busTemp>
+            <ion-label color="primary">{{item.nombre | titlecase}}</ion-label>
+        </ng-template>
+        
+        <div *ngIf="busqueda">
+            <ng-container *ngIf="cargando; else cargTemp">
+                <ion-spinner slot="end" name="dots"></ion-spinner>
+            </ng-container>
+            <ng-template #cargTemp>
+                <ion-button (click)="limpiarBusqueda()" slot="end">
+                    Limpiar
+                </ion-button>
+            </ng-template>
+        </div>
     </ion-list-header>
     <ion-card *ngFor="let prod of item.productos; let y = index; trackBy: trackProducts" style="--padding: 0;">
         <ion-item style="--padding-start: 0; cursor: pointer;" lines="none" detail (click)="presentProduct(prod)">

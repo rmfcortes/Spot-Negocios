@@ -3,11 +3,23 @@ import { Component, OnInit } from '@angular/core';
 import { HostListener } from "@angular/core";
 import { Subscription } from 'rxjs';
 
+
+import subWeeks from 'date-fns/subWeeks'
+import parseISO from 'date-fns/parseISO'
+import endOfWeek from 'date-fns/endOfWeek'
+import subMonths from 'date-fns/subMonths'
+import formatISO from 'date-fns/formatISO'
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfWeek from 'date-fns/startOfWeek'
+import startOfMonth from 'date-fns/startOfMonth'
+
 import { HistorialService } from 'src/app/services/historial.service';
 
 import { HistorialPedido, Pedido } from 'src/app/interfaces/pedido';
 import { AlertService } from 'src/app/services/alert.service';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 @Component({
   selector: 'app-historial',
@@ -71,6 +83,13 @@ export class HistorialPage implements OnInit {
     },
   }
 
+  periodo: string
+  inicio: string
+  fin: string
+
+  ver_rangos = false
+  ver_set_periodo = false
+
   constructor(
     private platform: Platform,
     private menu: MenuController,
@@ -83,6 +102,53 @@ export class HistorialPage implements OnInit {
   ngOnInit() {
     this.menu.enable(true)
     this.getToday()
+    this.getCurrentWeek()
+  }
+  
+  getCurrentWeek() {
+    this.periodo = 'Semana actual'
+    const start = startOfWeek(new Date())
+    const end = endOfWeek(new Date())
+    this.formatDate(end, start)
+  }
+
+  getCurrentMonth() {
+    this.periodo = 'Mes actual'
+    const start = startOfMonth(new Date())
+    const end = endOfMonth(new Date())
+    this.formatDate(end, start, true)
+  }
+
+  getLastWeek() {
+    this.periodo = 'Semana pasada'
+    const lastWeek = subWeeks(new Date(), 1)
+    const start = startOfWeek(lastWeek)
+    const end = endOfWeek(lastWeek)
+    this.formatDate(end, start)
+  }
+
+  getLastMonth() {
+    const lastMonth = subMonths(new Date(), 1)
+    const start = startOfMonth(lastMonth)
+    const end = endOfMonth(lastMonth)
+    this.formatDate(end, start, true)
+  }
+
+  getPeriodo() {
+    this.periodo = 'Periodo personalizado'
+    this.ver_set_periodo = true
+    this.ver_rangos = false
+  }
+
+  formatDate(end: Date, start: Date, month?: boolean) {
+    this.ver_set_periodo = false
+    this.ver_rangos = false
+    if (month) this.periodo = format(start, 'MMMM', {locale: es})
+    this.inicio = format(start, 'EEEE dd/MMMM', {locale: es})
+    this.fin = format(end, 'EEEE dd/MMMM', {locale: es})
+    this.inicial_date = formatISO(start, {representation: 'date'})
+    this.end_date = formatISO(end, {representation: 'date'})
+    this.getRegistrosByRange()
   }
   
   async getToday() {
@@ -110,45 +176,47 @@ export class HistorialPage implements OnInit {
 
     //Fechas seleccionadas
 
-    async openDatePicker(initial: boolean) {
-      const datePickerModal = await this.modalCtrl.create({
-        component: Ionic4DatepickerModalComponent,
-        cssClass: 'li-ionic4-datePicker',
-        componentProps: { 
-           'objConfig': this.datePickerObj, 
-           'selectedDate': this.today 
-        }
+  async openDatePicker(initial: boolean) {
+    const datePickerModal = await this.modalCtrl.create({
+      component: Ionic4DatepickerModalComponent,
+      cssClass: 'li-ionic4-datePicker',
+      componentProps: { 
+          'objConfig': this.datePickerObj, 
+          'selectedDate': this.today 
+      }
+    })
+
+    await datePickerModal.present()
+  
+    datePickerModal.onDidDismiss()
+      .then((data) => {
+        if (initial) this.initialDateCambio(data.data.date)
+        else this.endDateCambio(data.data.date)
       })
+  }
 
-      await datePickerModal.present()
-   
-      datePickerModal.onDidDismiss()
-        .then((data) => {
-          if (initial) this.initialDateCambio(data.data.date)
-          else this.endDateCambio(data.data.date)
-        })
-    }
-
-  async initialDateCambio(value) {
+  async initialDateCambio(value: string) {
     if (value === 'Fecha invalida') return
-    this.inicial_date = value
     if (this.end_date) {
-      if (this.inicial_date > this.end_date) {
+      if (value > this.end_date) {
         this.commonService.presentAlert('', 'La fecha inicial no puede ser mayor a la fecha final')
         return
       }
+      this.inicio = format(parseISO(value), 'EEEE dd/MMMM', {locale: es})
+      this.inicial_date = value
       this.getRegistrosByRange()
     }
   }
 
-  async endDateCambio(value) {
+  async endDateCambio(value: string) {
     if (value === 'Fecha invalida') return
-    this.end_date = value
     if (this.inicial_date) {
-      if (this.inicial_date > this.end_date) {
+      if (this.inicial_date > value) {
         this.commonService.presentAlert('', 'La fecha inicial no puede ser mayor a la fecha final')
         return
       }
+      this.fin = format(parseISO(value), 'EEEE dd/MMMM', {locale: es})
+      this.end_date = value
       this.getRegistrosByRange()
     }
   }
