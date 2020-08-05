@@ -61,3 +61,9 @@ export interface FunctionInfo {
     subCategoria: string[];
     tipo: string;
 }
+
+export interface SubCategoria {
+    cantidad: number;
+    alias: string;
+    subCategoria: string;
+}

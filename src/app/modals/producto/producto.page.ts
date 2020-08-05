@@ -189,14 +189,31 @@ export class ProductoPage implements OnInit {
   }
 
   async guardarCambios() {
+    if (this.nuevo && this.producto.agotado) {
+      this.alertService.presentAlert('', 'Por agrega productos a tu lista hasta que tengas inventario de ellos')
+      return
+    }
+    if (this.producto.descuento && this.producto.dosxuno) {
+      this.alertService.presentAlert('', 'Por favor elige 1 de las 2 opciones: Descuento / 2x1. Elegir ambas puede causar confusión en el cliente')
+      return
+    }
     this.producto.nombre = this.producto.nombre.trim()
     this.producto.descripcion = this.producto.descripcion.trim()
     if (!this.producto.nombre || !this.producto.descripcion || !this.producto.precio) {
       this.alertService.presentAlert('', 'Por favor completa todos los campos')
       return
     }
-    if (this.producto.precio && this.tipo === 'productos' && !/^[0-9]+$/.test(this.producto.precio.toString())) {
+    if (this.producto.precio && !/^[0-9]+$/.test(this.producto.precio.toString())) {
       this.alertService.presentAlert('Precio inválido', 'El precio debe incluir sólo números enteros')
+      return
+    }
+    if (this.producto.descuento && !/^[0-9]+$/.test(this.producto.descuento.toString())) {
+      this.alertService.presentAlert('Descuento inválido', 'El descuento debe ser un número entero entre 1-99')
+      return
+    }
+    if (this.producto.descuento && this.producto.descuento < 1 ||
+        this.producto.descuento && this.producto.descuento > 99) {
+      this.alertService.presentAlert('Descuento inválido', 'El descuento no puede ser mayor 99 ni menor a 1')
       return
     }
     if (this.producto.pasillo === 'Ofertas' && !this.producto.foto) {
@@ -212,13 +229,23 @@ export class ProductoPage implements OnInit {
         this.base64 = ''
       }
       if (this.base64Oferta && this.producto.pasillo === 'Ofertas') {
-        this.producto.foto = await this.productoService.uploadFoto(this.base64Oferta, this.producto, 'oferta');
+        this.producto.foto = await this.productoService.uploadFoto(this.base64Oferta, this.producto, 'oferta')
         this.base64Oferta = ''
       }
+      let iPasilloViejo
+      if (this.pasilloViejo === 'Ofertas') iPasilloViejo = 0
+      else iPasilloViejo = this.pasillos.findIndex(p => p.nombre === this.pasilloViejo) - 1 
+      
+      
+      let iPasillo
+      if (this.producto.pasillo === 'Ofertas') iPasillo = 0
+      else iPasillo = this.pasillos.findIndex(p => p.nombre === this.producto.pasillo) - 1
+
+
       if (this.pasilloViejo && this.pasilloViejo !== this.producto.pasillo) {
-        this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo, this.producto)
+        this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo, this.producto, iPasilloViejo, iPasillo)
       }
-      await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.nuevo, this.plan)
+      await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.nuevo, this.plan, iPasillo)
       this.guardando = false
       this.cambios_pendientes = false
       this.alertService.dismissLoading()
@@ -235,7 +262,11 @@ export class ProductoPage implements OnInit {
       const resp = await this.alertService.presentAlertAction(`Eliminar ${this.producto.nombre}`,
       '¿Estás seguro de eliminar este producto? se perderá toda la información referente al mismo de manera permanente', 'Eliminar', 'Cancelar')
       if (resp) {
-        await this.productoService.deleteProducto(this.producto, this.tipo, this.categoria, this.agregados)
+        let iPasilloViejo
+        if (this.pasilloViejo === 'Ofertas') iPasilloViejo = 0
+        else iPasilloViejo = this.pasillos.findIndex(p => p.nombre === this.pasilloViejo) - 1
+        this.copiar(this.producto_original, this.producto)
+        await this.productoService.deleteProducto(this.producto, this.tipo, this.categoria, this.agregados, iPasilloViejo)
         this.alertService.presentToast('Artículo eliminado')
         this.modalCtrl.dismiss('eliminado')
       }

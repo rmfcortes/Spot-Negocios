@@ -12,7 +12,7 @@ import { PerfilService } from 'src/app/services/perfil.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UidService } from 'src/app/services/uid.service';
 
-import { Perfil, Region, Ubicacion } from 'src/app/interfaces/perfil';
+import { Perfil, Region, Ubicacion, SubCategoria } from 'src/app/interfaces/perfil';
 
 
 @Component({
@@ -27,7 +27,7 @@ export class PerfilPage implements OnInit {
   noLogo = '../../../assets/img/no-logo.png'
   noPortada = '../../../assets/img/no-portada.png'
 
-  subCategorias: string[] = []
+  subCategorias: SubCategoria[] = []
 
   base64Pordata = ''
   base64Logo = ''
@@ -160,6 +160,10 @@ export class PerfilPage implements OnInit {
   // Guardar
 
   async guardarCambios() {
+    if (this.perfil.subCategoria.length === 0) {
+      this.alertService.presentAlert('', 'Debes seleccionar al menos 1 Subcategoría')
+      return
+    }
     this.perfil.nombre = this.perfil.nombre.trim()
     this.perfil.direccion.direccion = this.perfil.direccion.direccion.trim()
     this.perfil.telefono = this.perfil.telefono.trim()

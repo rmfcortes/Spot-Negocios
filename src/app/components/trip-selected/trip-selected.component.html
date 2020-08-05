@@ -92,12 +92,12 @@
     <ion-label style="font-size: large; font-weight: 700;">Productos</ion-label>
 </ion-item-divider>
 <ion-item *ngFor="let producto of pedido_selected.productos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
-    <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
+    <ion-badge color="danger" slot="start">{{producto.cantidad}}</ion-badge>
     <ion-thumbnail slot="start">
         <img [src]="producto.url">
     </ion-thumbnail>
     <ion-label>
-        <h2 class="ion-text-wrap">{{producto.nombre | titlecase}}
+        <h2 class="ion-text-wrap" style="font-weight: 700;">{{producto.nombre | titlecase}}
             <ion-text color="medium">{{producto.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>
         <p>{{producto.observaciones | titlecase}}</p>
@@ -105,9 +105,23 @@
             <h4>+ {{item.titulo | titlecase}}</h4>
             <p style="color: var(--ion-color-primary); margin-left: 0.5rem;" *ngFor="let com of item.complementos">{{com.nombre}}: {{com.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</p>
         </div>
-        <h2 class="ion-text-wrap">Total
-            <ion-text color="medium">{{producto.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+        <h2 class="ion-text-wrap" *ngIf="producto.descuento">Descuento
+            <ion-text color="medium">{{(producto.precio * (producto.descuento/100) * producto.cantidad) | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>
+        <h2 class="ion-text-wrap" *ngIf="!producto.descuento">Total
+            <ion-text color="medium">{{producto.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+        </h2>                                
+        <h2 class="ion-text-wrap" *ngIf="producto.descuento">Total
+            <ion-text color="medium">{{producto.total - (producto.precio * (producto.descuento/100) * producto.cantidad) | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+        </h2>
+    </ion-label>
+    <ion-badge class="gradient--" slot="end" *ngIf="producto.dosxuno" mode="ios">2x1</ion-badge>
+</ion-item>
+<hr style="border-bottom: var(--ion-color-medium) 1px solid;">
+<ion-item style="text-align: right;" lines="none">
+    <ion-label color="primary">
+        <h2 style="font-weight: 700;" *ngIf="pedido_selected.negocio.repartidores_propios">Total: {{pedido_selected.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
+        <h2 style="font-weight: 700;" *ngIf="!pedido_selected.negocio.repartidores_propios">Total: {{pedido_selected.total - pedido_selected.envio - pedido_selected.propina | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
     </ion-label>
 </ion-item>
 

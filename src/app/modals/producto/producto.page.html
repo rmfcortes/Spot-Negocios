@@ -45,16 +45,27 @@
                     <ion-label color="medium" position="floating">Precio (opcional)</ion-label>
                     <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.precio" type="number" name="precio" minlength="1"></ion-input>
                 </ion-item>
+                <ion-item>
+                    <ion-label color="medium" position="floating">Descuento (1-99)</ion-label>
+                    <ion-input (ionChange)="formularioChange()"  (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="producto.descuento" type="number" name="desc" minlength="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label color="medium" *ngIf="!producto.dosxuno">Promoción 2x1</ion-label>
+                    <ion-label *ngIf="producto.dosxuno">Promoción 2x1</ion-label>
+                    <ion-checkbox (ionChange)="formularioChange()" [(ngModel)]="producto.dosxuno" slot="end" name="dosxuno"></ion-checkbox>
+                </ion-item>
                 <ion-radio-group name="agotado" [(ngModel)]="producto.agotado" (ionChange)="formularioChange()" >
                     <ion-list-header>
                         <ion-label color="medium">Existencias</ion-label>
                     </ion-list-header>
                     <ion-item lines="none">
-                        <ion-label>En inventario</ion-label>
+                        <ion-label color="medium" *ngIf="producto.agotado">En inventario</ion-label>
+                        <ion-label *ngIf="!producto.agotado">En inventario</ion-label>
                         <ion-radio slot="end" [value]="false"></ion-radio>
                     </ion-item>
                     <ion-item>
-                        <ion-label>Temporalmente agotado</ion-label>
+                        <ion-label color="medium" *ngIf="!producto.agotado">Temporalmente agotado</ion-label>
+                        <ion-label *ngIf="producto.agotado">Temporalmente agotado</ion-label>
                         <ion-radio slot="end" [value]="true"></ion-radio>
                     </ion-item>
                 </ion-radio-group>
@@ -89,7 +100,7 @@
                     <ion-label color="medium">Complementos</ion-label>
                     <ion-button (click)="addComplemento()" size="small" class="gradient--">
                         Nuevo complemento
-                        <ion-icon name="add"></ion-icon>
+                        <ion-icon slot="end" name="add"></ion-icon>
                     </ion-button>
                 </ion-item>
                 <div *ngIf="tipo === 'productos'">
@@ -120,7 +131,7 @@
                 </div>
                 <ion-button class="boton-margen gradient--" style="margin-top: 2rem" [disabled]="!forma.valid || !producto.url || !producto.pasillo || guardando" expand="block" type="submit">
                     Guardar cambios
-                    <ion-spinner *ngIf="guardando" name="dots"></ion-spinner>
+                    <ion-spinner slot="end" *ngIf="guardando" name="dots"></ion-spinner>
                 </ion-button>
             </form>
         </div>

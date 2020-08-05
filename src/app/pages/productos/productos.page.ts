@@ -299,12 +299,11 @@ export class ProductosPage implements OnInit {
   // Acciones
   async verProducto(producto: Producto) {
     let nuevo = false
-    let agregados: number
     let pasilloAnterior: string
     const plan = this.uidService.getPlan()
+    const agregados = await this.productoService.getProductosAgregados()
     if (!producto) {
       nuevo = true
-      agregados = await this.productoService.getProductosAgregados()
       let permitidos
       switch (plan) {
         case 'basico':

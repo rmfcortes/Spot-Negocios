@@ -253,19 +253,19 @@
                                             <app-list-img [sections]="productos" (showProduct)="verProducto($event)"></app-list-img>
                                         </div>
                                         <div *ngSwitchCase="'block'">
-                                            <app-block [sections]="productos"></app-block>
+                                            <app-block [sections]="productos" (showProduct)="verProducto($event)"></app-block>
                                         </div>
                                         <div *ngSwitchCase="'cards'">
-                                            <app-cards [sections]="productos"></app-cards>
+                                            <app-cards [sections]="productos" (showProduct)="verProducto($event)"></app-cards>
                                         </div>
                                         <div *ngSwitchCase="'list'">
-                                            <app-list [sections]="productos"></app-list>
+                                            <app-list [sections]="productos" (showProduct)="verProducto($event)"></app-list>
                                         </div>
                                         <div *ngSwitchCase="'gallery'">
-                                            <app-gallery [sections]="productos"></app-gallery>
+                                            <app-gallery [sections]="productos" (showProduct)="verProducto($event)"></app-gallery>
                                         </div>
                                         <div *ngSwitchDefault>
-                                            <app-list-img [sections]="productos"></app-list-img>
+                                            <app-list-img [sections]="productos" (showProduct)="verProducto($event)"></app-list-img>
                                         </div>
                                     </div>
                                 </ng-container>

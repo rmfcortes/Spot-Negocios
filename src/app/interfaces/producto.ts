@@ -16,6 +16,8 @@ export interface Producto {
     complementos?: ListaComplementosElegidos[];
     total?: number;
     mudar?: boolean;
+    descuento?: number;
+    dosxuno?: boolean;
 }
 
 export interface ListaComplementosElegidos {

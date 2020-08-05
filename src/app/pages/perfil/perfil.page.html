@@ -67,11 +67,13 @@
                                         <ion-label color="medium">Costo envío fijo / variable</ion-label>
                                     </ion-list-header>
                                     <ion-item lines="none">
-                                        <ion-label>Cuota fija</ion-label>
+                                        <ion-label *ngIf="perfil.envio_costo_fijo">Cuota fija</ion-label>
+                                        <ion-label class="medium" *ngIf="!perfil.envio_costo_fijo">Cuota fija</ion-label>
                                         <ion-radio slot="end" [value]="true" (ionFocus)="formularioChange()"></ion-radio>
                                     </ion-item>
                                     <ion-item>
-                                        <ion-label>En base a distancia</ion-label>
+                                        <ion-label *ngIf="!perfil.envio_costo_fijo">En base a distancia</ion-label>
+                                        <ion-label class="medium" *ngIf="perfil.envio_costo_fijo">En base a distancia</ion-label>
                                         <ion-radio slot="end" [value]="false" (ionFocus)="formularioChange()"></ion-radio>
                                     </ion-item>
                                 </ion-radio-group>
@@ -97,7 +99,7 @@
                                 <ion-item>
                                     <ion-label color="medium">Subcategoria</ion-label>
                                     <ion-select multiple="true" [(ngModel)]="perfil.subCategoria" (ionChange)="formularioChange()" [disabled]="subCategorias.length <= 0" color="medium" okText="Aceptar" cancelText="Cancelar" required name="subCat">
-                                        <ion-select-option *ngFor="let item of subCategorias" [value]="item">{{item | titlecase}}</ion-select-option>
+                                        <ion-select-option *ngFor="let item of subCategorias" [value]="item.subCategoria">{{item.alias | titlecase}}</ion-select-option>
                                     </ion-select>
                                 </ion-item>
         

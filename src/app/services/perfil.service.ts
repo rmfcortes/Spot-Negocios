@@ -6,7 +6,7 @@ import { AngularFireStorage } from '@angular/fire/storage';
 
 import { UidService } from './uid.service';
 
-import { Perfil } from '../interfaces/perfil';
+import { Perfil, SubCategoria } from '../interfaces/perfil';
 import { BusquedaService } from './busqueda.service';
 
 
@@ -185,10 +185,10 @@ export class PerfilService {
     this.palabrasService.updateClaves(claves)
   }
 
-  getSubCategorias(categoria: string): Promise<string[]> {
+  getSubCategorias(categoria: string): Promise<SubCategoria[]> {
     return new Promise((resolve, reject) => {
       const region = this.uidService.getRegion()
-      const catSub = this.db.list(`categoriaSub/${region}/${categoria}`).valueChanges().subscribe((subCategorias: string[]) => {
+      const catSub = this.db.list(`categoriaSub/${region}/${categoria}`).valueChanges().subscribe((subCategorias: SubCategoria[]) => {
         catSub.unsubscribe()
         resolve(subCategorias)
       })

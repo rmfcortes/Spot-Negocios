@@ -26,6 +26,7 @@ export interface Pedido {
     repartidor_solicitado: boolean;
     recolectado?: boolean;
     banderazo?: number;
+    descuento?: number;
 }
 
 export interface Avance {

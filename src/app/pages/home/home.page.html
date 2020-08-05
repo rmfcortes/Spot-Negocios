@@ -183,7 +183,7 @@
                     <ion-card>
                         <h3 class="titulo">Productos</h3>
                         <ion-item *ngFor="let producto of pedido.productos; let i = index; let odd = odd" [ngClass]="{'contraste': odd}" lines="none">
-                            <ion-badge color="primary" slot="start">{{producto.cantidad}}</ion-badge>
+                            <ion-badge color="dark" slot="start">{{producto.cantidad}}</ion-badge>
                             <ion-thumbnail slot="start">
                                 <img [src]="producto.url">
                             </ion-thumbnail>
@@ -196,16 +196,23 @@
                                     <h4>+ {{item.titulo | titlecase}}</h4>
                                     <p style="color: var(--ion-color-primary); margin-left: 0.5rem;" *ngFor="let com of item.complementos">{{com.nombre}}: {{com.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</p>
                                 </div>
-                                <h2 class="ion-text-wrap">Total
+                                <h2 class="ion-text-wrap" *ngIf="producto.descuento">Descuento
+                                    <ion-text color="medium">{{(producto.precio * (producto.descuento/100) * producto.cantidad) | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+                                </h2>
+                                <h2 class="ion-text-wrap" *ngIf="!producto.descuento">Total
                                     <ion-text color="medium">{{producto.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
+                                </h2>                                
+                                <h2 class="ion-text-wrap" *ngIf="producto.descuento">Total
+                                    <ion-text color="medium">{{producto.total - (producto.precio * (producto.descuento/100) * producto.cantidad) | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
                                 </h2>
                             </ion-label>
+                            <ion-badge class="gradient--" mode="ios" slot="end" *ngIf="producto.dosxuno">2x1</ion-badge>
                         </ion-item>
                         <hr style="border-bottom: var(--ion-color-medium) 1px solid;">
                         <ion-item style="text-align: right;" lines="none">
                             <ion-label color="primary">
                                 <h2 style="font-weight: 700;" *ngIf="pedido.negocio.repartidores_propios">Total: {{pedido.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
-                                <h2 style="font-weight: 700;" *ngIf="!pedido.negocio.repartidores_propios">Total: {{pedido.total - pedido.envio -pedido.propina | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
+                                <h2 style="font-weight: 700;" *ngIf="!pedido.negocio.repartidores_propios">Total: {{pedido.total - pedido.envio - pedido.propina | currency:'CAD':'symbol-narrow':'1.0-2'}}</h2>
                             </ion-label>
                         </ion-item>
                     </ion-card>

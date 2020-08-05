@@ -115,7 +115,7 @@ export class ProductosService {
     })
   }
 
-  setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number, nuevo: boolean, plan: string) {
+  setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number, nuevo: boolean, plan: string, iPasillo: number) {
     const region = this.uidService.getRegion()
     return new Promise(async (resolve, reject) => {
       try {
@@ -135,10 +135,17 @@ export class ProductosService {
             id: producto.id,
             idNegocio
           }
+          const subs = await this.getSubCategorias()
           await this.db.object(`ofertas/${region}/${categoria}/${producto.id}`).update(oferta)
           await this.db.object(`ofertas/${region}/todas/${producto.id}`).update(oferta)
+          for (const item of subs) {
+            await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).update(oferta)
+          }
         }
-        if (nuevo) await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
+        if (nuevo) {
+          await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
+          await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
+        }
         this.setPalabras(producto)
         if (agregados === 0) await this.setDisplay(plan)
         resolve()
@@ -164,7 +171,7 @@ export class ProductosService {
     })
   }
 
-  deleteProducto(producto: Producto, tipo: string, categoria: string, agregados: number) {
+  deleteProducto(producto: Producto, tipo: string, categoria: string, agregados: number, iPasilloViejo: number): Promise<boolean> {
     const region = this.uidService.getRegion()
     return new Promise(async (resolve, reject) => {
       try {        
@@ -178,9 +185,14 @@ export class ProductosService {
         if (producto.pasillo === 'Ofertas') {
           await this.db.object(`ofertas/${region}/${categoria}/${producto.id}`).remove()
           await this.db.object(`ofertas/${region}/todas/${producto.id}`).remove()
+          const subs = await this.getSubCategorias()
+          for (const item of subs) {
+            await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).remove()
+          }
         }
         await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos - 1 : 0)
-        if (agregados === 1)
+        await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasilloViejo}/cantidad`).query.ref.transaction(productos => productos ? productos - 1 : 0)
+        if (agregados === 1) this.removeDisplay()
         resolve()
       } catch (error) {
         reject(error)
@@ -188,15 +200,21 @@ export class ProductosService {
     })
   }
 
-  async changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string, producto: Producto) {
+  async changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string, producto: Producto, iPasilloViejo: number, iPasillo: number) {
     const region = this.uidService.getRegion()
     const idNegocio = this.uidService.getUid()
+    await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasilloViejo}/cantidad`).query.ref.transaction(productos => productos ? productos - 1 : 0)
+    await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
     await this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}`).update(producto)
     await this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}/mudar`).set(true)
     this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${pasilloViejo}/${idProducto}`).remove()
     if (pasilloViejo === 'Ofertas') {
       this.db.object(`ofertas/${region}/${categoria}/${idProducto}`).remove()
       this.db.object(`ofertas/${region}/todas/${idProducto}`).remove()
+      const subs = await this.getSubCategorias()
+      for (const item of subs) {
+        await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).remove()
+      }
     }
   }
 
@@ -381,6 +399,16 @@ export class ProductosService {
       } catch (error) {
         reject(error)
       }
+    })
+  }
+
+  getSubCategorias(): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      const uid = this.uidService.getUid()
+      const subSub = this.db.list(`perfiles/${uid}/subCategoria`).valueChanges().subscribe((subCategorias: string[]) => {
+        subSub.unsubscribe()
+        resolve(subCategorias)
+      })
     })
   }
 
