@@ -91,8 +91,10 @@ export class PedidosService {
   }
 
   solicitarRepartidor(pedido: Pedido, i?: number) {
+    if (pedido.solicitudes && pedido.solicitudes === 3) return
     const uid = this.uidService.getUid()
     pedido.last_solicitud = Date.now()
+    pedido.solicitudes = pedido.solicitudes ? pedido.solicitudes + 1 : 1
     this.db.object(`pedidos/activos/${uid}/detalles/${pedido.id}`).update(pedido)
     this.db.object(`pedidos/repartidor_pendiente/${uid}/${pedido.id}`).set(pedido)
     this.db.object(`pedidos/activos/${uid}/repartidor_pendiente/${pedido.id}`).set(pedido.id)
@@ -185,6 +187,5 @@ export class PedidosService {
       this.conteo()
     }, 1000)
   }
-
 
 }

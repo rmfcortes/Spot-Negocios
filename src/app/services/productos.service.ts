@@ -115,7 +115,7 @@ export class ProductosService {
     })
   }
 
-  setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number, nuevo: boolean, plan: string, iPasillo: number) {
+  setProducto(producto: Producto, categoria: string, complementos: Complemento[], tipo: string, agregados: number, plan: string, iPasillo: number) {
     const region = this.uidService.getRegion()
     return new Promise(async (resolve, reject) => {
       try {
@@ -142,7 +142,7 @@ export class ProductosService {
             await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).update(oferta)
           }
         }
-        if (nuevo) {
+        if (producto.nuevo) {
           await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
           await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
         }
@@ -250,18 +250,16 @@ export class ProductosService {
   }
 
   async setPalabras(producto: Producto) {
-    let claves = '';
-    const palabras = await this.palabrasService.getPalabrasClave();
-    if (palabras) {
-      claves = claves.concat(palabras + ' ');
-    }
-    claves = claves.concat(producto.nombre);
+    let claves = ''
+    const palabras = await this.palabrasService.getPalabrasClave()
+    if (palabras) claves = claves.concat(palabras + ' ')
+    claves = claves.concat(producto.nombre)
     claves = claves
       .toLocaleLowerCase()
       .split(' ')
       .filter((item, i, allItems) => i === allItems.indexOf(item))
-      .join(' ');
-    this.palabrasService.updateClaves(claves);
+      .join(' ')
+    this.palabrasService.updateClaves(claves)
   }
 
   // Auxiliar

@@ -18,6 +18,7 @@ export interface Producto {
     mudar?: boolean;
     descuento?: number;
     dosxuno?: boolean;
+    nuevo: boolean;
 }
 
 export interface ListaComplementosElegidos {

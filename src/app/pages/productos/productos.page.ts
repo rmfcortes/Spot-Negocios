@@ -298,12 +298,10 @@ export class ProductosPage implements OnInit {
 
   // Acciones
   async verProducto(producto: Producto) {
-    let nuevo = false
     let pasilloAnterior: string
     const plan = this.uidService.getPlan()
     const agregados = await this.productoService.getProductosAgregados()
     if (!producto) {
-      nuevo = true
       let permitidos
       switch (plan) {
         case 'basico':
@@ -332,14 +330,16 @@ export class ProductosPage implements OnInit {
         unidad: '',
         url: '',
         variables: false,
+        nuevo: true
       }
     } else {
+      producto.nuevo = false
       pasilloAnterior = producto.pasillo
     }
     const modal = await this.modalCtrl.create({
       component: ProductoPage,
       backdropDismiss: false,
-      componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados, nuevo, plan}
+      componentProps: {producto, categoria: this.categoria, tipo: this.tipo, agregados, plan}
     })
 
     modal.onWillDismiss().then(resp => {
@@ -348,7 +348,7 @@ export class ProductosPage implements OnInit {
           const i = this.productos.findIndex(p => p.nombre === producto.pasillo)
           this.productos[i].productos = this.productos[i].productos.filter(r => r.id !== producto.id)
         } else {
-          if (!nuevo) {
+          if (!producto.nuevo) {
             const i = this.productos.findIndex(p => p.nombre === producto.pasillo)
             if (pasilloAnterior !== producto.pasillo) {
               const iAnterior = this.productos.findIndex(p => p.nombre === pasilloAnterior)

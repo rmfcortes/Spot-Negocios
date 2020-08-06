@@ -21,7 +21,6 @@ export class ProductoPage implements OnInit {
 
   @Input() tipo: string
   @Input() plan: string
-  @Input() nuevo: boolean
   @Input() agregados: number
   @Input() categoria: string
   @Input() producto: Producto
@@ -35,6 +34,7 @@ export class ProductoPage implements OnInit {
     pasillo: '',
     precio: 1,
     url: '',
+    nuevo: false
   }
   complementos: Complemento[] = []
 
@@ -65,7 +65,7 @@ export class ProductoPage implements OnInit {
     await this.getPasillos()
     await this.getComplementos()
     this.pasilloViejo = this.producto.pasillo
-    if (!this.nuevo) this.copiar(this.producto, this.producto_original)
+    if (!this.producto.nuevo) this.copiar(this.producto, this.producto_original)
   }
 
   ionViewWillEnter() {
@@ -115,7 +115,7 @@ export class ProductoPage implements OnInit {
   }
 
   formularioChange() {
-    if (this.nuevo) return
+    if (this.producto.nuevo) return
     if (!this.activate_cambios) return
     this.cambios_pendientes = true
   }
@@ -189,7 +189,7 @@ export class ProductoPage implements OnInit {
   }
 
   async guardarCambios() {
-    if (this.nuevo && this.producto.agotado) {
+    if (this.producto.nuevo && this.producto.agotado) {
       this.alertService.presentAlert('', 'Por agrega productos a tu lista hasta que tengas inventario de ellos')
       return
     }
@@ -245,7 +245,7 @@ export class ProductoPage implements OnInit {
       if (this.pasilloViejo && this.pasilloViejo !== this.producto.pasillo) {
         this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo, this.producto, iPasilloViejo, iPasillo)
       }
-      await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.nuevo, this.plan, iPasillo)
+      await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.plan, iPasillo)
       this.guardando = false
       this.cambios_pendientes = false
       this.alertService.dismissLoading()
@@ -286,7 +286,7 @@ export class ProductoPage implements OnInit {
   }
 
   descartarCambios() {
-    if (!this.nuevo) this.copiar(this.producto_original, this.producto)
+    if (!this.producto.nuevo) this.copiar(this.producto_original, this.producto)
     this.modalCtrl.dismiss()
   }
 

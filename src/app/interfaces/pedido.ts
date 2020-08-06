@@ -21,6 +21,7 @@ export interface Pedido {
     last_notification?: number;
     last_notificado?: string;
     last_solicitud?: number;
+    solicitudes?: number;
     cancelado_by_negocio?: number;
     razon_cancelacion?: string;
     repartidor_solicitado: boolean;
