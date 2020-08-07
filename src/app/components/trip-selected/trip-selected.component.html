@@ -19,9 +19,11 @@
             <ion-text color="medium" *ngIf="pedido_selected.entrega === 'inmediato'">{{pedido_selected.entregado | date:'h:mm a'}}</ion-text>
             <ion-text color="medium" *ngIf="pedido_selected.entrega === 'planeado'" class="ion-text-wrap">{{pedido_selected.entregado | date:'d/MMMM/y h:mm a'}}</ion-text>
         </h2>
-        <h2 *ngIf="pedido_selected.entregado">Forma de pago:
-            <ion-text color="medium">{{pedido_selected.formaPago.tipo | titlecase}}</ion-text>
-        </h2>
+        <div *ngIf="pedido_selected.entregado">
+            <h2 class="medium" *ngIf="pedido_selected.formaPago.tipo === 'efectivo'"><strong style="color: black;">Forma pago:</strong>Efectivo</h2>
+            <h2 class="medium" *ngIf="pedido_selected.formaPago.tipo === 'terminal'"><strong style="color: black;">Forma pago:</strong>Terminal</h2>
+            <h2 class="medium" *ngIf="pedido_selected.formaPago.tipo !== 'efectivo' && pedido_selected.formaPago.tipo !== 'terminal'"><strong style="color: black;">Forma pago:</strong>Pago en línea</h2>
+        </div>
         <h2 *ngIf="pedido_selected.entregado">Total:
             <ion-text color="medium">{{pedido_selected.total | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-text>
         </h2>        

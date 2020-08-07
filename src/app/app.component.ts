@@ -80,6 +80,8 @@ export class AppComponent {
 
   last_count = 0
 
+  currentPage = 'home'
+
   constructor(
     private title: Title,
     private router: Router,
@@ -148,6 +150,7 @@ export class AppComponent {
           this.animationService.pulse(el, Infinity, 1500)
         }, 350)
         setTimeout(() => {
+          if (this.currentPage === '/horario') return
           this.commonService.presentAlert('Agrega tu horario', 'Agrega el horario de tu negocio para que los usuarios lo conozcan. ' +
           'Si no agregas un horario en todo momento aparecerás en status -Cerrado-')
         }, 10000)
@@ -200,6 +203,7 @@ export class AppComponent {
   }
 
   irA(page: string, i: number) {
+    this.currentPage = page
     if (this.cambios) {
       this.commonService.presentAlertAction('', 'Tienes cambios pendientes por guardar. ¿Deseas salir sin guardar estos cambios?', 'Descartar cambios', 'Cancelar')
       .then(resp => {

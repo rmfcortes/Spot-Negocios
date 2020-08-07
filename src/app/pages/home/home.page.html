@@ -102,7 +102,9 @@
                         </ion-item>                   
                         <ion-item lines="none">
                             <ion-label>
-                                <h2 class="medium"><strong style="color: black;">Forma pago:</strong> {{pedido.formaPago.tipo !== 'efectivo' ? 'Tarjeta' : 'Efectivo'}}</h2>
+                                <h2 class="medium" *ngIf="pedido.formaPago.tipo === 'efectivo'"><strong style="color: black;">Forma pago:</strong>Efectivo</h2>
+                                <h2 class="medium" *ngIf="pedido.formaPago.tipo === 'terminal'"><strong style="color: black;">Forma pago:</strong>Terminal</h2>
+                                <h2 class="medium" *ngIf="pedido.formaPago.tipo !== 'efectivo' && pedido.formaPago.tipo !== 'terminal'"><strong style="color: black;">Forma pago:</strong>Pago en línea</h2>
                                 <h2 class="medium" *ngIf="pedido.comision"><strong style="color: black;">Comisión:</strong> {{pedido.comision | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h2>
                                 <h2 class="medium" *ngIf="pedido.negocio.repartidores_propios"><strong style="color: black;">Envío:</strong> {{pedido.envio | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h2>
                                 <h2 class="medium" *ngIf="pedido.negocio.repartidores_propios"><strong style="color: black;">Propina:</strong> {{pedido.propina | currency : 'CAD': 'symbol-narrow': '1.0-2'}}</h2>
