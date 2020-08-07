@@ -1,6 +1,7 @@
 {
     "hosting": {
         "public": "www",
+        "target": "socios",
         "ignore": [
             "firebase.json",
             "**/.*",

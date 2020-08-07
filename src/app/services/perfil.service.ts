@@ -198,19 +198,19 @@ export class PerfilService {
   updateSubCategoria(subCategoriaAnterior: string[], perfil: Perfil) {
     return new Promise(async (resolve, reject) => {
       try {
-        const idNegocio = this.uidService.getUid();
+        const idNegocio = this.uidService.getUid()
         if (perfil.abierto) {
           subCategoriaAnterior.forEach(async (s) => {
             const i = perfil.subCategoria.findIndex(sub => sub === s);
             if (i < 0) {
-              await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${s}/abiertos/${idNegocio}`).remove();
+              await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${s}/abiertos/${idNegocio}`).remove()
             }
           });
         } else {
           subCategoriaAnterior.forEach(async (su) => {
             const i = perfil.subCategoria.findIndex(subC => subC === su);
             if (i < 0) {
-              await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${su}/cerrados/${idNegocio}`).remove();
+              await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${su}/cerrados/${idNegocio}`).remove()
             }
           })
         }

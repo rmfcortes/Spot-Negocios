@@ -79,8 +79,9 @@ export class PerfilPage implements OnInit {
 
   getPerfil() {
     this.perfilService.getPerfil().then(async (perfil: Perfil) => {
+      this.subCategoriaAnterior = []
       this.perfil = perfil
-      this.subCategoriaAnterior = this.perfil.subCategoria
+      this.perfil.subCategoria.forEach(s => this.subCategoriaAnterior.push(s))
       this.cobertura = true
       this.perfilReady = true
       this.getSubcategorias()
@@ -228,7 +229,8 @@ export class PerfilPage implements OnInit {
 
       if (subCatChange) await this.perfilService.updateSubCategoria(this.subCategoriaAnterior, this.perfil)
 
-      this.subCategoriaAnterior = this.perfil.subCategoria
+      this.subCategoriaAnterior = []
+      this.perfil.subCategoria.forEach(s => this.subCategoriaAnterior.push(s))
       this.alertService.dismissLoading()
       this.alertService.presentToast('Cambios guardados')
       this.uidService.setCambios(false)

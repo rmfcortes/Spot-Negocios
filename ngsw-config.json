@@ -2,7 +2,7 @@
     "$schema": "./node_modules/@angular/service-worker/config/schema.json",
     "index": "/index.html",
     "assetGroups": [{
-        "name": "Spot Negocios",
+        "name": "Plaza Socios",
         "installMode": "prefetch",
         "resources": {
             "files": [
