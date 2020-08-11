@@ -104,30 +104,50 @@
                     </ion-button>
                 </ion-item>
                 <div *ngIf="tipo === 'productos'">
-                    <ion-list *ngFor="let item of complementos; let i = index">
-                        <ion-list-header>
-                            <ion-label color="primary">{{item.titulo}}</ion-label>
-                            <ion-button (click)="addProductoComplemento(i)" size="small">
+                    <ion-card *ngFor="let item of complementos; let i = index">                       
+                        <ion-list>
+                            <ion-list-header>
+                                <h2 style="font-weight: 700;">{{item.titulo}}</h2>
+                                <ion-button fill="clear" slot="end" (click)="deleteComplemento(i)" size="small">
+                                    <ion-icon name="trash" color="medium"></ion-icon>
+                                </ion-button>
+                            </ion-list-header>
+                            <ion-grid fixed class="escritorio">
+                                <ion-row>
+                                    <ion-col size="6">
+                                        <ion-item lines="none" class="contraste">
+                                            <ion-label>Obligatorio</ion-label>
+                                            <ion-checkbox slot="start" [(ngModel)]="item.obligatorio" name="{{i}}" (ionChange)="formularioChange()" ></ion-checkbox>
+                                        </ion-item>
+                                    </ion-col>
+                                    <ion-col size="6">
+                                        <ion-item lines="none" class="contraste">
+                                            <ion-label color="medium">Elegir máximo:</ion-label>
+                                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="item.limite" type="number" name="limite" required (ionChange)="formularioChange()"></ion-input>
+                                        </ion-item>
+                                    </ion-col>
+                                </ion-row>
+                            </ion-grid>
+                            <ion-item lines="none" class="contraste mobile">
+                                <ion-label>Obligatorio</ion-label>
+                                <ion-checkbox slot="start" [(ngModel)]="item.obligatorio" name="{{i}}" (ionChange)="formularioChange()" ></ion-checkbox>
+                            </ion-item>
+                            <ion-item lines="none" class="contraste mobile">
+                                <ion-label color="medium">Elegir máximo:</ion-label>
+                                <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="item.limite" type="number" name="limite" required (ionChange)="formularioChange()"></ion-input>
+                            </ion-item>
+                            <ion-item *ngFor="let prods of item.productos; let y = index">
+                                <ion-label color="medium">{{prods.nombre}}</ion-label>
+                                <ion-label color="medium">+{{prods.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
+                                <ion-icon slot="end" name="trash" (click)="deleteProdCom(i, y)"></ion-icon>
+                            </ion-item>
+                        </ion-list>
+                        <ion-item lines="none">
+                            <ion-button class="gradient--" (click)="addProductoComplemento(i)" slot="end">
                                 Agrega producto
                             </ion-button>
-                            <ion-button fill="outline" (click)="deleteComplemento(i)" size="small">
-                                <ion-icon name="trash"></ion-icon>
-                            </ion-button>
-                        </ion-list-header>
-                        <ion-item>
-                            <ion-label>Obligatorio</ion-label>
-                            <ion-checkbox [(ngModel)]="item.obligatorio" name="{{i}}" (ionChange)="formularioChange()" ></ion-checkbox>
                         </ion-item>
-                        <ion-item>
-                            <ion-label color="medium" position="floating">Máximo de opciones a elegir</ion-label>
-                            <ion-input (keyup.enter)="$event.target.blur();" [disabled]="guardando" [(ngModel)]="item.limite" type="number" name="limite" required (ionChange)="formularioChange()"></ion-input>
-                        </ion-item>
-                        <ion-item *ngFor="let prods of item.productos; let y = index">
-                            <ion-label color="medium">{{prods.nombre}}</ion-label>
-                            <ion-label color="medium">+{{prods.precio | currency:'CAD':'symbol-narrow':'1.0-2'}}</ion-label>
-                            <ion-icon slot="end" name="trash" (click)="deleteProdCom(i, y)"></ion-icon>
-                        </ion-item>
-                    </ion-list>
+                    </ion-card>
                 </div>
                 <ion-button class="boton-margen gradient--" style="margin-top: 2rem" [disabled]="!forma.valid || !producto.url || !producto.pasillo || guardando" expand="block" type="submit">
                     Guardar cambios

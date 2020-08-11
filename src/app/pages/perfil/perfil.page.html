@@ -44,7 +44,7 @@
                             <form #forma="ngForm" (submit)="guardarCambios()">
                                 <ion-item>
                                     <ion-label color="medium" position="floating">Negocio</ion-label>
-                                    <ion-input (keyup.enter)="$event.target.blur()" (ionChange)="formularioChange()" [(ngModel)]="perfil.nombre" type="text" name="nombre" required minlength="3"></ion-input>
+                                    <ion-input color="medium" [readonly]="true" (keyup.enter)="$event.target.blur()" (ionChange)="formularioChange()" [(ngModel)]="perfil.nombre" type="text" name="nombre" required minlength="3"></ion-input>
                                 </ion-item>
                                 <ion-item>
                                     <ion-label color="medium" position="floating">Contacto</ion-label>
@@ -93,8 +93,9 @@
                                     <ion-label color="medium" position="floating">Descripción</ion-label>
                                     <ion-textarea (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.descripcion" type="text" name="descripcion" required minlength="3"></ion-textarea>
                                 </ion-item>
-                                <ion-item>
-                                    <ion-label color="medium">Categoria    {{perfil.categoria | titlecase}}</ion-label>
+                                <ion-item lines="full">
+                                    <ion-label color="medium">Categoria    </ion-label>
+                                    <ion-label slot="end" color="medium">{{perfil.categoria | titlecase}}</ion-label>
                                 </ion-item>
                                 <ion-item>
                                     <ion-label color="medium">Subcategoria</ion-label>

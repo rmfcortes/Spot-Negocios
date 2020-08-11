@@ -6,8 +6,7 @@ import { AngularFireStorage } from '@angular/fire/storage';
 
 import { UidService } from './uid.service';
 
-import { Perfil, SubCategoria } from '../interfaces/perfil';
-import { BusquedaService } from './busqueda.service';
+import { Perfil, SubCategoria, IsOpen } from '../interfaces/perfil';
 
 
 @Injectable({
@@ -18,7 +17,6 @@ export class PerfilService {
   constructor(
     private db: AngularFireDatabase,
     private fireStorage: AngularFireStorage,
-    private palabrasService: BusquedaService,
     private uidService: UidService,
   ) { }
 
@@ -74,7 +72,6 @@ export class PerfilService {
         }
         // Info perfil
         await this.db.object(`perfiles/${idNegocio}`).update(perfil)
-        this.setPalabras(perfil)
         if (perfil.productos && perfil.productos > 0) this.setDisplay(perfil)
         resolve()
       } catch (error) {
@@ -133,23 +130,6 @@ export class PerfilService {
         }
         await this.db.object(`functions/${perfil.region}/${idNegocio}`).update(infoFun)
 
-
-        // Info busqueda
-        const busqueda: any = {
-          abierto,
-          foto: perfil.logo,
-          nombre: perfil.nombre,
-          direccion: perfil.direccion,
-        }
-        if (perfil.tipo === 'productos') {
-          if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
-          if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
-          if (perfil.envio) busqueda.envio = perfil.envio
-          busqueda.envio_costo_fijo = perfil.envio_costo_fijo ? true : false
-          busqueda.repartidores_propios = perfil.repartidores_propios
-        }
-        if (perfil.plan === 'basico') delete busqueda.idNegocio
-        await this.db.object(`busqueda/${perfil.region}/${idNegocio}`).update(busqueda)
         resolve()
       } catch (error) {
         reject(error)
@@ -169,22 +149,6 @@ export class PerfilService {
     })
   }
 
-  async setPalabras(perfil: Perfil) {
-    let claves = ''
-    const palabras = await this.palabrasService.getPalabrasClave()
-    if (palabras) {
-      claves = claves.concat(palabras + ' ')
-    }
-    claves = claves.concat(perfil.nombre + ' ')
-    claves = claves.concat(perfil.categoria)
-    claves = claves
-      .toLocaleLowerCase()
-      .split(' ')
-      .filter((item, i, allItems) => i === allItems.indexOf(item))
-      .join(' ')
-    this.palabrasService.updateClaves(claves)
-  }
-
   getSubCategorias(categoria: string): Promise<SubCategoria[]> {
     return new Promise((resolve, reject) => {
       const region = this.uidService.getRegion()
@@ -199,7 +163,8 @@ export class PerfilService {
     return new Promise(async (resolve, reject) => {
       try {
         const idNegocio = this.uidService.getUid()
-        if (perfil.abierto) {
+        const abierto = await this.isOpen()
+        if (abierto) {
           subCategoriaAnterior.forEach(async (s) => {
             const i = perfil.subCategoria.findIndex(sub => sub === s);
             if (i < 0) {
@@ -249,16 +214,5 @@ export class PerfilService {
     return this.fireStorage.storage.refFromURL(foto).delete()
   }
 
-  // Para busqueda page
-
-  getProductos(): Promise<number> {
-    return new Promise((resolve, reject) => {
-      const idNegocio = this.uidService.getUid()
-      const prodSub = this.db.object(`perfiles/${idNegocio}/productos`).valueChanges().subscribe((prods: number) => {
-        prodSub.unsubscribe()
-        resolve(prods)
-      })
-    })
-  }
 
 }

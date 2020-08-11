@@ -1,7 +1,6 @@
 import { Direccion } from './direccion';
 
 export interface Perfil {
-    abierto: boolean
     id: string
     formas_pago: FormaPago
     nombre: string
@@ -66,4 +65,9 @@ export interface SubCategoria {
     cantidad: number;
     alias: string;
     subCategoria: string;
+}
+
+export interface IsOpen {
+    abierto: boolean;
+    idNegocio: string;
 }

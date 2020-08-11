@@ -41,11 +41,6 @@ export class AppComponent {
       url: '/productos',
       icon: 'cart'
     },
-    // {
-    //   title: 'Búsqueda',
-    //   url: '/busqueda',
-    //   icon: 'search'
-    // },
     {
       title: 'Horario',
       url: '/horario',

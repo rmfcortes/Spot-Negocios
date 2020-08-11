@@ -35,7 +35,6 @@ export class CuentaService {
       }
       await this.db.object(`aacambio/${idNegocio}`).set(cambio)
       this.setPlan(plan)
-      if (plan !== 'basico') this.db.object(`busqueda/${region}/${idNegocio}/idNegocio`).set(idNegocio)
       this.db.object(`perfiles/${idNegocio}/plan`).set(plan)
       resolve()
     })

@@ -4,7 +4,6 @@ import { finalize } from 'rxjs/operators';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireStorage } from '@angular/fire/storage';
 
-import { BusquedaService } from './busqueda.service';
 import { PerfilService } from './perfil.service';
 import { UidService } from './uid.service';
 
@@ -22,7 +21,6 @@ export class ProductosService {
   constructor(
     private db: AngularFireDatabase,
     private fireStorage: AngularFireStorage,
-    private palabrasService: BusquedaService,
     private perfilService: PerfilService,
     private uidService: UidService,
   ) { }
@@ -147,7 +145,6 @@ export class ProductosService {
           await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
           await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
         }
-        this.setPalabras(producto)
         if (agregados === 0) await this.setDisplay(plan)
         resolve()
       } catch (error) {
@@ -250,19 +247,6 @@ export class ProductosService {
     return this.fireStorage.storage.refFromURL(foto).delete();
   }
 
-  async setPalabras(producto: Producto) {
-    let claves = ''
-    const palabras = await this.palabrasService.getPalabrasClave()
-    if (palabras) claves = claves.concat(palabras + ' ')
-    claves = claves.concat(producto.nombre)
-    claves = claves
-      .toLocaleLowerCase()
-      .split(' ')
-      .filter((item, i, allItems) => i === allItems.indexOf(item))
-      .join(' ')
-    this.palabrasService.updateClaves(claves)
-  }
-
   // Auxiliar
   setDisplay(plan: string) {
     return new Promise(async (resolve, reject) => {
@@ -270,12 +254,13 @@ export class ProductosService {
       try {        
         // Info preview
         const perfil: Perfil = await this.perfilService.getPerfil()
+        const abierto = await this.perfilService.isOpen()
         const calificacion = {
           calificaciones: 5,
           promedio: 5,
         }
         const preview: any = {
-          abierto: perfil.abierto,
+          abierto,
           foto: perfil.logo,
           id: perfil.id,
           nombre: perfil.nombre,
@@ -291,7 +276,7 @@ export class ProductosService {
           preview.envio_costo_fijo = perfil.envio_costo_fijo ? true : false
           preview.repartidores_propios = perfil.repartidores_propios
         }
-        if (perfil.abierto) {
+        if (abierto) {
           perfil.subCategoria.forEach(async (s) => {
             await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${s}/abiertos/${idNegocio}`).update(preview)
           })
@@ -315,7 +300,7 @@ export class ProductosService {
 
         // Info functions
         const infoFun: any = {
-          abierto: perfil.abierto,
+          abierto,
           categoria: perfil.categoria,
           foto: perfil.logo,
           idNegocio: perfil.id,
@@ -337,28 +322,6 @@ export class ProductosService {
         }
         await this.db.object(`functions/${perfil.region}/${idNegocio}`).update(infoFun)
 
-
-        // Info busqueda
-        const busqueda: any = {
-          abierto: perfil.abierto,
-          categoria: perfil.categoria,
-          foto: perfil.logo,
-          idNegocio,
-          nombre: perfil.nombre,
-          tipo: perfil.tipo,
-          direccion: perfil.direccion,
-          promedio: 5,
-          calificaciones: 5,
-        }
-        if (perfil.tipo === 'productos') {
-          if (perfil.envio_gratis_pedMin) busqueda.envio_gratis_pedMin = perfil.envio_gratis_pedMin
-          if (perfil.envio_desp_pedMin) busqueda.envio_desp_pedMin = perfil.envio_desp_pedMin
-          if (perfil.envio) busqueda.envio = perfil.envio
-          busqueda.envio_costo_fijo = perfil.envio_costo_fijo ? true : false
-          busqueda.repartidores_propios = perfil.repartidores_propios
-        }
-        if (plan === 'basico') delete busqueda.idNegocio
-        await this.db.object(`busqueda/${perfil.region}/${idNegocio}`).update(busqueda)
         await this.db.object(`rate/resumen/${idNegocio}`).update(calificacion)
         await this.db.object(`categoria/${perfil.region}/${perfil.categoria}/cantidad`).query.ref.transaction(cantidad => cantidad ? cantidad + 1 : 1)
         resolve()
@@ -374,8 +337,9 @@ export class ProductosService {
       try {        
         // Info preview
         const perfil: Perfil = await this.perfilService.getPerfil()
+        const abierto = await this.perfilService.isOpen()
         const idNegocio = this.uidService.getUid()
-        if (perfil.abierto) {
+        if (abierto) {
           perfil.subCategoria.forEach(async (s) => {
             await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${s}/abiertos/${idNegocio}`).remove()
           })
@@ -390,8 +354,7 @@ export class ProductosService {
         }
         // Info functions
         await this.db.object(`functions/${perfil.region}/${idNegocio}`).remove()
-        // Info busqueda
-        await this.db.object(`busqueda/${perfil.region}/${idNegocio}/idNegocio`).remove()
+
         await this.db.object(`rate/resumen/${idNegocio}`).remove()
         resolve()
       } catch (error) {

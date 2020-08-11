@@ -148,7 +148,7 @@ export class ProductoPage implements OnInit {
         return
       }
       producto.precio = parseInt(producto.precio, 10)
-      this.complementos[i].productos.unshift(producto)
+      this.complementos[i].productos.push(producto)
       this.cambios_pendientes = true
     })
   }

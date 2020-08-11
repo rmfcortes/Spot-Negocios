@@ -189,7 +189,7 @@ export class PerfilPage implements OnInit {
         permitidos = 500
         break
     }
-    const agregados = this.perfil.subCategoria.length;
+    const agregados = this.perfil.subCategoria.length
     if (agregados > permitidos) {
       this.alertService.presentAlert('Límite de subCategorías', `Tu plan actual es ${plan}. Y sólo puedes
       agregar ${permitidos} subCategoria(s). Si deseas agregar más, contacta a tu vendedor y actualiza tu plan`)
