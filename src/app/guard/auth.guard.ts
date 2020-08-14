@@ -20,13 +20,20 @@ export class AuthGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      return this.authService.checkUser()
-      .then(uid => {
+      return this.authService.getUid()
+      .then(async (uid) => {
         if (!uid) { 
           this.router.navigate(['/login'])
           throw 'no_uid'
         }
-        return this.regionService.checkRegion()
+        try {
+          const checked = this.authService.getAuthChecked()
+          if (!checked) await this.authService.checkFireAuthTest()
+          return this.regionService.checkRegion()
+        } catch (error) {
+          this.router.navigate(['/login'])
+          throw 'no_auth'
+        }
       })
       .then(() => this.planService.checkPlan())
       .then(() => true)

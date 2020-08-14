@@ -61,9 +61,17 @@ export class PerfilService {
         // Info datos-pedido & preparacion if tipo productos
         if (perfil.tipo === 'productos') {
           const datosPedido = {
+            envio: perfil.envio ? perfil.envio : 0,
+            idNegocio: perfil.id,
+            direccion: perfil.direccion,
+            nombreNegocio: perfil.nombre,
+            logo: perfil.logo,
             entrega: perfil.entrega,
             telefono: perfil.telefono,
-            formas_pago: perfil.formas_pago
+            formas_pago: perfil.formas_pago,
+            envio_gratis_pedMin: perfil.envio_gratis_pedMin ? perfil.envio_gratis_pedMin : 0,
+            repartidores_propios: perfil.repartidores_propios,
+            envio_costo_fijo: perfil.envio_costo_fijo ? perfil.envio_costo_fijo : false
           }
           await this.db.object(`negocios/datos-pedido/${perfil.categoria}/${idNegocio}`).update(datosPedido)
         }

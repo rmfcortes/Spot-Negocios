@@ -10,11 +10,11 @@
             </ion-header>
             <ion-content class="background-gris">
                 <ion-menu-toggle auto-hide="false">
-                    <ion-item *ngFor="let p of appPages; let first = first; let i = index" (click)="irA(p.url, i)" [routerDirection]="'root'" style="cursor: pointer;">
-                        <ion-icon slot="start" [name]="p.icon" color="medium" *ngIf="i!== iSel"></ion-icon>
-                        <ion-icon slot="start" [name]="p.icon" color="primary" *ngIf="i === iSel"></ion-icon>
-                        <ion-label color="medium" *ngIf="i!== iSel">{{p.title}}</ion-label>
-                        <ion-label color="primary" *ngIf="i === iSel">{{p.title}}</ion-label>
+                    <ion-item *ngFor="let p of appPages; let first = first" (click)="irA(p.url)" [routerDirection]="'root'" style="cursor: pointer;">
+                        <ion-icon slot="start" [name]="p.icon" color="medium" *ngIf="currentPage !== p.url"></ion-icon>
+                        <ion-icon slot="start" [name]="p.icon" color="primary" *ngIf="currentPage === p.url"></ion-icon>
+                        <ion-label color="medium" *ngIf="currentPage !== p.url">{{p.title}}</ion-label>
+                        <ion-label color="primary" *ngIf="currentPage === p.url">{{p.title}}</ion-label>
                         <ion-badge *ngIf="first && pedidos > 0" color="primary" slot="end">{{pedidos}}</ion-badge>
                         <div *ngIf="no_horario && p.title === 'Horario'" class="alert" id="alert">
                             <ion-icon slot="end" color="danger" name="notifications" class="alert-icon"></ion-icon>

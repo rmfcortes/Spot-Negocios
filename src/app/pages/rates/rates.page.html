@@ -101,8 +101,6 @@
                 </ion-grid>
             </ng-container>
 
-
-
             <!-- No repartidores template -->
             <ng-template #hasRepasTemp>
                 <ion-grid fixed>
@@ -125,6 +123,9 @@
                                         </ion-label>
                                     </ion-item>
                                 </ion-card>
+                                <ion-item lines="none" *ngIf="comentarios.length === 0" style="text-align: center;">
+                                    <ion-label color="medium">No hay comentarios por mostrar</ion-label>
+                                </ion-item>
                             </ng-template>
     
                             <ion-infinite-scroll threshold="50px" (ionInfinite)="loadComentarios($event)">
@@ -140,6 +141,7 @@
                     </ion-row>
                 </ion-grid>
             </ng-template>
+
         </ng-container>
         <ng-template #rateTemplate>
             <ion-item lines="none" style="text-align: center;">

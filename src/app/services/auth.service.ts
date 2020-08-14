@@ -11,6 +11,8 @@ import { UidService } from './uid.service';
 })
 export class AuthService {
 
+  authChecked = false
+
   constructor(
     private db: AngularFireDatabase,
     public authFirebase: AngularFireAuth,
@@ -19,7 +21,33 @@ export class AuthService {
 
   // Check isLog
 
-  checkUser(): Promise<boolean> {
+  getAuthChecked() {
+    return this.authChecked
+  }
+
+  setAuthChecked() {
+    this.authChecked = true
+  }
+
+  async checkFireAuthTest() {
+    return new Promise((resolve, reject) => {
+      const authSub = this.authFirebase.authState.subscribe(async (resp) => {
+        if (resp) {
+          authSub.unsubscribe()
+          this.setAuthChecked()
+          const nombre = localStorage.getItem('nombre')
+          await this.setUser(resp.uid, nombre)
+          resolve(resp)
+        } else {
+          reject()
+        }
+      },
+        err => reject(err)
+      )
+    })
+  }
+
+  getUid(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       let user
       user = this.uidService.getUid()
@@ -39,8 +67,6 @@ export class AuthService {
     return new Promise (async (resolve, reject) => {
       if ( localStorage.getItem('uid') ) {
         const uid = localStorage.getItem('uid')
-        const nombre = localStorage.getItem('nombre')
-        await this.setUser(uid, nombre)
         resolve(uid)
       } else resolve(false)
     })

@@ -51,6 +51,7 @@ export class AlertService {
             }
           }, {
             text: 'Asignar',
+            cssClass: 'btn_aceptar',
             handler: (data) => {
               resolve(data);
             }
@@ -97,6 +98,7 @@ export class AlertService {
             cssClass: 'secondary',
           }, {
             text: btnAceptar,
+            cssClass: 'btn_aceptar',
             handler: (data) => {
               resolve(data.name1)
             }
@@ -130,7 +132,8 @@ export class AlertService {
             role: 'cancel',
             cssClass: 'secondary',
           }, {
-            text: 'Ok',
+            text: 'Agregar',
+            cssClass: 'btn_aceptar',
             handler: (data) => {
               resolve(data)
             }
@@ -158,6 +161,7 @@ export class AlertService {
         buttons: [
           {
             text: 'Aceptar',
+            cssClass: 'btn_aceptar',
             handler: (data) => {
               resolve(data)
             }
@@ -178,15 +182,15 @@ export class AlertService {
             text: txtCancelar,
             role: 'cancel',
             cssClass: 'secondary',
-            handler: (blah) => {
-              resolve(false);
+            handler: () => {
+              resolve(false)
             }
           },
           {
             text: txtAceptar,
-            cssClass: 'secondary',
-            handler: (blah) => {
-              resolve(true);
+            cssClass: 'btn_aceptar',
+            handler: () => {
+              resolve(true)
             }
           }
         ]

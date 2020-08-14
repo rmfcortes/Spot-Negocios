@@ -126,19 +126,21 @@ export class ProductosService {
           producto.variables = false
         }
         await this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${producto.pasillo}/${producto.id}`).update(producto)
+        await this.db.object(`productos/${idNegocio}/${producto.id}`).update(producto)
         if (producto.pasillo === 'Ofertas') {
           const oferta = {
             categoria,
             foto: producto.foto,
             id: producto.id,
             idNegocio,
-            tipo
+            tipo,
+            agotado: producto.agotado ? producto.agotado : false
           }
           const subs = await this.getSubCategorias()
           await this.db.object(`ofertas/${region}/${categoria}/${producto.id}`).update(oferta)
           await this.db.object(`ofertas/${region}/todas/${producto.id}`).update(oferta)
           for (const item of subs) {
-            await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item.subCategoria}/${producto.id}`).update(oferta)
+            await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).update(oferta)
           }
         }
         if (producto.nuevo) {
@@ -177,6 +179,7 @@ export class ProductosService {
         this.borraFoto(producto.url)
         if (producto.foto) this.borraFoto(producto.foto)
         await this.db.object(`negocios/${tipo}/${categoria}/${idNegocio}/${producto.pasillo}/${producto.id}`).remove()
+        await this.db.object(`productos/${idNegocio}/${producto.id}`).remove()
         if (producto.variables) {
           await this.db.object(`negocios/complementos/${idNegocio}/${producto.id}`).remove()
         }
@@ -185,7 +188,7 @@ export class ProductosService {
           await this.db.object(`ofertas/${region}/todas/${producto.id}`).remove()
           const subs = await this.getSubCategorias()
           for (const item of subs) {
-            await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item.subCategoria}/${producto.id}`).remove()
+            await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).remove()
           }
         }
         await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos - 1 : 0)
@@ -211,7 +214,7 @@ export class ProductosService {
       this.db.object(`ofertas/${region}/todas/${idProducto}`).remove()
       const subs = await this.getSubCategorias()
       for (const item of subs) {
-        await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item.subCategoria}/${producto.id}`).remove()
+        await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).remove()
       }
     }
   }
@@ -285,7 +288,14 @@ export class ProductosService {
             abierto: true,
             idNegocio
           }
+          const abiertoAnalisis = {
+            abierto: true,
+            activo: true
+          }
           await this.db.object(`isOpen/${perfil.region}/${idNegocio}`).update(abierto)
+          for (const i of [0,1,2,3,4,5,6]) {
+            await this.db.object(`horario/analisis/${i}/${idNegocio}`).update(abiertoAnalisis)
+          }
         } else {
           perfil.subCategoria.forEach(async(su) => {
             await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${su}/cerrados/${idNegocio}`).update(preview)
@@ -294,8 +304,15 @@ export class ProductosService {
           const cerrado = {
             abierto: false,
             idNegocio
+          }          
+          const cerradoAnalisis = {
+            abierto: false,
+            activo: true
           }
           await this.db.object(`isOpen/${perfil.region}/${idNegocio}`).update(cerrado)
+          for (const i of [0,1,2,3,4,5,6]) {
+            await this.db.object(`horario/analisis/${i}/${idNegocio}`).update(cerradoAnalisis)
+          }
         }
 
         // Info functions
@@ -323,7 +340,6 @@ export class ProductosService {
         await this.db.object(`functions/${perfil.region}/${idNegocio}`).update(infoFun)
 
         await this.db.object(`rate/resumen/${idNegocio}`).update(calificacion)
-        await this.db.object(`categoria/${perfil.region}/${perfil.categoria}/cantidad`).query.ref.transaction(cantidad => cantidad ? cantidad + 1 : 1)
         resolve()
       } catch (error) {
         this.db.object(`perfiles/${idNegocio}/productos`).set(0)
@@ -344,18 +360,23 @@ export class ProductosService {
             await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${s}/abiertos/${idNegocio}`).remove()
           })
           await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/todos/abiertos/${idNegocio}`).remove()
-          await this.db.object(`isOpen/${perfil.region}/${idNegocio}`).remove()
         } else {
           perfil.subCategoria.forEach(async(su) => {
             await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/${su}/cerrados/${idNegocio}`).remove()
           })
           await this.db.object(`negocios/preview/${perfil.region}/${perfil.categoria}/todos/cerrados/${idNegocio}`).remove()
-          await this.db.object(`isOpen/${perfil.region}/${idNegocio}`).remove()
+        }
+        await this.db.object(`isOpen/${perfil.region}/${idNegocio}`).remove()
+        const analisis = {
+          abierto: false,
+          activo: false
+        }
+        for (const i of [0,1,2,3,4,5,6]) {
+          await this.db.object(`horario/analisis/${i}/${idNegocio}`).update(analisis)
         }
         // Info functions
-        await this.db.object(`functions/${perfil.region}/${idNegocio}`).remove()
-
         await this.db.object(`rate/resumen/${idNegocio}`).remove()
+        await this.db.object(`functions/${perfil.region}/${idNegocio}`).remove()
         resolve()
       } catch (error) {
         reject(error)
@@ -363,10 +384,10 @@ export class ProductosService {
     })
   }
 
-  getSubCategorias(): Promise<SubCategoria[]> {
+  getSubCategorias(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       const uid = this.uidService.getUid()
-      const subSub = this.db.list(`perfiles/${uid}/subCategoria`).valueChanges().subscribe((subCategorias: SubCategoria[]) => {
+      const subSub = this.db.list(`perfiles/${uid}/subCategoria`).valueChanges().subscribe((subCategorias: string[]) => {
         subSub.unsubscribe()
         resolve(subCategorias)
       })

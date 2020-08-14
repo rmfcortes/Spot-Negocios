@@ -68,8 +68,6 @@ export class AppComponent {
 
   perfil: Perfil
 
-  iSel: number
-
   no_horario = false
   cambios = false
 
@@ -97,13 +95,15 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      const href = window.location.href
+      const arHref = href.split('/')
+      this.currentPage = '/' + arHref[arHref.length - 1]
       this.platform.backButton.subscribeWithPriority(9999, () => {
         document.addEventListener('backbutton', (event) => {
           event.preventDefault()
           event.stopPropagation()
         }, false)
       })
-
       this.swService.checkUpdates()
       this.getUser()
     })
@@ -111,6 +111,7 @@ export class AppComponent {
 
   getUser() {
     this.uidSub = this.uidService.usuario.subscribe(uid => {
+      if(this.uid === uid) return
       this.uid = uid
       if (this.uid) {
         this.getPlan()
@@ -146,9 +147,15 @@ export class AppComponent {
         }, 350)
         setTimeout(() => {
           if (this.currentPage === '/horario') return
-          this.commonService.presentAlert('Agrega tu horario', 'Agrega el horario de tu negocio para que los usuarios lo conozcan. ' +
-          'Si no agregas un horario en todo momento aparecerás en status -Cerrado-')
-        }, 10000)
+          this.commonService.presentAlertAction('Agrega tu horario', 'Agrega el horario de tu negocio para que los usuarios lo conozcan. ' +
+          'Si no agregas un horario en todo momento aparecerás en status -Cerrado-', 'Agregar horario', 'Después')
+          .then(resp => {
+            if (resp) {
+              const i = this.appPages.findIndex(p => p.title === 'Horario')
+              this.irA(this.appPages[i].url)
+            }
+          })
+        }, 2000)
         this.horarioService.hasHorario.subscribe(hasHorario => {
           if (hasHorario) {
             this.no_horario = false
@@ -197,19 +204,19 @@ export class AppComponent {
     this.cambiosSub = this.uidService.cambios.subscribe(value => this.cambios = value)
   }
 
-  irA(page: string, i: number) {
+  irA(page: string) {
     this.currentPage = page
     if (this.cambios) {
       this.commonService.presentAlertAction('', 'Tienes cambios pendientes por guardar. ¿Deseas salir sin guardar estos cambios?', 'Descartar cambios', 'Cancelar')
       .then(resp => {
         if (resp) {
-          this.iSel = i
+          this.currentPage = page
           this.router.navigate([page])
           this.uidService.setCambios(false)
         }
       })
     } else {
-      this.iSel = i
+      this.currentPage = page
       this.router.navigate([page])
     }
   }

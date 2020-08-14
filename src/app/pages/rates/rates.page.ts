@@ -91,7 +91,7 @@ export class RatesPage implements OnInit {
     return new Promise((resolve, reject) => {
       this.rateService.getNegRate().then(rate => {
         this.rate = rate
-        if (rate.calificaciones > 5 && this.scrWidth >= 992 || rate.calificaciones > 5 && !this.repartidores_propios) 
+        if (rate && rate.calificaciones > 5 && this.scrWidth >= 992 || rate && rate.calificaciones > 5 && !this.repartidores_propios) 
           this.setDatos(this.perfilNegocio.id, 'negocio', rate.calificaciones, this.perfilNegocio.nombre, null)
         this.rateNegReady = true
       })
