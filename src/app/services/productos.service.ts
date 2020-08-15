@@ -146,7 +146,7 @@ export class ProductosService {
         if (producto.nuevo) {
           await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
           if (producto.pasillo === 'Ofertas') await this.db.object(`perfiles/${idNegocio}/ofertas`).query.ref.transaction(productos => productos ? productos + 1 : 1)
-          await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
+          else await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
         }
         if (agregados === 0) await this.setDisplay(plan)
         resolve()

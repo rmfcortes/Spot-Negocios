@@ -31,6 +31,7 @@ export interface Perfil {
 
 export interface FormaPago {
     efectivo: boolean;
+    terminal: boolean;
     tarjeta: boolean;
 }
 

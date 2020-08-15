@@ -62,7 +62,7 @@
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Whatsapp de contacto (10 dígitos)</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.whats" type="tel" name="whats" minlength="10" maxlength="10"></ion-input>
                                 </ion-item>
-                                <ion-radio-group *ngIf="perfil.repartidores_propios" name="auto" [(ngModel)]="perfil.envio_costo_fijo" (ionChage)="formularioChange()">
+                                <ion-radio-group *ngIf="perfil.repartidores_propios && perfil.tipo === 'productos'" name="auto" [(ngModel)]="perfil.envio_costo_fijo" (ionChage)="formularioChange()">
                                     <ion-list-header>
                                         <ion-label color="medium">Costo envío fijo / variable</ion-label>
                                     </ion-list-header>
@@ -81,10 +81,27 @@
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Costo de envío</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.envio" type="number" name="envio" minlength="1"></ion-input>
                                 </ion-item>
-                                <ion-item *ngIf="perfil.repartidores_propios">
+                                <ion-item *ngIf="perfil.repartidores_propios && perfil.tipo === 'productos'">
                                     <ion-label color="medium" position="floating">Pedido mínimo para envío gratis</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" type="number" [(ngModel)]="perfil.envio_gratis_pedMin" name="envio_gratis" (ionChage)="formularioChange()"></ion-input>
                                 </ion-item>
+                                <ion-item *ngIf="perfil.tipo === 'productos'">
+                                    <ion-label color="medium" class="ion-text-wrap">Formas de pago</ion-label>
+                                  </ion-item>
+                                  <div *ngIf="perfil.tipo === 'productos'" style="width: 80%; margin-left: 20%;">
+                                      <ion-item>
+                                          <ion-label color="medium" class="ion-text-wrap">Efectivo</ion-label>
+                                          <ion-checkbox (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.formas_pago.efectivo" name="efectivo"></ion-checkbox>
+                                      </ion-item>
+                                      <ion-item>
+                                          <ion-label color="medium" class="ion-text-wrap">Tarjeta</ion-label>
+                                          <ion-checkbox (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.formas_pago.tarjeta" name="tarjeta"></ion-checkbox>
+                                      </ion-item>              
+                                      <ion-item *ngIf="perfil.repartidores_propios">
+                                          <ion-label color="medium" class="ion-text-wrap">Terminal</ion-label>
+                                          <ion-checkbox (keyup.enter)="$event.target.blur();" [(ngModel)]="perfil.formas_pago.terminal" name="terminal"></ion-checkbox>
+                                      </ion-item>
+                                  </div>
                                 <ion-item *ngIf="perfil.tipo === 'productos' && perfil.entrega === 'inmediato'">
                                     <ion-label color="medium" position="floating" class="ion-text-wrap">Tiempo de preparacion aprox. en minutos</ion-label>
                                     <ion-input (keyup.enter)="$event.target.blur();" (ionChange)="formularioChange()" [(ngModel)]="perfil.preparacion" type="number" name="preparacion" minlength="1"></ion-input>

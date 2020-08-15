@@ -208,6 +208,10 @@ export class PerfilPage implements OnInit {
       }
     }
     await this.alertService.presentLoading()
+    if (!this.perfil.repartidores_propios) {
+      this.perfil.formas_pago.terminal = false
+      this.perfil.envio_gratis_pedMin = null
+    }
     try {
       // Guarda fotos y obtiene urls
       if (this.base64Pordata) {

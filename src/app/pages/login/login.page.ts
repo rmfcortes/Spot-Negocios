@@ -103,7 +103,7 @@ export class LoginPage implements OnInit {
     this.authService.signInWithEmail(this.form.value)
     .then(() => {
       this.alertService.dismissLoading()
-      this.router.navigate(['home'])
+      this.router.navigate(['home'], { replaceUrl: true })
     })
     .catch((err) => {
       this.alertService.dismissLoading()

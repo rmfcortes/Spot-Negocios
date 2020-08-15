@@ -211,13 +211,13 @@ export class AppComponent {
       .then(resp => {
         if (resp) {
           this.currentPage = page
-          this.router.navigate([page])
+          this.router.navigate([page], { replaceUrl: true })
           this.uidService.setCambios(false)
         }
       })
     } else {
       this.currentPage = page
-      this.router.navigate([page])
+      this.router.navigate([page], { replaceUrl: true })
     }
   }
 
@@ -230,7 +230,7 @@ export class AppComponent {
     const y = this.appPages.findIndex(p => p.title === 'Repartidores')
     if (y >= 0) this.appPages.splice(y, 1)
     this.authService.logout()
-    this.router.navigate(['/login'])
+    this.router.navigate(['/login'], { replaceUrl: true })
   }
 
 }
