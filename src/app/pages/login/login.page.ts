@@ -112,12 +112,19 @@ export class LoginPage implements OnInit {
   }
 
   resetPassword() {
+    this.alertService.presentLoading('Enviado correo')
     this.err = ''
     this.form.controls.email.markAsTouched()
     if (!this.form.controls.email.valid) return
     this.authService.resetPass(this.form.value.email)
-    .then(() =>  this.err = 'Hemos enviado un enlace al correo electrónico para reingresar una contraseña')
-    .catch(err => this.err = err)
+    .then(() => {
+      this.alertService.dismissLoading()
+      this.alertService.presentToastButton('¡Listo!. Revisa tu correo electrónico y ahí encontrarás nuestro enlace para restablecer tu contraseña. (Si no lo encuentras en tu Bandeja, revisa en el Correo no deseado)')
+    })
+    .catch(err => {
+      this.alertService.dismissLoading()
+      this.err = err
+    })
   }
 
 

@@ -61,8 +61,8 @@
                 <ion-card style="padding-bottom: 1rem;">
                     <ion-item lines="none">
                         <ion-label color="medium">Departamentos</ion-label>
-                        <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
-                        <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
+                        <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="pasillos.pasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
+                        <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="pasillos.pasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
                         <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
                     </ion-item>
                     <ion-item *ngIf="viewSectionInput" lines="none">
@@ -73,7 +73,7 @@
                         </ion-button>
                     </ion-item>
                     <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
-                        <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
+                        <ion-item *ngFor="let section of pasillos.pasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                             <ng-container *ngIf="section.edit; else editTemplate">
                                 <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
                                 <ion-reorder slot="end"></ion-reorder>
@@ -93,7 +93,7 @@
 
                 <!-- Lista productos -->
 
-                <ion-item lines="none" *ngIf="listaPasillos.length > 0">
+                <ion-item lines="none" *ngIf="pasillos.pasillos.length > 0">
                     <ion-button slot="end" (click)="verProducto(null)" expand="block" fill="outline" color="primary" class="btn_agregar ion-text-wrap">
                         Agregar producto
                     </ion-button>
@@ -163,8 +163,8 @@
                         <ion-card style="padding-bottom: 1rem;">
                             <ion-item lines="none">
                                 <ion-label color="medium">Departamentos</ion-label>
-                                <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
-                                <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="listaPasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
+                                <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="pasillos.pasillos.length > 0 && viewSectionList === false" (click)="viewSectionList = true"></ion-icon>
+                                <ion-icon slot="end" name="chevron-up" color="primary" *ngIf="pasillos.pasillos.length > 0 && viewSectionList === true" (click)="viewSectionList = false"></ion-icon>
                                 <ion-icon slot="end" name="add" color="primary" (click)="showSectionInput()"></ion-icon>
                             </ion-item>
                             <ion-item *ngIf="viewSectionInput" lines="none">
@@ -175,7 +175,7 @@
                                 </ion-button>
                             </ion-item>
                             <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false" *ngIf="viewSectionList">
-                                <ion-item *ngFor="let section of listaPasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
+                                <ion-item *ngFor="let section of pasillos.pasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                                     <ng-container *ngIf="section.edit; else editTemplate">
                                         <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
                                         <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
@@ -205,7 +205,7 @@
 
                         <!-- Products list -->
 
-                        <ion-card *ngIf="listaPasillos.length > 0" style="padding-bottom: 1rem;">
+                        <ion-card *ngIf="pasillos.pasillos.length > 0" style="padding-bottom: 1rem;">
                             <ion-item lines="none">
                                 <ion-label color="medium">Productos</ion-label>
                                 <ion-icon slot="end" name="chevron-down" color="primary" *ngIf="viewProducts === false && productosCargados > 0" (click)="viewProducts = true"></ion-icon>
@@ -236,14 +236,14 @@
                                 <!-- Product view -->
                                 <ng-template #modalProduct>
                                 </ng-template>
-                                <ion-segment scrollable *ngIf="listaPasillos && listaPasillos.length > 0" [value]="pasilloFiltro ? pasilloFiltro : 'todos'">
+                                <ion-segment scrollable *ngIf="pasillos.pasillos && pasillos.pasillos.length > 0" [value]="pasilloFiltro ? pasilloFiltro : 'todos'">
                                     <ion-segment-button (click)="resetProds()" value="todos">
                                         Todos
                                     </ion-segment-button>
                                     <ion-segment-button (click)="resetProds('Ofertas')" *ngIf="hasOfertas" value="ofertas">
                                         Ofertas
                                     </ion-segment-button>
-                                    <ion-segment-button (click)="resetProds(item.nombre)" *ngFor="let item of listaPasillos; trackBy: trackByPasillosPasillos" [value]="item.nombre">
+                                    <ion-segment-button (click)="resetProds(item.nombre)" *ngFor="let item of pasillos.pasillos; trackBy: trackByPasillosPasillos" [value]="item.nombre">
                                         {{item.nombre}}
                                     </ion-segment-button>
                                 </ion-segment>
@@ -327,7 +327,7 @@
         </ion-card>
     </ng-template>
 
-    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile" *ngIf="listaPasillos.length > 0 && prods_busqueda[0].productos.length === 0">
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile" *ngIf="pasillos.pasillos.length > 0 && prods_busqueda[0].productos.length === 0">
         <ion-fab-button (click)="verProducto(null)" class="gradient--">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>

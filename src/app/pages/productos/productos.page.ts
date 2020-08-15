@@ -45,8 +45,6 @@ export class ProductosPage implements OnInit {
 
   ///////////Escritorio
 
-  listaPasillos: Pasillo[] = []
-
   prodsReady = false
 
   back: Subscription
@@ -123,7 +121,6 @@ export class ProductosPage implements OnInit {
     if (detalles.pasillos && detalles.pasillos.length > 0) {
       this.pasillos.pasillos = detalles.pasillos
       this.pasillos.pasillos = this.pasillos.pasillos.sort((a, b) => a.prioridad - b.prioridad)
-      this.getListaPasillos(this.pasillos.pasillos)
     } else {
       this.prodsReady = true
       return
@@ -426,7 +423,7 @@ export class ProductosPage implements OnInit {
     if (!this.busqueda) return
     this.busqueda = this.busqueda.toLowerCase()
     try {
-      this.prods_busqueda[0].productos = await this.productoService.busca(this.tipo, this.categoria, this.listaPasillos, this.busqueda)
+      this.prods_busqueda[0].productos = await this.productoService.busca(this.tipo, this.categoria, this.pasillos.pasillos, this.busqueda)
       this.buscando = false
       if (this.prods_busqueda[0].productos.length === 0) this.alertService.presentToast('No hay resultados para el código ingresado')
       else this.viewProducts = false
@@ -442,15 +439,10 @@ export class ProductosPage implements OnInit {
   }
   
   // Pasillos
-  getListaPasillos(pasillos) {
-    this.listaPasillos = pasillos
-    const plan = this.uidService.getPlan()
-  }
-
   async addPasillo() {
     this.nuevo_pasillo = this.nuevo_pasillo.trim()
     if (!this.nuevo_pasillo || this.nuevo_pasillo === '') return
-    const i = this.listaPasillos.findIndex(p => p.nombre === this.nuevo_pasillo)
+    const i = this.pasillos.pasillos.findIndex(p => p.nombre === this.nuevo_pasillo)
     if (i >= 0) {
       this.alertService.presentAlert('', 'El nombre de este pasillo ya existe. Por favor intenta con otro')
       return
@@ -459,46 +451,46 @@ export class ProductosPage implements OnInit {
       nombre: this.nuevo_pasillo,
       prioridad: 0
     }
-    this.listaPasillos.unshift(pasillo)
-    this.listaPasillos.forEach((p, i) => p.prioridad = i + 1)
+    this.pasillos.pasillos.unshift(pasillo)
+    this.pasillos.pasillos.forEach((p, i) => p.prioridad = i + 1)
     this.nuevo_pasillo = ''
     this.viewSectionInput = false
-    this.pasillosService.updatePasillos(this.categoria, this.listaPasillos)
+    this.pasillosService.updatePasillos(this.categoria, this.pasillos.pasillos)
   }
 
   doReorder(event) {
-    const itemMove = this.listaPasillos.splice(event.detail.from, 1)[0]
-    this.listaPasillos.splice(event.detail.to, 0, itemMove)
-    this.listaPasillos.forEach((p, i) => p.prioridad = i + 1)
-    this.pasillosService.updatePasillos(this.categoria, this.listaPasillos)
+    const itemMove = this.pasillos.pasillos.splice(event.detail.from, 1)[0]
+    this.pasillos.pasillos.splice(event.detail.to, 0, itemMove)
+    this.pasillos.pasillos.forEach((p, i) => p.prioridad = i + 1)
+    this.pasillosService.updatePasillos(this.categoria, this.pasillos.pasillos)
     event.detail.complete()
   }
 
   editPasillo(i) {
     this.unselectEdit()
-    this.beforeEdit = this.listaPasillos[i].nombre
-    this.listaPasillos[i].edit = true
+    this.beforeEdit = this.pasillos.pasillos[i].nombre
+    this.pasillos.pasillos[i].edit = true
     setTimeout(() => this.inputSectionEdit.setFocus(), 300)
   }
 
   cancelEditPasillo(i: number) {
-    this.listaPasillos[i].nombre = this.beforeEdit
+    this.pasillos.pasillos[i].nombre = this.beforeEdit
     this.beforeEdit = ''
     this.unselectEdit()
   }
 
   saveEditSection(i) {
     this.unselectEdit()
-    this.listaPasillos[i].nombre =  this.listaPasillos[i].nombre.trim()
-    if (!this.listaPasillos[i].nombre) return
-    this.pasillosService.editPasillo(this.categoria, i, this.beforeEdit, this.listaPasillos[i].nombre)
+    this.pasillos.pasillos[i].nombre =  this.pasillos.pasillos[i].nombre.trim()
+    if (!this.pasillos.pasillos[i].nombre) return
+    this.pasillosService.editPasillo(this.categoria, i, this.beforeEdit, this.pasillos.pasillos[i].nombre)
     const y = this.productos.findIndex(p => p.nombre === this.beforeEdit)
-    this.productos[y].nombre = this.listaPasillos[i].nombre
+    this.productos[y].nombre = this.pasillos.pasillos[i].nombre
     this.beforeEdit = ''
   }
 
   unselectEdit() {
-    this.listaPasillos.forEach(s => s.edit = null)
+    this.pasillos.pasillos.forEach(s => s.edit = null)
   }
 
   async deletePasillo(i, nombre) {
@@ -506,9 +498,9 @@ export class ProductosPage implements OnInit {
      `¿Estás segura(o) de eliminar ${nombre}? se borrarán también todos los productos ` +
      'pertenecientes a este departamento. Esta acción es irreversible.', 'Eliminar', 'Cancelar')
     if (resp) {
-      this.listaPasillos.splice(i, 1)
-      this.listaPasillos.forEach((p, i) => p.prioridad = i + 1)
-      this.pasillosService.updatePasillos(this.categoria, this.listaPasillos)
+      this.pasillos.pasillos.splice(i, 1)
+      this.pasillos.pasillos.forEach((p, i) => p.prioridad = i + 1)
+      this.pasillosService.updatePasillos(this.categoria, this.pasillos.pasillos)
       this.pasillosService.deletePasillo(this.categoria, nombre)
     }
   }

@@ -9,7 +9,7 @@ import { UidService } from './uid.service';
 
 import { Producto, Complemento } from '../interfaces/producto';
 import { InfoPasillos, Pasillo } from '../interfaces/pasillo';
-import { Perfil, SubCategoria } from '../interfaces/perfil';
+import { Perfil } from '../interfaces/perfil';
 
 @Injectable({
   providedIn: 'root'
@@ -145,6 +145,7 @@ export class ProductosService {
         }
         if (producto.nuevo) {
           await this.db.object(`perfiles/${idNegocio}/productos`).query.ref.transaction(productos => productos ? productos + 1 : 1)
+          if (producto.pasillo === 'Ofertas') await this.db.object(`perfiles/${idNegocio}/ofertas`).query.ref.transaction(productos => productos ? productos + 1 : 1)
           await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasillo}/cantidad`).query.ref.transaction(productos => productos ? productos + 1 : 1)
         }
         if (agregados === 0) await this.setDisplay(plan)
@@ -186,6 +187,7 @@ export class ProductosService {
         if (producto.pasillo === 'Ofertas') {
           await this.db.object(`ofertas/${region}/${categoria}/${producto.id}`).remove()
           await this.db.object(`ofertas/${region}/todas/${producto.id}`).remove()
+          await this.db.object(`perfiles/${idNegocio}/ofertas`).query.ref.transaction(productos => productos ? productos - 1 : 0)
           const subs = await this.getSubCategorias()
           for (const item of subs) {
             await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).remove()
@@ -201,7 +203,7 @@ export class ProductosService {
     })
   }
 
-  async changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string, producto: Producto, iPasilloViejo: number, iPasillo: number) {
+  async changePasillo(categoria: string, pasilloViejo: string, idProducto: string, tipo: string, producto: Producto, iPasilloViejo: number, iPasillo: number, nuevoPasillo: string) {
     const region = this.uidService.getRegion()
     const idNegocio = this.uidService.getUid()
     await this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/pasillos/${iPasilloViejo}/cantidad`).query.ref.transaction(productos => productos ? productos - 1 : 0)
@@ -212,10 +214,14 @@ export class ProductosService {
     if (pasilloViejo === 'Ofertas') {
       this.db.object(`ofertas/${region}/${categoria}/${idProducto}`).remove()
       this.db.object(`ofertas/${region}/todas/${idProducto}`).remove()
+      this.db.object(`perfiles/${idNegocio}/ofertas`).query.ref.transaction(productos => productos ? productos - 1 : 0)
       const subs = await this.getSubCategorias()
       for (const item of subs) {
         await this.db.object(`ofertas/${region}/subCategorias/${categoria}/${item}/${producto.id}`).remove()
       }
+    }
+    if (nuevoPasillo === 'Ofertas') {
+      this.db.object(`perfiles/${idNegocio}/ofertas`).query.ref.transaction(productos => productos ? productos + 1 : 1)
     }
   }
 

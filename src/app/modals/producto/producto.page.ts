@@ -236,14 +236,12 @@ export class ProductoPage implements OnInit {
       if (this.pasilloViejo === 'Ofertas') iPasilloViejo = 0
       else iPasilloViejo = this.pasillos.findIndex(p => p.nombre === this.pasilloViejo) - 1 
       
-      
       let iPasillo
       if (this.producto.pasillo === 'Ofertas') iPasillo = 0
       else iPasillo = this.pasillos.findIndex(p => p.nombre === this.producto.pasillo) - 1
 
-
       if (this.pasilloViejo && this.pasilloViejo !== this.producto.pasillo) {
-        this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo, this.producto, iPasilloViejo, iPasillo)
+        this.productoService.changePasillo(this.categoria, this.pasilloViejo, this.producto.id, this.tipo, this.producto, iPasilloViejo, iPasillo, this.producto.pasillo)
       }
       await this.productoService.setProducto(this.producto, this.categoria, this.complementos, this.tipo, this.agregados, this.plan, iPasillo)
       this.guardando = false
@@ -262,11 +260,13 @@ export class ProductoPage implements OnInit {
       const resp = await this.alertService.presentAlertAction(`Eliminar ${this.producto.nombre}`,
       '¿Estás seguro de eliminar este producto? se perderá toda la información referente al mismo de manera permanente', 'Eliminar', 'Cancelar')
       if (resp) {
+        await this.alertService.presentLoading('Borrando datos del producto...')
         let iPasilloViejo
         if (this.pasilloViejo === 'Ofertas') iPasilloViejo = 0
         else iPasilloViejo = this.pasillos.findIndex(p => p.nombre === this.pasilloViejo) - 1
         this.copiar(this.producto_original, this.producto)
         await this.productoService.deleteProducto(this.producto, this.tipo, this.categoria, this.agregados, iPasilloViejo)
+        this.alertService.dismissLoading()
         this.alertService.presentToast('Artículo eliminado')
         this.modalCtrl.dismiss('eliminado')
       }
