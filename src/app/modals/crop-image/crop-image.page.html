@@ -22,7 +22,7 @@
         </div>
     </ng-container>
     <ng-template #elseTemplate>
-        <image-cropper format="jpeg" [transform]="imageTransform" [imageChangedEvent]="imageChangedEvent" imageQuality="quality || 60" (imageLoaded)="imageLoaded()" [maintainAspectRatio]="true" [aspectRatio]="aspect" [resizeToWidth]="width || 300" format="jpg"
+        <image-cropper format="jpeg" [transform]="imageTransform" [imageChangedEvent]="imageChangedEvent" [imageQuality]="quality || 90" (imageLoaded)="imageLoaded()" [maintainAspectRatio]="true" [aspectRatio]="aspect" [resizeToWidth]="width || 300" format="jpg"
             (imageCropped)="imageCropped($event)"></image-cropper>
         <ion-spinner *ngIf="!imageReady" name="bubbles" name="dots" class="spinner"></ion-spinner>
     </ng-template>

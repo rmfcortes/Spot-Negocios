@@ -79,8 +79,8 @@ export class ProductosService {
   }
 
   changeVista(vista: string, categoria: string) {
-    const idNegocio = this.uidService.getUid();
-    this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/vista`).set(vista);
+    const idNegocio = this.uidService.getUid()
+    this.db.object(`negocios/pasillos/${categoria}/${idNegocio}/vista`).set(vista)
   }
 
   getProductos(tipo: string, categoria: string, pasillo: string, batch: number, lastKey: string): Promise<Producto[]> {
@@ -227,29 +227,29 @@ export class ProductosService {
 
   uploadFoto(foto: string, producto: Producto, origen: string): Promise<any> {
     return new Promise (async (resolve, reject) => {
-      const idNegocio = this.uidService.getUid();
+      const idNegocio = this.uidService.getUid()
       if (!producto.id) {
-        producto.id = this.db.createPushId();
+        producto.id = this.db.createPushId()
       }
-      const ref = this.fireStorage.ref(`negocios/productos/${idNegocio}/${producto.id}/${origen}`);
-      const task = ref.putString( foto, 'base64', { contentType: 'image/jpeg'} );
+      const ref = this.fireStorage.ref(`negocios/productos/${idNegocio}/${producto.id}/${origen}`)
+      const task = ref.putString( foto, 'base64', { contentType: 'image/jpeg'} )
 
       const p = new Promise ((resolver, rejecte) => {
         const tarea = task.snapshotChanges().pipe(
           finalize(async () => {
-            const url = await ref.getDownloadURL().toPromise();
-            tarea.unsubscribe();
-            resolver(url);
+            const url = await ref.getDownloadURL().toPromise()
+            tarea.unsubscribe()
+            resolver(url)
           })
           ).subscribe(
             x => { },
             err => {
-              rejecte(err);
+              rejecte(err)
             }
-          );
-      });
-      resolve(p);
-    });
+          )
+      })
+      resolve(p)
+    })
   }
 
   borraFoto(foto: string) {

@@ -11,20 +11,20 @@ import { ImageCroppedEvent, ImageTransform } from 'ngx-image-cropper';
 })
 export class CropImagePage implements OnInit {
 
-  @Input() imageChangedEvent;
-  @Input() aspect;
-  @Input() quality;
-  @Input() width;
+  @Input() imageChangedEvent
+  @Input() quality
+  @Input() aspect
+  @Input() width
 
 
-  croppedImage: any = '';
+  croppedImage: any = ''
   imageTransform: ImageTransform = {
     scale: 1
-  };
-  verPrevio = false;
-  imageReady = false;
+  }
+  verPrevio = false
+  imageReady = false
 
-  back: Subscription;
+  back: Subscription
 
   constructor(
     private platform: Platform,
@@ -36,24 +36,24 @@ export class CropImagePage implements OnInit {
 
   ionViewWillEnter() {
     this.back = this.platform.backButton.subscribeWithPriority(9999, () => {
-      this.salir();
-    });
+      this.salir()
+    })
   }
 
   imageLoaded() {
-    this.imageReady = true;
+    this.imageReady = true
   }
 
   imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = event.base64;
+    this.croppedImage = event.base64
   }
 
   guardar() {
-    this.modalCtrl.dismiss(this.croppedImage);
+    this.modalCtrl.dismiss(this.croppedImage)
   }
 
   salir() {
-    this.modalCtrl.dismiss();
+    this.modalCtrl.dismiss()
   }
 
 }

@@ -20,13 +20,13 @@
         <ng-container *ngIf="producto && producto.url; else fotoTemplate">
             <div class="foto-container" style="background: white !important;">
                 <img [src]="producto.url" style="height: 100%;" (click)="foto1.click()" /> <br>
-                <input style="display: none" (change)="cropImage($event, 1/.75, true, 60)" type="file" #foto1> <br>
+                <input style="display: none" (change)="cropImage($event, 1/.75, true, 90, 300)" type="file" #foto1> <br>
             </div>
         </ng-container>
         <ng-template #fotoTemplate>
             <div class="foto-container">
                 <img [src]="noFoto" style="height: 50%" (click)="foto1.click()" /> <br>
-                <input style="display: none" (change)="cropImage($event, 1/.75, true, 60)" type="file" #foto1> <br>
+                <input style="display: none" (change)="cropImage($event, 1/.75, true, 90, 300)" type="file" #foto1> <br>
                 <ion-label *ngIf="!producto.url">Agrega una imagen o foto de tu producto</ion-label>
             </div>
         </ng-template>
@@ -92,7 +92,7 @@
                         </ion-col>
                         <ion-col size="8" style="cursor: pointer;">
                             <img style="float: right;" [src]="producto.foto || noLogo" style="height: 8rem;" (click)="foto2.click()" />
-                            <input style="display: none" (change)="cropImage($event, 1/.45, false, 100, 800)" type="file" #foto2>
+                            <input style="display: none" (change)="cropImage($event, 1/.45, false, 85, 600)" type="file" #foto2>
                         </ion-col>
                     </ion-row>
                 </ion-grid>

@@ -23,7 +23,7 @@
                         <ion-card>
                             <div>
                                 <img [src]="perfil.portada || noPortada" style="width: 100%; cursor: pointer;" (click)="foto1.click()" /> <br>
-                                <input style="display: none" (change)="cropImage($event, 1/.33, true, 80, 450)" type="file" #foto1> <br>
+                                <input style="display: none" (change)="cropImage($event, 1/.33, true, 90, 600)" type="file" #foto1> <br>
                             </div>
                             <div class="logo">
                                 <img [src]="perfil.logo || noLogo" style="position: relative;" (click)="foto2.click()" />
