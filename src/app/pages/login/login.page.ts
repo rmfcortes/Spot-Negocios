@@ -83,7 +83,6 @@ export class LoginPage implements OnInit {
       }
   }
 
-
   focus(nextElement: IonInput) {
     nextElement.setFocus()
   }  

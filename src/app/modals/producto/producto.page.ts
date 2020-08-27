@@ -94,7 +94,8 @@ export class ProductoPage implements OnInit {
         if (plan !== 'basico') {
           const oferta: Pasillo = {
             nombre: 'Ofertas',
-            prioridad: 0
+            prioridad: 0,
+            cantidad: 0
           }
           this.pasillos.unshift(oferta)
         }

@@ -183,7 +183,7 @@ export class PerfilPage implements OnInit {
         permitidos = 1
         break
       case 'pro':
-        permitidos = 4
+        permitidos = 10
         break
       case 'premium':
         permitidos = 500

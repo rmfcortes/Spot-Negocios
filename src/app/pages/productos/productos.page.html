@@ -76,15 +76,14 @@
                         <ion-item *ngFor="let section of pasillos.pasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                             <ng-container *ngIf="section.edit; else editTemplate">
                                 <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
+                                <ion-icon slot="end" name="save" color="primary" (click)="saveEditSection(i)"></ion-icon>
+                                <ion-icon slot="end" name="close" color="dark" (click)="cancelEditPasillo(i)"></ion-icon>
                                 <ion-reorder slot="end"></ion-reorder>
-                                <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
-                                <ion-icon slot="end" name="close" color="danger" (click)="cancelEditPasillo(i)"></ion-icon>
                             </ng-container>
                             <ng-template #editTemplate>
                                 <ion-label>{{section.nombre}}</ion-label>
                                 <ion-reorder slot="end"></ion-reorder>
-                                <ion-icon slot="end" name="pencil" color="primary" (click)="editPasillo(i)"></ion-icon>
-                                <ion-icon slot="end" name="trash" color="danger" (click)="deletePasillo(i, section.nombre)"></ion-icon>
+                                <ion-icon slot="end" name="ellipsis-vertical" (click)="presentActionOpciones(i, section.nombre)"></ion-icon>
                             </ng-template>
                         </ion-item>
                     </ion-reorder-group>
@@ -124,12 +123,12 @@
                 </ion-item>
 
                 <ng-container *ngIf="pasilloFiltro; else elseTemplate">
-                    <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProductsFiltrados()" expand="block" class="gradient--" shape="round">
+                    <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProductsFiltrados()" expand="block" class="gradient-- boton-margen" shape="round" style="margin-bottom: 1rem;">
                         Ver más
                     </ion-button>
                 </ng-container>
                 <ng-template #elseTemplate>
-                    <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProducts()" expand="block" class="gradient--" shape="round">
+                    <ion-button *ngIf="!noMore && productosCargados > 0" (click)="loadMoreProducts()" expand="block" class="gradient-- boton-margen" shape="round" style="margin-bottom: 1rem;">
                         Ver más
                     </ion-button>
                 </ng-template>
@@ -178,21 +177,14 @@
                                 <ion-item *ngFor="let section of pasillos.pasillos; let i = index; trackBy: trackByPasillos; let odd = odd" lines="none" [ngClass]="{'contraste': odd}">
                                     <ng-container *ngIf="section.edit; else editTemplate">
                                         <ion-input (keyup.enter)="$event.target.blur();" [(ngModel)]="section.nombre" #inputSectionEdit></ion-input>
-                                        <ion-icon slot="end" name="save" color="success" (click)="saveEditSection(i)"></ion-icon>
-                                        <ion-icon slot="end" name="close" color="danger" (click)="cancelEditPasillo(i)"></ion-icon>
-                                        <ion-button (click)="resetProds(section.nombre)" slot="end" fill="outline">
-                                            Ver Productos
-                                        </ion-button>
+                                        <ion-icon slot="end" name="save" color="primary" (click)="saveEditSection(i)"></ion-icon>
+                                        <ion-icon slot="end" name="close" color="dark" (click)="cancelEditPasillo(i)"></ion-icon>
                                         <ion-reorder slot="end"></ion-reorder>
                                     </ng-container>
                                     <ng-template #editTemplate>
                                         <ion-label>{{section.nombre}}</ion-label>
-                                        <ion-icon slot="end" name="pencil" color="primary" (click)="editPasillo(i)"></ion-icon>
-                                        <ion-icon slot="end" name="trash" color="danger" (click)="deletePasillo(i, section.nombre)"></ion-icon>
-                                        <ion-button (click)="resetProds(section.nombre)" slot="end" fill="outline">
-                                            Ver Productos
-                                        </ion-button>
                                         <ion-reorder slot="end"></ion-reorder>
+                                        <ion-icon slot="end" name="ellipsis-vertical" (click)="presentActionOpciones(i, section.nombre)"></ion-icon>
                                     </ng-template>
                                 </ion-item>
                             </ion-reorder-group>
@@ -327,7 +319,7 @@
         </ion-card>
     </ng-template>
 
-    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mobile" *ngIf="pasillos.pasillos.length > 0 && prods_busqueda[0].productos.length === 0">
+    <ion-fab vertical="center" horizontal="end" slot="fixed" class="mobile" *ngIf="pasillos.pasillos.length > 0 && prods_busqueda[0].productos.length === 0">
         <ion-fab-button (click)="verProducto(null)" class="gradient--">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>

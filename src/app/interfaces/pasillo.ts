@@ -8,4 +8,5 @@ export interface Pasillo {
     nombre: string;
     prioridad: number;
     edit?: boolean;
+    cantidad: number;
 }

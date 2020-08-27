@@ -1,4 +1,4 @@
-import { ModalController, Platform, MenuController, IonInput, IonSearchbar } from '@ionic/angular';
+import { ModalController, Platform, MenuController, IonInput, IonSearchbar, ActionSheetController } from '@ionic/angular';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -72,6 +72,7 @@ export class ProductosPage implements OnInit {
     private platform: Platform,
     private menu: MenuController,
     private modalCtrl: ModalController,
+    private actionSheetCtrl: ActionSheetController,
     private productoService: ProductosService,
     private pasillosService: PasilloService,
     private alertService: AlertService,
@@ -277,6 +278,7 @@ export class ProductosPage implements OnInit {
   }
 
   resetProds(pasillo?) {
+    this.viewSectionList = false
     this.lastKey = ''
     this.yPasillo = 0
     this.productos = []
@@ -364,6 +366,8 @@ export class ProductosPage implements OnInit {
               this.productos[i].productos[y] = producto
             }
           } else {
+            const i = this.pasillos.pasillos.findIndex(p => p.nombre === producto.pasillo)
+            this.pasillos.pasillos[i].cantidad = this.pasillos.pasillos[i].cantidad ? this.pasillos.pasillos[i].cantidad + 1 : 1
             if (this.productosCargados && this.productosCargados > 0) this.addProdAgregado(resp.data)
             else {
               this.productosCargados = 1
@@ -449,7 +453,8 @@ export class ProductosPage implements OnInit {
     }
     const pasillo: Pasillo = {
       nombre: this.nuevo_pasillo,
-      prioridad: 0
+      prioridad: 0,
+      cantidad:0
     }
     this.pasillos.pasillos.unshift(pasillo)
     this.pasillos.pasillos.forEach((p, i) => p.prioridad = i + 1)
@@ -507,6 +512,41 @@ export class ProductosPage implements OnInit {
 
   ionViewWillLeave() {
     if (this.back) this.back.unsubscribe()
+  }
+
+  async presentActionOpciones(i: number, nombre: string) {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: '¿Qué deseas hacer?',
+      buttons: [
+        {
+          text: 'Ver productos de este pasillo',
+          icon: 'eye',
+          handler: () => {
+            this.resetProds(nombre)
+          }
+        },
+        {
+          text: 'Editar nombre',
+          icon: 'pencil',
+          handler: () => {
+            this.editPasillo(i)
+          }
+        },
+        {
+          text: 'Eliminar pasillo y sus productos',
+          icon: 'trash',
+          handler: () => {
+            this.deletePasillo(i, nombre)
+          }
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close',
+          role: 'cancel'
+        },
+      ]
+    })
+    await actionSheet.present()
   }
 
   // Track By
