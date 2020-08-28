@@ -8,6 +8,7 @@ import { RepartidoresPageRoutingModule } from './repartidores-routing.module';
 
 import { RepartidoresPage } from './repartidores.page';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { CropImagePageModule } from 'src/app/modals/crop-image/crop-image.module';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     FormsModule,
     IonicModule,
     SharedModule,
+    CropImagePageModule,
     RepartidoresPageRoutingModule
   ],
   declarations: [RepartidoresPage]
